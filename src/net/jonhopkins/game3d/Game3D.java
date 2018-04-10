@@ -5,7 +5,34 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Calendar;
 
-public class Game3D extends Applet implements Runnable{
+public class Game3D extends Applet implements Runnable {
+	private static final long serialVersionUID = -429272861506526060L;
+	
+	private boolean gameIsRunning;
+	private int tod = 0;
+	
+	private GuiMenu menu;
+	private MapSector s1;
+	private Image buffer;
+	private Graphics bufferGraphics;
+	private MapEditor mapeditor;
+	private Point3D camera;
+	private Point3D mousePosition;
+	private int rotatex;
+	private int rotatey;
+	private double speedx = 1;
+	private double speedz = 1;
+	private int fps = 0;
+	private int framecount = 0;
+	private double cameraHeight;
+	private int viewingDistance;
+	private Point3D[] points;
+	private MapTile[] tiles;
+	private int halfScreenX;
+	private int halfScreenY;
+	private KeyboardInput keyboard;
+	private MouseInput mouse;
+	
 	public Game3D() {
 		cameraHeight = 10;
 		viewingDistance = 320;
@@ -18,37 +45,50 @@ public class Game3D extends Applet implements Runnable{
 		halfScreenY = 200;
 	}
 	
+	@Override
 	public void start() {
 		Thread thread = new Thread(this, "Main thread");
 		thread.start();
-	}
-	
-	public void init() {
-		resize(600, 400);
+		
 		s1 = new MapSector(0, 0);
 		getPoints();
 		getTiles();
-		setBackground(new Color(0x999999));
-		buffer = createImage(2 * halfScreenX, 2 * halfScreenY);
-		bufferGraphics = buffer.getGraphics();
-		setVisible(true);
-		keyboard = new KeyboardInput();
-		mouse = new MouseInput(this);
-		mouse.setRelative(true);
-		addKeyListener(keyboard);
-		addMouseListener(mouse);
-		addMouseMotionListener(mouse);
-		requestFocus();
 		
-		int hour = java.util.Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-		int min = java.util.Calendar.getInstance().get(Calendar.MINUTE);
-		int sec = java.util.Calendar.getInstance().get(Calendar.SECOND);
+		Calendar cal = Calendar.getInstance();
+		int hour = cal.get(Calendar.HOUR_OF_DAY);
+		int min = cal.get(Calendar.MINUTE);
+		int sec = cal.get(Calendar.SECOND);
 		tod = ((60 * hour + min) % 24) * 60 + sec;
-		if (tod > 1439) tod = 0;
+		if (tod > 1439) {
+			tod = 0;
+		}
 		
-		setGameRunning(false);
 		menu = new GuiMenu(this);
 		menu.draw();
+	}
+	
+	@Override
+	public void init() {
+		setBackground(new Color(0x999999));
+		
+		int width = halfScreenX * 2;
+		int height = halfScreenY * 2;
+		resize(width, height);
+		buffer = createImage(width, height);
+		bufferGraphics = buffer.getGraphics();
+		setVisible(true);
+		setFocusable(true);
+		
+		keyboard = new KeyboardInput();
+		addKeyListener(keyboard);
+		
+		mouse = new MouseInput(this);
+		mouse.setRelative(true);
+		addMouseListener(mouse);
+		addMouseMotionListener(mouse);
+		
+		setGameRunning(false);
+		requestFocus();
 	}
 	
 	public void drawSector() {
@@ -125,10 +165,12 @@ public class Game3D extends Applet implements Runnable{
 	public void getPoints() {
 		points = s1.getPoints();
 	}
+	
 	public void getTiles() {
 		tiles = s1.getTiles(points);
 	}
 	
+	@Override
 	public void run() {
 		short ticks = 0;
 		long timesofar = 0;
@@ -305,10 +347,12 @@ public class Game3D extends Applet implements Runnable{
 		}
 	}
 	
+	@Override
 	public void update(Graphics g) {
 		g.drawImage(buffer, 0, 0, this);
 	}
 	
+	@Override
 	public void paint(Graphics g) {
 		
 	}
@@ -316,7 +360,7 @@ public class Game3D extends Applet implements Runnable{
 	public void setGameRunning(boolean running) {
 		gameIsRunning = running;
 		
-		if(gameIsRunning) {
+		if (gameIsRunning) {
 			mouse.setRelative(true);
 			mouse.disableCursor();
 		} else {
@@ -327,31 +371,4 @@ public class Game3D extends Applet implements Runnable{
 			mouse.enableCursor();
 		}
 	}
-	
-	private boolean gameIsRunning;
-	
-	private int tod = 0;
-	
-	private GuiMenu menu;
-	private MapSector s1;
-	private Image buffer;
-	private Graphics bufferGraphics;
-	private MapEditor mapeditor;
-	private Point3D camera;
-	private Point3D mousePosition;
-	private int rotatex;
-	private int rotatey;
-	private double speedx = 1;
-	private double speedz = 1;
-	private int fps = 0;
-	private int framecount = 0;
-	private double cameraHeight;
-	private int viewingDistance;
-	private Point3D[] points;
-	private MapTile[] tiles;
-	private int halfScreenX;
-	private int halfScreenY;
-	private KeyboardInput keyboard;
-	private MouseInput mouse;
-	private static final long serialVersionUID = -429272861506526060L;
 }
