@@ -1,10 +1,27 @@
 package net.jonhopkins.game3d;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 
 public class MapSector {
+	private int pts[];
+	private int ts[];
+	private BufferedImage bImgPoints;
+	private BufferedImage bImgTiles;
+	private Point3D points[];
+	private MapTile tiles[];
+	private final int SECTOR_WIDTH = 64;
+	private final int SECTOR_HEIGHT = 64;
+	
+	private final String SECTORS_DIR = "sectors/";
+	private final String TILES_DIR = SECTORS_DIR + "tiles/";
+	private final String TILES_FILE = TILES_DIR + "Sector_%d_%d_tiles.png";
+	private final String POINTS_DIR = SECTORS_DIR + "points/";
+	private final String POINTS_FILE = POINTS_DIR + "Sector_%d_%d_points.png";
+	
 	public MapSector(int x, int y) {
 		setPointsFile(x, y);
 		setTilesFile(x, y);
@@ -69,25 +86,27 @@ public class MapSector {
 	}
 	
 	public void setTilesFile(int x, int y) {
-		String tilesfile = (new StringBuilder("sectors/tiles/Sector_")).append(x).append('_').append(y).append("_tiles.png").toString();
+		String tilesfile = String.format(TILES_FILE, x, y);
 		
 		bImgTiles = null;
 		try {
-			bImgTiles = ImageIO.read(getClass().getClassLoader().getResourceAsStream(tilesfile));
+			bImgTiles = ImageIO.read(new File(tilesfile));
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
 	public void setPointsFile(int x, int y) {
-		String pointsfile = (new StringBuilder("sectors/points/Sector_")).append(x).append('_').append(y).append("_points.png").toString();
+		String pointsfile = String.format(POINTS_FILE, x, y);;
 		
 		bImgPoints = null;
 		try {
-			bImgPoints = ImageIO.read(getClass().getClassLoader().getResourceAsStream(pointsfile));
+			bImgPoints = ImageIO.read(new File(pointsfile));
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
 	public void setPoints() {
 		for(int i = 0; i < SECTOR_HEIGHT + 1; i++) {
 			for(int j = 0; j < SECTOR_WIDTH + 1; j++) {
@@ -95,6 +114,7 @@ public class MapSector {
 			}
 		}
 	}
+	
 	public void setTiles() {
 		for(int i = 0; i < SECTOR_HEIGHT; i++) {
 			for(int j = 0; j < SECTOR_WIDTH; j++) {
@@ -108,6 +128,7 @@ public class MapSector {
 		pts[y * (SECTOR_HEIGHT + 1) + x] = rgb;
 		setPoints();
 	}
+	
 	public void setTile(int x, int y, int rgb) {
 		bImgTiles.setRGB(x, y, rgb);
 		setTiles();
@@ -116,16 +137,8 @@ public class MapSector {
 	public BufferedImage getPointFile() {
 		return bImgPoints;
 	}
+	
 	public BufferedImage getTilesFile() {
 		return bImgTiles;
 	}
-	
-	private int pts[];
-	private int ts[];
-	private BufferedImage bImgPoints;
-	private BufferedImage bImgTiles;
-	private Point3D points[];
-	private MapTile tiles[];
-	private final int SECTOR_WIDTH = 64;
-	private final int SECTOR_HEIGHT = 64;
 }
