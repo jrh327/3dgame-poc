@@ -1,6 +1,9 @@
 package net.jonhopkins.game3d;
 
 public class GuiMenu extends Gui {
+	private GuiButton button1;
+	private GuiButton button2;
+	
 	public GuiMenu(Game3D main) {
 		super(main);
 		
@@ -21,7 +24,4 @@ public class GuiMenu extends Gui {
 			main.setGameRunning(true);
 		}
 	}
-	
-	GuiButton button1;
-	GuiButton button2;
 }

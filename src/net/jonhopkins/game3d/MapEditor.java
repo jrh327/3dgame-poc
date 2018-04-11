@@ -17,6 +17,9 @@ public class MapEditor {
 	private final int SECTOR_WIDTH = 64;
 	private final int SECTOR_HEIGHT = 64;
 	
+	private final Color DEBUG_TEXT_COLOR = Color.white;
+	private final Color DEBUG_TILE_OUTLINE_COLOR = Color.black;
+	
 	private final String SECTORS_DIR = "sectors/";
 	private final String TILES_DIR = SECTORS_DIR + "tiles/";
 	private final String TILES_FILE = TILES_DIR + "Sector_%d_%d_tiles.png";
@@ -45,13 +48,13 @@ public class MapEditor {
 	}
 	
 	public void drawHUD(Graphics g) {
-		g.setColor(Color.white);
+		g.setColor(DEBUG_TEXT_COLOR);
 		g.fillRect(0, 0, 200, 400);
 		
 		g.drawImage(pts, 2, 1, (SECTOR_WIDTH + 1) * scale, (SECTOR_HEIGHT + 1) * scale, null);
 		g.drawImage(ts, 2, 1 + SECTOR_HEIGHT * scale + 5, SECTOR_WIDTH * scale, SECTOR_HEIGHT * scale, null);
 		
-		g.setColor(Color.black);
+		g.setColor(DEBUG_TILE_OUTLINE_COLOR);
 		g.drawString(new StringBuilder("").append(raisePoint).toString(), 1, SECTOR_HEIGHT * 2 * scale + 16);
 		g.drawString(new StringBuilder("Last height change: ").append(lastHeight).toString(), 10, SECTOR_HEIGHT * 2 * scale + 16);
 	}

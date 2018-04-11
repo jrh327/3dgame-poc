@@ -1,12 +1,20 @@
 package net.jonhopkins.game3d;
 
 import java.applet.Applet;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.Calendar;
 
 public class Game3D extends Applet implements Runnable {
 	private static final long serialVersionUID = -429272861506526060L;
+	private final Color GAME_BG_COLOR = new Color(0x999999);
+	private final Color PAUSED_OVERLAY_COLOR = new Color(0, 0, 0, 150);
+	private final Color DEBUG_TEXT_COLOR = Color.white;
+	private final Color DEBUG_TILE_OUTLINE_COLOR = Color.black;
+	private final Color DEBUG_POINT_OUTLINE_COLOR = Color.red;
 	
 	private boolean gameIsRunning;
 	private int tod = 0;
@@ -69,7 +77,7 @@ public class Game3D extends Applet implements Runnable {
 	
 	@Override
 	public void init() {
-		setBackground(new Color(0x999999));
+		setBackground(GAME_BG_COLOR);
 		
 		int width = halfScreenX * 2;
 		int height = halfScreenY * 2;
@@ -106,7 +114,7 @@ public class Game3D extends Applet implements Runnable {
 			int[] xs = new int[4];
 			int[] ys = new int[4];
 			tempTiles[closestToMouse].to2DCoords(halfScreenX, halfScreenY, xs, ys);
-			bufferGraphics.setColor(Color.black);
+			bufferGraphics.setColor(DEBUG_TILE_OUTLINE_COLOR);
 			bufferGraphics.drawPolygon(xs, ys, 4);
 			
 			int bestDist = 1000;
@@ -120,7 +128,7 @@ public class Game3D extends Applet implements Runnable {
 				}
 			}
 			
-			bufferGraphics.setColor(Color.red);
+			bufferGraphics.setColor(DEBUG_POINT_OUTLINE_COLOR);
 			bufferGraphics.drawRect(xs[index], ys[index], 3, 3);
 			
 			if (index == 0) {
@@ -149,7 +157,7 @@ public class Game3D extends Applet implements Runnable {
 			mousePosition.z = Math.round(mousePosition.z);
 		}
 		
-		bufferGraphics.setColor(Color.white);
+		bufferGraphics.setColor(DEBUG_TEXT_COLOR);
 		
 		bufferGraphics.drawLine(halfScreenX, halfScreenY - 10, halfScreenX, halfScreenY + 10);
 		bufferGraphics.drawLine(halfScreenX - 10, halfScreenY, halfScreenX + 10, halfScreenY);
@@ -364,7 +372,7 @@ public class Game3D extends Applet implements Runnable {
 			mouse.setRelative(true);
 			mouse.disableCursor();
 		} else {
-			bufferGraphics.setColor(new Color(0, 0, 0, 150));
+			bufferGraphics.setColor(PAUSED_OVERLAY_COLOR);
 			bufferGraphics.fillRect(0, 0, 2 * halfScreenX, 2 * halfScreenY);
 			repaint();
 			mouse.setRelative(false);

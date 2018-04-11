@@ -5,20 +5,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Gui {
-	public Gui(Game3D main) {
-		this.main = main;
-	}
-	
-	public void draw() {
-		Graphics g = main.getGraphics();
-		
-		g.setColor(new Color(0x777777));
-		g.fillRect(offsetx, offsety, width, height);
-		
-		for (int i = 0; i < fields.size(); i++) {
-			fields.get(i).draw();
-		}
-	}
+	private final Color GUI_BG_COLOR = new Color(0x777777);
 	
 	protected int width = 400;
 	protected int height = 300;
@@ -26,4 +13,19 @@ public class Gui {
 	protected int offsety;
 	protected Game3D main;
 	protected ArrayList<Gui> fields = new ArrayList<Gui>();
+	
+	public Gui(Game3D main) {
+		this.main = main;
+	}
+	
+	public void draw() {
+		Graphics g = main.getGraphics();
+		
+		g.setColor(GUI_BG_COLOR);
+		g.fillRect(offsetx, offsety, width, height);
+		
+		for (int i = 0; i < fields.size(); i++) {
+			fields.get(i).draw();
+		}
+	}
 }

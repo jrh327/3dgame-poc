@@ -4,6 +4,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class GuiButton extends Gui {
+	private final Color BUTTON_BG_COLOR = new Color(0x555555);
+	
+	private int xpos = 0;
+	private int ypos = 0;
+	private int width = 100;
+	private int height = 30;
+	private String text = "";
+	
 	public GuiButton(Game3D main, GuiMenu menu, int x, int y, String s) {
 		super(main);
 		xpos = x;
@@ -12,10 +20,11 @@ public class GuiButton extends Gui {
 		offsety = menu.offsety;
 		text = s;
 	}
+	
 	public void draw() {
 		Graphics g = main.getGraphics();
 		
-		g.setColor(new Color(0x555555));
+		g.setColor(BUTTON_BG_COLOR);
 		g.fillRect(offsetx + xpos, offsety + ypos, width, height);
 		
 		g.setColor(Color.white);
@@ -26,10 +35,4 @@ public class GuiButton extends Gui {
 		return (x >=  offsetx + xpos && x <= offsetx + xpos + width 
 				&& y >= offsety + ypos && y <= offsety + ypos + height);
 	}
-	
-	int xpos = 0;
-	int ypos = 0;
-	int width = 100;
-	int height = 30;
-	String text = "";
 }
