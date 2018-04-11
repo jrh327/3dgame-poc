@@ -3,25 +3,40 @@ package net.jonhopkins.game3d;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-//import java.io.File;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 public class MapEditor {
+	private BufferedImage pts;
+	private BufferedImage ts;
+	private int scale;
+	private int raisePoint = 1;
+	private int lastHeight;
+	private final int SECTOR_WIDTH = 64;
+	private final int SECTOR_HEIGHT = 64;
+	
+	private final String SECTORS_DIR = "sectors/";
+	private final String TILES_DIR = SECTORS_DIR + "tiles/";
+	private final String TILES_FILE = TILES_DIR + "Sector_%d_%d_tiles.png";
+	private final String POINTS_DIR = SECTORS_DIR + "points/";
+	private final String POINTS_FILE = POINTS_DIR + "Sector_%d_%d_points.png";
+	
 	public MapEditor(int x, int y) {
-		String pointsfile = (new StringBuilder("sectors/points/Sector_")).append(x).append('_').append(y).append("_points.png").toString();
-		String tilesfile = (new StringBuilder("sectors/tiles/Sector_")).append(x).append('_').append(y).append("_tiles.png").toString();
+		String pointsfile = String.format(POINTS_FILE, x, y);
+		String tilesfile = String.format(TILES_FILE, x, y);
 		
 		pts = null;
 		try {
-			pts = ImageIO.read(getClass().getClassLoader().getResourceAsStream(pointsfile));
+			pts = ImageIO.read(new File(pointsfile));
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+		
 		ts = null;
 		try {
-			ts = ImageIO.read(getClass().getClassLoader().getResourceAsStream(tilesfile));
+			ts = ImageIO.read(new File(tilesfile));
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -51,6 +66,7 @@ public class MapEditor {
 			raisePoint--;
 		}
 	}
+	
 	public void raisePoint(Point3D position, MapSector s1, int direction) {
 		if (position == null) {
 			return;
@@ -100,12 +116,4 @@ public class MapEditor {
 		}
 		*/
 	}
-	
-	private BufferedImage pts;
-	private BufferedImage ts;
-	private int scale;
-	private int raisePoint = 1;
-	private int lastHeight;
-	private final int SECTOR_WIDTH = 64;
-	private final int SECTOR_HEIGHT = 64;
 }
