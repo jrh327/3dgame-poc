@@ -4,6 +4,16 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class DrawScene {
+	private static int clamp(int value, int min, int max) {
+		if (value < min) {
+			return min;
+		} else if (value > max) {
+			return max;
+		}
+		return min;
+	}
+	
+	
 	public static int drawScene(Point3D[] points, MapTile[] tiles, Point3D camera, double cameraHeight, double viewingDistance, int halfScreenX, int halfScreenY, Graphics bufferGraphics, int tod, double rotatex, double rotatey) {
 		bufferGraphics.clearRect(0, 0, 600, 400);
 		
@@ -28,19 +38,25 @@ public class DrawScene {
 		} else {
 			if (tod <= 660) {
 				lightlevel = (double)(tod / 60 - 3 + (tod % 60) / 60.0);
-				bufferGraphics.setColor(new Color((int)(lightlevel * 153 / 8),
-						(int)(lightlevel * 153 / 8),
-						50 + (int)(lightlevel * 205 / 8)));
+				int r = clamp((int)(lightlevel * 153 / 8), 0, 255);
+				int g = clamp((int)(lightlevel * 153 / 8), 0, 255);
+				int b = clamp(50 + (int)(lightlevel * 205 / 8), 0, 255);
+				
+				bufferGraphics.setColor(new Color(r, g, b));
 			} else if (tod >= 900) {
 				lightlevel = (double)(tod / 60 - (9 + 2 * (tod / 60 - 16)) - (1 - (tod % 60) / 60.0));
-				bufferGraphics.setColor(new Color((int)((1 - lightlevel) * 153 / 8),
-						(int)((1 - lightlevel) * 153 / 8),
-						50 + (int)((1 - lightlevel) * 205 / 8)));
+				int r = clamp((int)((1 - lightlevel) * 153 / 8), 0, 255);
+				int g = clamp((int)((1 - lightlevel) * 153 / 8), 0, 255);
+				int b = clamp(50 + (int)((1 - lightlevel) * 205 / 8), 0, 255);
+				
+				bufferGraphics.setColor(new Color(r, g, b));
+			} else {
+				int r = clamp((int)(lightlevel * 153 / 8), 0, 255);
+				int g = clamp((int)(lightlevel * 153 / 8), 0, 255);
+				int b = clamp(50 + (int)(lightlevel * 205 / 8), 0, 255);
+				
+				bufferGraphics.setColor(new Color(r, g, b));
 			}
-			
-			bufferGraphics.setColor(new Color((int)(lightlevel * 153 / 8),
-					(int)(lightlevel * 153 / 8),
-					50 + (int)(lightlevel * 205 / 8)));
 		}
 		
 		double timeofdayscalar = (8.0 - Math.abs(lightlevel - 8.0)) / 8.0;
@@ -55,14 +71,15 @@ public class DrawScene {
 		
 		for(int i = 0; i < 64; i++) {
 			for(int j = 0; j < 64; j++) {
-				double dist = Math.pow(Math.pow(tiles[i * 64 + j].avgX(), 2) + Math.pow(tiles[i* 64 + j].avgHeight() + cameraHeight, 2) + Math.pow(tiles[i * 64 + j].avgZ(), 2), 0.5); 
+				MapTile tile = tiles[i * 64 + j];
+				double dist = Math.pow(Math.pow(tile.avgX(), 2) + Math.pow(tile.avgHeight() + cameraHeight, 2) + Math.pow(tile.avgZ(), 2), 0.5); 
 				
-				if((tiles[i * 64 + j].avgZ() >= 0.0) && dist < viewingDistance) {
-					tiles[i * 64 + j].to2DCoords(halfScreenX, halfScreenY, xs, ys);
+				if((tile.avgZ() >= 0.0) && dist < viewingDistance) {
+					tile.to2DCoords(halfScreenX, halfScreenY, xs, ys);
 					
 					double colorScaler = (1.0 - (dist / viewingDistance)) * timeofdayscalar;
 					
-					int color = tiles[i * 64 + j].getRGB();
+					int color = tile.getRGB();
 					int newR = (int)(((color & 0xff0000) >> 16) * colorScaler);
 					int newG = (int)(((color & 0xff00) >> 8) * colorScaler);
 					int newB = (int)(((color & 0xff)) * colorScaler);

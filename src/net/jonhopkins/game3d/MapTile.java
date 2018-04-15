@@ -1,6 +1,12 @@
 package net.jonhopkins.game3d;
 
-public class MapTile {
+public class MapTile implements Comparable<MapTile> {
+	public Point3D UL;
+	public Point3D UR;
+	public Point3D LL;
+	public Point3D LR;
+	private int RGB;
+	
 	public MapTile(Point3D ul, Point3D ur, Point3D ll, Point3D lr, int rgb) {
 		UL = ul;
 		UR = ur;
@@ -66,19 +72,29 @@ public class MapTile {
 			LR.z = 0.1;
 		}
 		
-		xs[0] = (int)((double)halfScreenX + (UL.x * (50D / UL.z) * 10D));
-		xs[1] = (int)((double)halfScreenX + (UR.x * (50D / UR.z) * 10D));
-		xs[2] = (int)((double)halfScreenX + (LR.x * (50D / LR.z) * 10D));
-		xs[3] = (int)((double)halfScreenX + (LL.x * (50D / LL.z) * 10D));
-		ys[0] = (int)((double)halfScreenY - (UL.y * (50D / UL.z) * 10D));
-		ys[1] = (int)((double)halfScreenY - (UR.y * (50D / UR.z) * 10D));
-		ys[2] = (int)((double)halfScreenY - (LR.y * (50D / LR.z) * 10D));
-		ys[3] = (int)((double)halfScreenY - (LL.y * (50D / LL.z) * 10D));
+		double x = (double)halfScreenX;
+		double y = (double)halfScreenY;
+		
+		xs[0] = (int)(x + (UL.x * (50D / UL.z) * 10D));
+		xs[1] = (int)(x + (UR.x * (50D / UR.z) * 10D));
+		xs[2] = (int)(x + (LR.x * (50D / LR.z) * 10D));
+		xs[3] = (int)(x + (LL.x * (50D / LL.z) * 10D));
+		ys[0] = (int)(y - (UL.y * (50D / UL.z) * 10D));
+		ys[1] = (int)(y - (UR.y * (50D / UR.z) * 10D));
+		ys[2] = (int)(y - (LR.y * (50D / LR.z) * 10D));
+		ys[3] = (int)(y - (LL.y * (50D / LL.z) * 10D));
 	}
 	
-	public Point3D UL;
-	public Point3D UR;
-	public Point3D LL;
-	public Point3D LR;
-	private int RGB;
+	@Override
+	public int compareTo(MapTile other) {
+		double thisZ = this.avgZ();
+		double otherZ = this.avgZ();
+		
+		if (thisZ < otherZ) {
+			return -1;
+		} else if (thisZ == otherZ) {
+			return 0;
+		}
+		return 1;
+	}
 }
