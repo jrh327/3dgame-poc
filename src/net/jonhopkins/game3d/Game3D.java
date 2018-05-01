@@ -8,6 +8,12 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.Calendar;
 
+import net.jonhopkins.game3d.geometry.Face;
+import net.jonhopkins.game3d.geometry.Vertex;
+import net.jonhopkins.game3d.gui.Menu;
+import net.jonhopkins.game3d.input.KeyboardInput;
+import net.jonhopkins.game3d.input.MouseInput;
+
 public class Game3D extends Applet implements Runnable {
 	private static final long serialVersionUID = -429272861506526060L;
 	private final Color GAME_BG_COLOR = new Color(0x999999);
@@ -19,13 +25,13 @@ public class Game3D extends Applet implements Runnable {
 	private boolean gameIsRunning;
 	private int tod = 0;
 	
-	private GuiMenu menu;
+	private Menu menu;
 	private MapSector s1;
 	private Image buffer;
 	private Graphics bufferGraphics;
 	private MapEditor mapeditor;
-	private Point3D camera;
-	private Point3D mousePosition;
+	private Vertex camera;
+	private Vertex mousePosition;
 	private int rotatex;
 	private int rotatey;
 	private double speedx = 1;
@@ -34,8 +40,8 @@ public class Game3D extends Applet implements Runnable {
 	private int framecount = 0;
 	private double cameraHeight;
 	private int viewingDistance;
-	private Point3D[] points;
-	private MapTile[] tiles;
+	private Vertex[] points;
+	private Face[] tiles;
 	private int halfScreenX;
 	private int halfScreenY;
 	private KeyboardInput keyboard;
@@ -44,8 +50,8 @@ public class Game3D extends Applet implements Runnable {
 	public Game3D() {
 		cameraHeight = 10;
 		viewingDistance = 320;
-		camera = new Point3D(0D, cameraHeight, 0D);
-		mousePosition = new Point3D(0, 0, 0);
+		camera = new Vertex(0D, cameraHeight, 0D);
+		mousePosition = new Vertex(0, 0, 0);
 		mapeditor = new MapEditor(0, 0);
 		rotatex = 0;
 		rotatey = 0;
@@ -62,16 +68,9 @@ public class Game3D extends Applet implements Runnable {
 		getPoints();
 		getTiles();
 		
-		Calendar cal = Calendar.getInstance();
-		int hour = cal.get(Calendar.HOUR_OF_DAY);
-		int min = cal.get(Calendar.MINUTE);
-		int sec = cal.get(Calendar.SECOND);
-		tod = ((60 * hour + min) % 24) * 60 + sec;
-		if (tod > 1439) {
-			tod = 0;
-		}
+		updateTime();
 		
-		menu = new GuiMenu(this);
+		menu = new Menu(this);
 		menu.draw();
 	}
 	
@@ -100,11 +99,12 @@ public class Game3D extends Applet implements Runnable {
 	}
 	
 	public void drawSector() {
-		Point3D[] tempPoints = s1.getPoints();
-		MapTile[] tempTiles = s1.getTiles(tempPoints);
+		Vertex[] tempPoints = s1.getPoints();
+		Face[] tempTiles = s1.getTiles(tempPoints);
 		DrawingPreparation.translatePointsWithRespectToCamera(tempPoints, camera);
 		if (rotatey != 0) DrawingPreparation.rotatePointsY(tempPoints, rotatey);
 		if (rotatex != 0) DrawingPreparation.rotatePointsX(tempPoints, rotatex);
+		tempTiles = DrawingPreparation.backFaceCulling(tempTiles);
 		DrawingPreparation.Quicksort(tempTiles, 0, tempTiles.length - 1);
 		bufferGraphics.clearRect(0, 0, 600, 400);
 		
@@ -189,7 +189,7 @@ public class Game3D extends Applet implements Runnable {
 				mouse.poll();
 				
 				if (gameIsRunning) {
-					long time = System.nanoTime();
+					long time = System.currentTimeMillis();
 					
 					if (keyboard.keyDown(KeyEvent.VK_ESCAPE) || (keyboard.keyDown(KeyEvent.VK_CONTROL) && keyboard.keyDown(KeyEvent.VK_C))) {
 						setGameRunning(false);
@@ -206,17 +206,13 @@ public class Game3D extends Applet implements Runnable {
 					drawSector();
 					repaint();
 					
-					timesofar += ((System.nanoTime() - time) / 1000000);
+					timesofar += ((System.currentTimeMillis() - time));
 					if (ticks == 10) {
 						fps = 1000 / (int)(timesofar / framecount);
 						ticks = 0;
 						timesofar = 0;
 						framecount = 0;
-						int hour = java.util.Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-						int min = java.util.Calendar.getInstance().get(Calendar.MINUTE);
-						int sec = java.util.Calendar.getInstance().get(Calendar.SECOND);
-						tod = ((60 * hour + min) % 24) * 60 + sec;
-						if (tod > 1439) tod = 0;
+						updateTime();
 					}
 					ticks++;
 				} else {
@@ -377,6 +373,17 @@ public class Game3D extends Applet implements Runnable {
 			repaint();
 			mouse.setRelative(false);
 			mouse.enableCursor();
+		}
+	}
+	
+	public void updateTime() {
+		Calendar cal = Calendar.getInstance();
+		int hour = cal.get(Calendar.HOUR_OF_DAY);
+		int min = cal.get(Calendar.MINUTE);
+		int sec = cal.get(Calendar.SECOND);
+		tod = ((60 * hour + min) % 24) * 60 + sec;
+		if (tod > 1439) {
+			tod = 0;
 		}
 	}
 }

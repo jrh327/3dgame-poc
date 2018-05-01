@@ -1,4 +1,4 @@
-package net.jonhopkins.game3d;
+package net.jonhopkins.game3d.input;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -33,54 +33,56 @@ public class MouseInput implements MouseListener, MouseMotionListener {
 		ONCE      // Down for the first time
 	}
 	
-	public MouseInput( Component component ) {
+	public MouseInput(Component component) {
 		// Need the component object to convert screen coordinates 
 		//this.component = component;
 		// Calculate the component center
 		int w = component.getBounds().width;
 		int h = component.getBounds().height;
-		center = new Point( w/2, h/2 );
+		center = new Point(w / 2, h / 2);
 		/*try {
 			robot = new Robot();
-		} catch( Exception e ) {
+		} catch (Exception e) {
 			// Handle exception [game specific]
 		}
 		*/
 		// Create default mouse positions
-		mousePos = new Point( 0, 0 );
-		currentPos = new Point( 0, 0 );
+		mousePos = new Point(0, 0);
+		currentPos = new Point(0, 0);
 		// Setup initial button states
-		state = new boolean[ BUTTON_COUNT ];
-		poll = new MouseState[ BUTTON_COUNT ];
-		for( int i = 0; i < BUTTON_COUNT; ++i ) {
-			poll[ i ] = MouseState.RELEASED;
+		state = new boolean[BUTTON_COUNT];
+		poll = new MouseState[BUTTON_COUNT];
+		for (int i = 0; i < BUTTON_COUNT; i++) {
+			poll[i] = MouseState.RELEASED;
 		}
 	}
 	
 	public synchronized void poll() {
 		// If relative, return only the delta movements,
 		// otherwise return the current position...
-		if( isRelative() ) {
-			mousePos = new Point( dx, dy );
+		if (isRelative()) {
+			mousePos = new Point(dx, dy);
 		} else {
-			mousePos = new Point( currentPos );
+			mousePos = new Point(currentPos);
 		}
+		
 		// Since we have polled, need to reset the delta
 		// so the values do not accumulate
 		dx = dy = 0;
 		// Check each mouse button
-		for( int i = 0; i < BUTTON_COUNT; ++i ) {
+		for (int i = 0; i < BUTTON_COUNT; i++) {
 			// If the button is down for the first
 			// time, it is ONCE, otherwise it is
 			// PRESSED.  
-			if( state[ i ] ) {
-				if( poll[ i ] == MouseState.RELEASED )
-					poll[ i ] = MouseState.ONCE;
-				else
-					poll[ i ] = MouseState.PRESSED;
+			if (state[i]) {
+				if (poll[i] == MouseState.RELEASED) {
+					poll[i] = MouseState.ONCE;
+				} else {
+					poll[i] = MouseState.PRESSED;
+				}
 			} else {
 				// Button is not down
-				poll[ i ] = MouseState.RELEASED;
+				poll[i] = MouseState.RELEASED;
 			}
 		}
 	}
@@ -89,9 +91,9 @@ public class MouseInput implements MouseListener, MouseMotionListener {
 		return relative;
 	}
 	
-	public void setRelative( boolean relative ) {
+	public void setRelative(boolean relative) {
 		this.relative = relative;
-		if( relative ) {
+		if (relative) {
 			centerMouse();
 		}
 	}
@@ -100,37 +102,43 @@ public class MouseInput implements MouseListener, MouseMotionListener {
 		return mousePos;
 	}
 	
-	public boolean buttonDownOnce( int button ) {
-		return poll[ button-1 ] == MouseState.ONCE;
+	public boolean buttonDownOnce(int button) {
+		return poll[button - 1] == MouseState.ONCE;
 	}
 	
-	public boolean buttonDown( int button ) {
-		return poll[ button-1 ] == MouseState.ONCE ||
-				poll[ button-1 ] == MouseState.PRESSED;
+	public boolean buttonDown(int button) {
+		return poll[button - 1] == MouseState.ONCE ||
+				poll[button - 1] == MouseState.PRESSED;
 	}
 	
-	public synchronized void mousePressed( MouseEvent e ) {
-		state[ e.getButton()-1 ] = true;
+	@Override
+	public synchronized void mousePressed(MouseEvent e) {
+		state[e.getButton() - 1] = true;
 	}
 	
-	public synchronized void mouseReleased( MouseEvent e ) {
-		state[ e.getButton()-1 ] = false;
+	@Override
+	public synchronized void mouseReleased(MouseEvent e) {
+		state[e.getButton() - 1] = false;
 	}
 	
-	public synchronized void mouseEntered( MouseEvent e ) {
-		mouseMoved( e );
+	@Override
+	public synchronized void mouseEntered(MouseEvent e) {
+		mouseMoved(e);
 	}
 	
-	public synchronized void mouseExited( MouseEvent e ) {
-		mouseMoved( e );
+	@Override
+	public synchronized void mouseExited(MouseEvent e) {
+		mouseMoved(e);
 	}
 	
-	public synchronized void mouseDragged( MouseEvent e ) {
-		mouseMoved( e );
+	@Override
+	public synchronized void mouseDragged(MouseEvent e) {
+		mouseMoved(e);
 	}
 	
-	public synchronized void mouseMoved( MouseEvent e ) {
-		if( isRelative() ) {
+	@Override
+	public synchronized void mouseMoved(MouseEvent e) {
+		if (isRelative()) {
 			Point p = e.getPoint();
 			dx += p.x - center.x;
 			dy += p.y - center.y;
@@ -140,32 +148,33 @@ public class MouseInput implements MouseListener, MouseMotionListener {
 		}
 	}
 	
-	public void mouseClicked( MouseEvent e ) {
+	@Override
+	public void mouseClicked(MouseEvent e) {
 		// Not needed
 	}
 	
 	private void centerMouse() {
-		/*if( robot != null && component.isShowing() ) {
+		/*if (robot != null && component.isShowing()) {
 			// Because the convertPointToScreen method 
 			// changes the object, make a copy!
-			Point copy = new Point( center.x, center.y );
-			SwingUtilities.convertPointToScreen( copy, component );
-			robot.mouseMove( copy.x, copy.y );
+			Point copy = new Point(center.x, center.y);
+			SwingUtilities.convertPointToScreen(copy, component);
+			robot.mouseMove(copy.x, copy.y);
 		}
 		*/
 	}
 	
 	public void disableCursor() {
 		/*Toolkit tk = Toolkit.getDefaultToolkit();
-		Image image = tk.createImage( "" );
-		Point point = new Point( 0, 0 );
+		Image image = tk.createImage("");
+		Point point = new Point(0, 0);
 		String name = "CanBeAnything";
-		Cursor cursor = tk.createCustomCursor( image, point, name ); 
-		component.setCursor( cursor );
+		Cursor cursor = tk.createCustomCursor(image, point, name); 
+		component.setCursor(cursor);
 		*/
 	}
 	
 	public void enableCursor() {
-		//component.setCursor( new Cursor( Cursor.DEFAULT_CURSOR ) );
+		//component.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 }

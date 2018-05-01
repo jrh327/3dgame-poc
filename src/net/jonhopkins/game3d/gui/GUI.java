@@ -1,27 +1,29 @@
-package net.jonhopkins.game3d;
+package net.jonhopkins.game3d.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-public class Gui {
-	private final Color GUI_BG_COLOR = new Color(0x777777);
+import net.jonhopkins.game3d.Game3D;
+
+public abstract class GUI {
+	private static final Color DEFAULT_BG_COLOR = new Color(0x777777);
 	
 	protected int width = 400;
 	protected int height = 300;
 	protected int offsetx;
 	protected int offsety;
 	protected Game3D main;
-	protected ArrayList<Gui> fields = new ArrayList<Gui>();
+	protected ArrayList<GUI> fields = new ArrayList<GUI>();
 	
-	public Gui(Game3D main) {
+	public GUI(Game3D main) {
 		this.main = main;
 	}
 	
 	public void draw() {
 		Graphics g = main.getGraphics();
 		
-		g.setColor(GUI_BG_COLOR);
+		g.setColor(DEFAULT_BG_COLOR);
 		g.fillRect(offsetx, offsety, width, height);
 		
 		for (int i = 0; i < fields.size(); i++) {

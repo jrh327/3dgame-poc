@@ -1,13 +1,13 @@
-package net.jonhopkins.game3d;
+package net.jonhopkins.game3d.geometry;
 
-public class MapTile implements Comparable<MapTile> {
-	public Point3D UL;
-	public Point3D UR;
-	public Point3D LL;
-	public Point3D LR;
+public class Face implements Comparable<Face> {
+	public Vertex UL;
+	public Vertex UR;
+	public Vertex LL;
+	public Vertex LR;
 	private int RGB;
 	
-	public MapTile(Point3D ul, Point3D ur, Point3D ll, Point3D lr, int rgb) {
+	public Face(Vertex ul, Vertex ur, Vertex ll, Vertex lr, int rgb) {
 		UL = ul;
 		UR = ur;
 		LL = ll;
@@ -40,8 +40,8 @@ public class MapTile implements Comparable<MapTile> {
 		return RGB;
 	}
 	
-	public Point3D[] getPoints() {
-		return (new Point3D[] {
+	public Vertex[] getPoints() {
+		return (new Vertex[] {
 			UL, UR, LR, LL
 		});
 	}
@@ -85,12 +85,19 @@ public class MapTile implements Comparable<MapTile> {
 		ys[3] = (int)(y - (LL.y * (50D / LL.z) * 10D));
 	}
 	
+	public Vector getNormal() {
+		Vector pq = new Vector(UR.x - UL.x, UR.y - UL.y, UR.z - UL.z);
+		Vector pr = new Vector(LR.x - UL.x, LR.y - UL.y, LR.z - UL.z);
+		Vector cross = Vector.cross(pq, pr);
+		return cross;
+	}
+	
 	@Override
-	public int compareTo(MapTile other) {
+	public int compareTo(Face other) {
 		double thisZ = this.avgZ();
-		double otherZ = this.avgZ();
+		double otherZ = other.avgZ();
 		
-		if (thisZ < otherZ) {
+		if (thisZ > otherZ) {
 			return -1;
 		} else if (thisZ == otherZ) {
 			return 0;

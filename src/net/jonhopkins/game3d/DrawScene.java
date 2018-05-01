@@ -3,6 +3,9 @@ package net.jonhopkins.game3d;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import net.jonhopkins.game3d.geometry.Face;
+import net.jonhopkins.game3d.geometry.Vertex;
+
 public class DrawScene {
 	private static int clamp(int value, int min, int max) {
 		if (value < min) {
@@ -10,14 +13,14 @@ public class DrawScene {
 		} else if (value > max) {
 			return max;
 		}
-		return min;
+		return value;
 	}
 	
 	
-	public static int drawScene(Point3D[] points, MapTile[] tiles, Point3D camera, double cameraHeight, double viewingDistance, int halfScreenX, int halfScreenY, Graphics bufferGraphics, int tod, double rotatex, double rotatey) {
+	public static int drawScene(Vertex[] points, Face[] tiles, Vertex camera, double cameraHeight, double viewingDistance, int halfScreenX, int halfScreenY, Graphics bufferGraphics, int tod, double rotatex, double rotatey) {
 		bufferGraphics.clearRect(0, 0, 600, 400);
 		
-		MapTile sun = new MapTile(new Point3D(-1, -32, 1), new Point3D(1, -32, 1), new Point3D(-1, -32, -1), new Point3D(1, -32, -1), 0xffff99);
+		Face sun = new Face(new Vertex(-1, -32, 1), new Vertex(1, -32, 1), new Vertex(-1, -32, -1), new Vertex(1, -32, -1), 0xffff99);
 		
 		sun.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
 		sun.rotateY(rotatey);
@@ -69,35 +72,34 @@ public class DrawScene {
 			bufferGraphics.fillPolygon(xs, ys, 4);
 		}
 		
-		for(int i = 0; i < 64; i++) {
-			for(int j = 0; j < 64; j++) {
-				MapTile tile = tiles[i * 64 + j];
-				double dist = Math.pow(Math.pow(tile.avgX(), 2) + Math.pow(tile.avgHeight() + cameraHeight, 2) + Math.pow(tile.avgZ(), 2), 0.5); 
+		int counter = 0;
+		for (Face tile : tiles) {
+			double dist = Math.pow(Math.pow(tile.avgX(), 2) + Math.pow(tile.avgHeight() + cameraHeight, 2) + Math.pow(tile.avgZ(), 2), 0.5); 
+			
+			if (tile.avgZ() >= 0.0 && dist < viewingDistance) {
+				tile.to2DCoords(halfScreenX, halfScreenY, xs, ys);
 				
-				if((tile.avgZ() >= 0.0) && dist < viewingDistance) {
-					tile.to2DCoords(halfScreenX, halfScreenY, xs, ys);
-					
-					double colorScaler = (1.0 - (dist / viewingDistance)) * timeofdayscalar;
-					
-					int color = tile.getRGB();
-					int newR = (int)(((color & 0xff0000) >> 16) * colorScaler);
-					int newG = (int)(((color & 0xff00) >> 8) * colorScaler);
-					int newB = (int)(((color & 0xff)) * colorScaler);
-					
-					if (newR < 0) newR = 0;
-					if (newR > 255) newR = 255;
-					if (newG < 0) newG = 0;
-					if (newG > 255) newG = 255;
-					if (newB < 0) newB = 0;
-					if (newB > 255) newB = 255;
-					
-					bufferGraphics.setColor(new Color(newR, newG, newB));
-					bufferGraphics.fillPolygon(xs, ys, 4);
-					
-					if (inpoly(xs, ys, 4, 300, 200)) {
-						closestToMouse = i * 64 + j;
-					}
+				double colorScaler = (1.0 - (dist / viewingDistance)) * timeofdayscalar;
+				
+				int color = tile.getRGB();
+				int newR = (int)(((color & 0xff0000) >> 16) * colorScaler);
+				int newG = (int)(((color & 0xff00) >> 8) * colorScaler);
+				int newB = (int)(((color & 0xff)) * colorScaler);
+				
+				if (newR < 0) newR = 0;
+				if (newR > 255) newR = 255;
+				if (newG < 0) newG = 0;
+				if (newG > 255) newG = 255;
+				if (newB < 0) newB = 0;
+				if (newB > 255) newB = 255;
+				
+				bufferGraphics.setColor(new Color(newR, newG, newB));
+				bufferGraphics.fillPolygon(xs, ys, 4);
+				
+				if (inpoly(xs, ys, 4, 300, 200)) {
+					closestToMouse = counter;
 				}
+				counter++;
 			}
 		}
 		

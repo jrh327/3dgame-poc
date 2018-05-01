@@ -1,9 +1,11 @@
-package net.jonhopkins.game3d;
+package net.jonhopkins.game3d.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class GuiLabel extends Gui {
+import net.jonhopkins.game3d.Game3D;
+
+public class Label extends GUI {
 	private final Color LABEL_TEXT_COLOR = Color.white;
 	
 	private int xpos = 0;
@@ -12,7 +14,7 @@ public class GuiLabel extends Gui {
 	private int height = 30;
 	private String text = "";
 	
-	public GuiLabel(Game3D main, GuiMenu menu, int x, int y, String s) {
+	public Label(Game3D main, Menu menu, int x, int y, String s) {
 		super(main);
 		xpos = x;
 		ypos = y;

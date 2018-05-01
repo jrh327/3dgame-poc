@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import net.jonhopkins.game3d.geometry.Vertex;
+
 public class MapEditor {
 	private BufferedImage pts;
 	private BufferedImage ts;
@@ -70,7 +72,7 @@ public class MapEditor {
 		}
 	}
 	
-	public void raisePoint(Point3D position, MapSector s1, int direction) {
+	public void raisePoint(Vertex position, MapSector s1, int direction) {
 		if (position == null) {
 			return;
 		}
@@ -98,14 +100,14 @@ public class MapEditor {
 		pts.setRGB(x, y, newHeight);
 	}
 	
-	public Point3D getPosition(int x, int y) {
+	public Vertex getPosition(int x, int y) {
 		x = x / scale;
 		y = y / scale;
 		if (x < 0 || x > 64 || y < 0 || y > 64) {
 			return null;
 		}
 		
-		return new Point3D(x - 32, (pts.getRGB(x, y) & 0xff) - 128, 32 - y);
+		return new Vertex(x - 32, (pts.getRGB(x, y) & 0xff) - 128, 32 - y);
 	}
 	
 	public void save(int x, int y) {

@@ -1,9 +1,11 @@
-package net.jonhopkins.game3d;
+package net.jonhopkins.game3d.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class GuiButton extends Gui {
+import net.jonhopkins.game3d.Game3D;
+
+public class Button extends GUI {
 	private final Color BUTTON_BG_COLOR = new Color(0x555555);
 	
 	private int xpos = 0;
@@ -12,7 +14,7 @@ public class GuiButton extends Gui {
 	private int height = 30;
 	private String text = "";
 	
-	public GuiButton(Game3D main, GuiMenu menu, int x, int y, String s) {
+	public Button(Game3D main, Menu menu, int x, int y, String s) {
 		super(main);
 		xpos = x;
 		ypos = y;

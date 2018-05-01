@@ -6,13 +6,16 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import net.jonhopkins.game3d.geometry.Face;
+import net.jonhopkins.game3d.geometry.Vertex;
+
 public class MapSector {
 	private int pts[];
 	private int ts[];
 	private BufferedImage bImgPoints;
 	private BufferedImage bImgTiles;
-	private Point3D points[];
-	private MapTile tiles[];
+	private Vertex points[];
+	private Face tiles[];
 	private final int SECTOR_WIDTH = 64;
 	private final int SECTOR_HEIGHT = 64;
 	
@@ -32,8 +35,8 @@ public class MapSector {
 		pts = bImgPoints.getRGB(0, 0, SECTOR_WIDTH + 1, SECTOR_HEIGHT + 1, pts, 0, SECTOR_WIDTH + 1);
 		ts = bImgTiles.getRGB(0, 0, SECTOR_WIDTH, SECTOR_HEIGHT, ts, 0, SECTOR_WIDTH);
 		
-		points = new Point3D[(SECTOR_HEIGHT + 1) * (SECTOR_WIDTH + 1)];
-		tiles = new MapTile[SECTOR_HEIGHT * SECTOR_WIDTH];
+		points = new Vertex[(SECTOR_HEIGHT + 1) * (SECTOR_WIDTH + 1)];
+		tiles = new Face[SECTOR_HEIGHT * SECTOR_WIDTH];
 		
 		setPoints();
 		setTiles();
@@ -47,25 +50,25 @@ public class MapSector {
 		return ts;
 	}
 	
-	public Point3D[] getPoints() {
-		Point3D[] p2 = new Point3D[points.length];
+	public Vertex[] getPoints() {
+		Vertex[] p2 = new Vertex[points.length];
 		
 		for (int i = 0; i < p2.length; i++) {
-			p2[i] = new Point3D(points[i].x, points[i].y, points[i].z);
+			p2[i] = new Vertex(points[i].x, points[i].y, points[i].z);
 		}
 		
 		return p2;
 	}
 	
-	public MapTile[] getTiles() {
-		MapTile[] t2 = new MapTile[tiles.length];
+	public Face[] getTiles() {
+		Face[] t2 = new Face[tiles.length];
 		
 		for (int i = 0; i < 64; i++) {
 			for (int j = 0; j < 64; j++) {
-				t2[i * 64 + j] = new MapTile(new Point3D(points[i * 65 + j].x, points[i * 65 + j].y, points[i * 65 + j].z),
-						new Point3D(points[i * 65 + j + 1].x, points[i * 65 + j + 1].y, points[i * 65 + j + 1].z),
-						new Point3D(points[(i + 1) * 65 + j].x, points[(i + 1) * 65 + j].y, points[(i + 1) * 65 + j].z),
-						new Point3D(points[(i + 1) * 65 + j + 1].x, points[(i + 1) * 65 + j + 1].y, points[(i + 1) * 65 + j + 1].z),
+				t2[i * 64 + j] = new Face(new Vertex(points[i * 65 + j].x, points[i * 65 + j].y, points[i * 65 + j].z),
+						new Vertex(points[i * 65 + j + 1].x, points[i * 65 + j + 1].y, points[i * 65 + j + 1].z),
+						new Vertex(points[(i + 1) * 65 + j].x, points[(i + 1) * 65 + j].y, points[(i + 1) * 65 + j].z),
+						new Vertex(points[(i + 1) * 65 + j + 1].x, points[(i + 1) * 65 + j + 1].y, points[(i + 1) * 65 + j + 1].z),
 						ts[i * 64 + j]);
 			}
 		}
@@ -73,12 +76,12 @@ public class MapSector {
 		return t2;
 	}
 	
-	public MapTile[] getTiles(Point3D[] points) {
-		MapTile[] t2 = new MapTile[tiles.length];
+	public Face[] getTiles(Vertex[] points) {
+		Face[] t2 = new Face[tiles.length];
 		
 		for (int i = 0; i < 64; i++) {
 			for (int j = 0; j < 64; j++) {
-				t2[i * 64 + j] = new MapTile(points[i * 65 + j], points[i * 65 + j + 1], points[(i + 1) * 65 + j], points[(i + 1) * 65 + j + 1], ts[i * 64 + j]);
+				t2[i * 64 + j] = new Face(points[i * 65 + j], points[i * 65 + j + 1], points[(i + 1) * 65 + j], points[(i + 1) * 65 + j + 1], ts[i * 64 + j]);
 			}
 		}
 		
@@ -110,7 +113,7 @@ public class MapSector {
 	public void setPoints() {
 		for(int i = 0; i < SECTOR_HEIGHT + 1; i++) {
 			for(int j = 0; j < SECTOR_WIDTH + 1; j++) {
-				points[i * 65 + j] = new Point3D((j - (SECTOR_WIDTH / 2)) * 10, (pts[i * (SECTOR_HEIGHT + 1) + j] & 0xff) - 128, (SECTOR_HEIGHT / 2 - i) * 10);
+				points[i * 65 + j] = new Vertex((j - (SECTOR_WIDTH / 2)) * 10, (pts[i * (SECTOR_HEIGHT + 1) + j] & 0xff) - 128, (SECTOR_HEIGHT / 2 - i) * 10);
 			}
 		}
 	}
@@ -118,7 +121,7 @@ public class MapSector {
 	public void setTiles() {
 		for(int i = 0; i < SECTOR_HEIGHT; i++) {
 			for(int j = 0; j < SECTOR_WIDTH; j++) {
-				tiles[i * 64 + j] = new MapTile(points[i * 65 + j], points[i * 65 + j + 1], points[(i + 1) * 65 + j], points[(i + 1) * 65 + j + 1], ts[i * 64 + j]);
+				tiles[i * 64 + j] = new Face(points[i * 65 + j], points[i * 65 + j + 1], points[(i + 1) * 65 + j], points[(i + 1) * 65 + j + 1], ts[i * 64 + j]);
 			}
 		}
 	}

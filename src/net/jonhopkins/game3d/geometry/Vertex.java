@@ -1,11 +1,11 @@
-package net.jonhopkins.game3d;
+package net.jonhopkins.game3d.geometry;
 
-public class Point3D {
+public class Vertex {
 	public double x;
 	public double y;
 	public double z;
 	
-	public Point3D(double x, double y, double z) {
+	public Vertex(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -27,12 +27,12 @@ public class Point3D {
 	 * @param points the points to rotate
 	 * @param theta the angle by which to rotate, in degrees
 	 */
-	public static void rotateX(Point3D[] points, double theta) {
+	public static void rotateX(Vertex[] points, double theta) {
 		theta = degreesToRadians(theta);
 		double cosTheta = Math.cos(theta);
 		double sinTheta = Math.sin(theta);
 		
-		for (Point3D point : points) {
+		for (Vertex point : points) {
 			double y = point.y;
 			double z = point.z;
 			double tempY = y * cosTheta - z * sinTheta;
@@ -66,12 +66,12 @@ public class Point3D {
 	 * @param points the points to rotate
 	 * @param theta the angle by which to rotate, in degrees
 	 */
-	public static void rotateY(Point3D[] points, double theta) {
+	public static void rotateY(Vertex[] points, double theta) {
 		theta = degreesToRadians(theta);
 		double cosTheta = Math.cos(theta);
 		double sinTheta = Math.sin(theta);
 		
-		for (Point3D point : points) {
+		for (Vertex point : points) {
 			double z = point.z;
 			double x = point.x;
 			double tempZ = z * cosTheta - x * sinTheta;
@@ -105,12 +105,12 @@ public class Point3D {
 	 * @param points the points to rotate
 	 * @param theta the angle by which to rotate, in degrees
 	 */
-	public static void rotateZ(Point3D[] points, double theta) {
+	public static void rotateZ(Vertex[] points, double theta) {
 		theta = degreesToRadians(theta);
 		double cosTheta = Math.cos(theta);
 		double sinTheta = Math.sin(theta);
 		
-		for (Point3D point : points) {
+		for (Vertex point : points) {
 			double x = point.x;
 			double y = point.y;
 			double tempX = x * cosTheta - y * sinTheta;
