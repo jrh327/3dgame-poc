@@ -47,15 +47,19 @@ public class Face implements Comparable<Face> {
 	}
 	
 	public double avgX() {
-		return (UL.x + UR.x + LL.x + LR.x) / 4D;
+		return (UL.x + UR.x + LL.x + LR.x) / 4.0;
+	}
+	
+	public double avgY() {
+		return (UL.y + UR.y + LL.y + LR.y) / 4.0;
 	}
 	
 	public double avgZ() {
-		return (UL.z + UR.z + LL.z + LR.z) / 4D;
+		return (UL.z + UR.z + LL.z + LR.z) / 4.0;
 	}
 	
-	public double avgHeight() {
-		return (UL.y + UR.y + LL.y + LR.y) / 4D;
+	public Vertex getCenter() {
+		return new Vertex(avgX(), avgY(), avgZ());
 	}
 	
 	public void to2DCoords(int halfScreenX, int halfScreenY, int[] xs, int[] ys) {

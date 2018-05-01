@@ -18,7 +18,8 @@ public class DrawingPreparation {
 			
 			// camera is the "origin" here, so the vector between the camera
 			// and a point on the tile is just the negative of that point
-			Vector camToTile = new Vector(-tile.UL.x, -tile.UL.y, -tile.UL.z);
+			Vertex center = tile.getCenter();
+			Vector camToTile = new Vector(-center.x, -center.y, -center.z);
 			double dot = Vector.dot(normal, camToTile);
 			if (dot > 0.0) {
 				visible.add(tile);

@@ -239,34 +239,34 @@ public class Game3D extends Applet implements Runnable {
 				double tempZ = camera.z;
 				if(camera.z + Math.cos(rotatey * Math.PI / 180) <= 32D && camera.z + Math.cos(rotatey * Math.PI / 180) >= -32D ) {
 					tempZ += Math.cos(rotatey * Math.PI / 180) * speedz;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgHeight() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
 						camera.z = tempZ;
 					}
 				}
 				if (camera.x - Math.sin(rotatey * Math.PI / 180) <= 32D && camera.x - Math.sin(rotatey * Math.PI / 180) >= -32D) {
 					tempX -= Math.sin(rotatey * Math.PI / 180) * speedx;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgHeight() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
 						camera.x = tempX;
 					}
 				}
-				camera.y = tiles[(int)(64 - (camera.z + 32)) * 64 + (int)(camera.x + 32)].avgHeight() + cameraHeight;
+				camera.y = tiles[(int)(64 - (camera.z + 32)) * 64 + (int)(camera.x + 32)].avgY() + cameraHeight;
 			}
 			if (keyboard.keyDown(KeyEvent.VK_A)) {
 				double tempX = camera.x;
 				double tempZ = camera.z;
 				if(camera.x - Math.cos(rotatey * Math.PI / 180) <= 32D && camera.x - Math.cos(rotatey * Math.PI / 180) >= -32D){
 					tempX -= Math.cos(rotatey * Math.PI / 180) * speedx;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgHeight() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
 						camera.x = tempX;
 					}
 				}
 				if (camera.z - Math.sin(rotatey * Math.PI / 180) <= 32D && camera.z - Math.sin(rotatey * Math.PI / 180) >= -32D) {
 					tempZ -= Math.sin(rotatey * Math.PI / 180) * speedz;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgHeight() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
 						camera.z = tempZ;
 					}
 				}
-				camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgHeight() + cameraHeight;
+				camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight;
 			}
 			if (keyboard.keyDown(KeyEvent.VK_S)) {
 				if (keyboard.keyDown(KeyEvent.VK_CONTROL)) {
@@ -276,17 +276,17 @@ public class Game3D extends Applet implements Runnable {
 					double tempZ = camera.z;
 					if(camera.z - Math.cos(rotatey * Math.PI / 180) <= 32D && camera.z - Math.cos(rotatey * Math.PI / 180) >= -32D) {
 						tempZ -= Math.cos(rotatey * Math.PI / 180) * speedz;
-						if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgHeight() + cameraHeight - camera.y <= 2) {
+						if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
 							camera.z = tempZ;
 						}
 					}
 					if( camera.x + Math.sin(rotatey * Math.PI / 180) <= 32D && camera.x + Math.sin(rotatey * Math.PI / 180) >= -32D) {
 						tempX += Math.sin(rotatey * Math.PI / 180) * speedx;
-						if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgHeight() + cameraHeight - camera.y <= 2) {
+						if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
 							camera.x = tempX;
 						}
 					}
-					camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgHeight() + cameraHeight;
+					camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight;
 				}
 			}
 			if (keyboard.keyDown(KeyEvent.VK_D)) {
@@ -294,17 +294,17 @@ public class Game3D extends Applet implements Runnable {
 				double tempZ = camera.z;
 				if(camera.x + Math.cos(rotatey * Math.PI / 180) <= 32D && camera.x + Math.cos(rotatey * Math.PI / 180) >= -32D) {
 					tempX += Math.cos(rotatey * Math.PI / 180) * speedx;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgHeight() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
 						camera.x = tempX;
 					}
 				}
 				if (camera.z + Math.sin(rotatey * Math.PI / 180) <= 32D && camera.z + Math.sin(rotatey * Math.PI / 180) >= -32D) {
 					tempZ += Math.sin(rotatey * Math.PI / 180) * speedz;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgHeight() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
 						camera.z = tempZ;
 					}
 				}
-				camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgHeight() + cameraHeight;
+				camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight;
 			}
 			
 			camera.x *= 10;

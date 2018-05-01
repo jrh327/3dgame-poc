@@ -74,7 +74,7 @@ public class DrawScene {
 		
 		int counter = 0;
 		for (Face tile : tiles) {
-			double dist = Math.pow(Math.pow(tile.avgX(), 2) + Math.pow(tile.avgHeight() + cameraHeight, 2) + Math.pow(tile.avgZ(), 2), 0.5); 
+			double dist = Math.pow(Math.pow(tile.avgX(), 2) + Math.pow(tile.avgY() + cameraHeight, 2) + Math.pow(tile.avgZ(), 2), 0.5); 
 			
 			if (tile.avgZ() >= 0.0 && dist < viewingDistance) {
 				tile.to2DCoords(halfScreenX, halfScreenY, xs, ys);
