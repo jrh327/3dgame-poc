@@ -20,7 +20,7 @@ public class DrawScene {
 	public static int drawScene(Vertex[] points, Face[] tiles, Vertex camera, double cameraHeight, double viewingDistance, int halfScreenX, int halfScreenY, Graphics bufferGraphics, int tod, double rotatex, double rotatey) {
 		bufferGraphics.clearRect(0, 0, 600, 400);
 		
-		Face sun = new Face(new Vertex(-1, -32, 1), new Vertex(1, -32, 1), new Vertex(-1, -32, -1), new Vertex(1, -32, -1), 0xffff99);
+		Face sun = new Face(new Vertex[] { new Vertex(-1, -32, 1), new Vertex(1, -32, 1), new Vertex(1, -32, -1), new Vertex(-1, -32, -1) }, 0xffff99);
 		
 		sun.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
 		sun.rotateY(rotatey);

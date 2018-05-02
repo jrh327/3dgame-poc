@@ -131,27 +131,14 @@ public class Game3D extends Applet implements Runnable {
 			bufferGraphics.setColor(DEBUG_POINT_OUTLINE_COLOR);
 			bufferGraphics.drawRect(xs[index], ys[index], 3, 3);
 			
-			if (index == 0) {
-				mousePosition.x = tempTiles[closestToMouse].UL.x / 10;
-				mousePosition.y = tempTiles[closestToMouse].UL.y / 10;
-				mousePosition.z = tempTiles[closestToMouse].UL.z / 10;
-			} else if (index == 1) {
-				mousePosition.x = tempTiles[closestToMouse].UR.x / 10;
-				mousePosition.y = tempTiles[closestToMouse].UR.y / 10;
-				mousePosition.z = tempTiles[closestToMouse].UR.z / 10;
-			} else if (index == 2) {
-				mousePosition.x = tempTiles[closestToMouse].LR.x / 10;
-				mousePosition.y = tempTiles[closestToMouse].LR.y / 10;
-				mousePosition.z = tempTiles[closestToMouse].LR.z / 10;
-			} else if (index == 3) {
-				mousePosition.x = tempTiles[closestToMouse].LL.x / 10;
-				mousePosition.y = tempTiles[closestToMouse].LL.y / 10;
-				mousePosition.z = tempTiles[closestToMouse].LL.z / 10;
-			}
+			Vertex vertex = tempTiles[closestToMouse].vertices[index];
+			mousePosition.x = vertex.x / 10.0;
+			mousePosition.y = vertex.y / 10.0;
+			mousePosition.z = vertex.z / 10.0;
 			mousePosition.rotateY(-rotatey);
-			mousePosition.x += camera.x / 10;
-			mousePosition.y += camera.y / 10;
-			mousePosition.z += camera.z / 10;
+			mousePosition.x += camera.x / 10.0;
+			mousePosition.y += camera.y / 10.0;
+			mousePosition.z += camera.z / 10.0;
 			mousePosition.x = Math.round(mousePosition.x);
 			mousePosition.y = Math.round(mousePosition.y);
 			mousePosition.z = Math.round(mousePosition.z);

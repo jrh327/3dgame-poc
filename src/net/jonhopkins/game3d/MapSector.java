@@ -65,11 +65,12 @@ public class MapSector {
 		
 		for (int i = 0; i < 64; i++) {
 			for (int j = 0; j < 64; j++) {
-				t2[i * 64 + j] = new Face(new Vertex(points[i * 65 + j].x, points[i * 65 + j].y, points[i * 65 + j].z),
-						new Vertex(points[i * 65 + j + 1].x, points[i * 65 + j + 1].y, points[i * 65 + j + 1].z),
-						new Vertex(points[(i + 1) * 65 + j].x, points[(i + 1) * 65 + j].y, points[(i + 1) * 65 + j].z),
-						new Vertex(points[(i + 1) * 65 + j + 1].x, points[(i + 1) * 65 + j + 1].y, points[(i + 1) * 65 + j + 1].z),
-						ts[i * 64 + j]);
+				t2[i * 64 + j] = new Face(new Vertex[] {
+						new Vertex(points[i * 65 + j]),
+						new Vertex(points[i * 65 + j + 1]),
+						new Vertex(points[(i + 1) * 65 + j + 1]),
+						new Vertex(points[(i + 1) * 65 + j])
+				}, ts[i * 64 + j]);
 			}
 		}
 		
@@ -81,7 +82,12 @@ public class MapSector {
 		
 		for (int i = 0; i < 64; i++) {
 			for (int j = 0; j < 64; j++) {
-				t2[i * 64 + j] = new Face(points[i * 65 + j], points[i * 65 + j + 1], points[(i + 1) * 65 + j], points[(i + 1) * 65 + j + 1], ts[i * 64 + j]);
+				t2[i * 64 + j] = new Face(new Vertex[] {
+						points[i * 65 + j],
+						points[i * 65 + j + 1],
+						points[(i + 1) * 65 + j + 1],
+						points[(i + 1) * 65 + j]
+				}, ts[i * 64 + j]);
 			}
 		}
 		
@@ -111,17 +117,22 @@ public class MapSector {
 	}
 	
 	public void setPoints() {
-		for(int i = 0; i < SECTOR_HEIGHT + 1; i++) {
-			for(int j = 0; j < SECTOR_WIDTH + 1; j++) {
+		for (int i = 0; i < SECTOR_HEIGHT + 1; i++) {
+			for (int j = 0; j < SECTOR_WIDTH + 1; j++) {
 				points[i * 65 + j] = new Vertex((j - (SECTOR_WIDTH / 2)) * 10, (pts[i * (SECTOR_HEIGHT + 1) + j] & 0xff) - 128, (SECTOR_HEIGHT / 2 - i) * 10);
 			}
 		}
 	}
 	
 	public void setTiles() {
-		for(int i = 0; i < SECTOR_HEIGHT; i++) {
-			for(int j = 0; j < SECTOR_WIDTH; j++) {
-				tiles[i * 64 + j] = new Face(points[i * 65 + j], points[i * 65 + j + 1], points[(i + 1) * 65 + j], points[(i + 1) * 65 + j + 1], ts[i * 64 + j]);
+		for (int i = 0; i < SECTOR_HEIGHT; i++) {
+			for (int j = 0; j < SECTOR_WIDTH; j++) {
+				tiles[i * 64 + j] = new Face(new Vertex[] {
+						points[i * 65 + j],
+						points[i * 65 + j + 1],
+						points[(i + 1) * 65 + j + 1],
+						points[(i + 1) * 65 + j]
+				}, ts[i * 64 + j]);
 			}
 		}
 	}

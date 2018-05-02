@@ -1,39 +1,33 @@
 package net.jonhopkins.game3d.geometry;
 
 public class Face implements Comparable<Face> {
-	public Vertex UL;
-	public Vertex UR;
-	public Vertex LL;
-	public Vertex LR;
+	public Vertex[] vertices;
 	private int RGB;
 	
-	public Face(Vertex ul, Vertex ur, Vertex ll, Vertex lr, int rgb) {
-		UL = ul;
-		UR = ur;
-		LL = ll;
-		LR = lr;
+	public Face(Vertex[] vertices, int rgb) {
+		if (vertices.length < 3) {
+			throw new IllegalArgumentException("Cannot have fewer than three vertices in a polygon");
+		}
+		this.vertices = vertices.clone();
 		RGB = rgb;
 	}
 	
 	public void rotateX(double theta) {
-		UL.rotateX(theta);
-		UR.rotateX(theta);
-		LL.rotateX(theta);
-		LR.rotateX(theta);
+		for (Vertex vertex : vertices) {
+			vertex.rotateX(theta);
+		}
 	}
 	
 	public void rotateY(double theta) {
-		UL.rotateY(theta);
-		UR.rotateY(theta);
-		LL.rotateY(theta);
-		LR.rotateY(theta);
+		for (Vertex vertex : vertices) {
+			vertex.rotateY(theta);
+		}
 	}
 	
 	public void rotateZ(double theta) {
-		UL.rotateZ(theta);
-		UR.rotateZ(theta);
-		LL.rotateZ(theta);
-		LR.rotateZ(theta);
+		for (Vertex vertex : vertices) {
+			vertex.rotateZ(theta);
+		}
 	}
 	
 	public int getRGB() {
@@ -41,21 +35,34 @@ public class Face implements Comparable<Face> {
 	}
 	
 	public Vertex[] getPoints() {
-		return (new Vertex[] {
-			UL, UR, LR, LL
-		});
+		return vertices.clone();
 	}
 	
 	public double avgX() {
-		return (UL.x + UR.x + LL.x + LR.x) / 4.0;
+		double x = 0.0;
+		int verts = vertices.length;
+		for (int i = 0; i < verts; i++) {
+			x += vertices[i].x;
+		}
+		return x / verts;
 	}
 	
 	public double avgY() {
-		return (UL.y + UR.y + LL.y + LR.y) / 4.0;
+		double y = 0.0;
+		int verts = vertices.length;
+		for (int i = 0; i < verts; i++) {
+			y += vertices[i].y;
+		}
+		return y / verts;
 	}
 	
 	public double avgZ() {
-		return (UL.z + UR.z + LL.z + LR.z) / 4.0;
+		double z = 0.0;
+		int verts = vertices.length;
+		for (int i = 0; i < verts; i++) {
+			z += vertices[i].z;
+		}
+		return z / verts;
 	}
 	
 	public Vertex getCenter() {
@@ -63,35 +70,34 @@ public class Face implements Comparable<Face> {
 	}
 	
 	public void to2DCoords(int halfScreenX, int halfScreenY, int[] xs, int[] ys) {
-		if (UL.z <= 0.0) {
-			UL.z = 0.1;
+		int verts = vertices.length;
+		if (xs.length != verts) {
+			throw new IllegalArgumentException("Must have as many x values as vertices");
 		}
-		if (UR.z <= 0.0) {
-			UR.z = 0.1;
-		}
-		if (LL.z <= 0.0) {
-			LL.z = 0.1;
-		}
-		if (LR.z <= 0.0) {
-			LR.z = 0.1;
+		if (ys.length != verts) {
+			throw new IllegalArgumentException("Must have as many y values as vertices");
 		}
 		
 		double x = (double)halfScreenX;
 		double y = (double)halfScreenY;
 		
-		xs[0] = (int)(x + (UL.x * (50D / UL.z) * 10D));
-		xs[1] = (int)(x + (UR.x * (50D / UR.z) * 10D));
-		xs[2] = (int)(x + (LR.x * (50D / LR.z) * 10D));
-		xs[3] = (int)(x + (LL.x * (50D / LL.z) * 10D));
-		ys[0] = (int)(y - (UL.y * (50D / UL.z) * 10D));
-		ys[1] = (int)(y - (UR.y * (50D / UR.z) * 10D));
-		ys[2] = (int)(y - (LR.y * (50D / LR.z) * 10D));
-		ys[3] = (int)(y - (LL.y * (50D / LL.z) * 10D));
+		for (int i = 0; i < verts; i++) {
+			Vertex vertex = vertices[i];
+			double z = vertex.z;
+			if (z <= 0.0) {
+				z = 0.1;
+			}
+			xs[i] = (int)(x + (vertex.x * (50.0 / z) * 10.0));
+			ys[i] = (int)(y - (vertex.y * (50.0 / z) * 10.0));
+		}
 	}
 	
 	public Vector getNormal() {
-		Vector pq = new Vector(UR.x - UL.x, UR.y - UL.y, UR.z - UL.z);
-		Vector pr = new Vector(LR.x - UL.x, LR.y - UL.y, LR.z - UL.z);
+		Vertex v1 = vertices[0];
+		Vertex v2 = vertices[1];
+		Vertex v3 = vertices[2];
+		Vector pq = new Vector(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
+		Vector pr = new Vector(v3.x - v1.x, v3.y - v1.y, v3.z - v1.z);
 		Vector cross = Vector.cross(pq, pr);
 		return cross;
 	}

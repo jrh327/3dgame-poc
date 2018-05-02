@@ -11,6 +11,12 @@ public class Vertex {
 		this.z = z;
 	}
 	
+	public Vertex(Vertex vertex) {
+		this.x = vertex.x;
+		this.y = vertex.y;
+		this.z = vertex.z;
+	}
+	
 	/**
 	 * Convert degrees to radians.
 	 * 
