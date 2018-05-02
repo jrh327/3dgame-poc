@@ -111,16 +111,17 @@ public class Game3D extends Applet implements Runnable {
 		int closestToMouse = DrawScene.drawScene(tempPoints, tempTiles, camera, cameraHeight, viewingDistance, halfScreenX, halfScreenY, bufferGraphics, tod, rotatex, rotatey);
 		
 		if (closestToMouse >= 0) {
-			int[] xs = new int[4];
-			int[] ys = new int[4];
-			tempTiles[closestToMouse].to2DCoords(halfScreenX, halfScreenY, xs, ys);
+			Face closest = tempTiles[closestToMouse];
+			int[] xs = new int[closest.vertices.length];
+			int[] ys = new int[closest.vertices.length];
+			closest.to2DCoords(halfScreenX, halfScreenY, xs, ys);
 			bufferGraphics.setColor(DEBUG_TILE_OUTLINE_COLOR);
-			bufferGraphics.drawPolygon(xs, ys, 4);
+			bufferGraphics.drawPolygon(xs, ys, xs.length);
 			
 			int bestDist = 1000;
 			int index = 0;
 			
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < xs.length; i++) {
 				int dist = (int)Math.sqrt((xs[i] - 300) * (xs[i] - 300) + (ys[i] - 200) * (ys[i] - 200));
 				if (dist < bestDist) {
 					bestDist = dist;
@@ -226,34 +227,34 @@ public class Game3D extends Applet implements Runnable {
 				double tempZ = camera.z;
 				if(camera.z + Math.cos(rotatey * Math.PI / 180) <= 32D && camera.z + Math.cos(rotatey * Math.PI / 180) >= -32D ) {
 					tempZ += Math.cos(rotatey * Math.PI / 180) * speedz;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 						camera.z = tempZ;
 					}
 				}
 				if (camera.x - Math.sin(rotatey * Math.PI / 180) <= 32D && camera.x - Math.sin(rotatey * Math.PI / 180) >= -32D) {
 					tempX -= Math.sin(rotatey * Math.PI / 180) * speedx;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 						camera.x = tempX;
 					}
 				}
-				camera.y = tiles[(int)(64 - (camera.z + 32)) * 64 + (int)(camera.x + 32)].avgY() + cameraHeight;
+				camera.y = tiles[(int)(64 - (camera.z + 32)) * 64 * 2 + (int)(camera.x + 32) * 2].avgY() + cameraHeight;
 			}
 			if (keyboard.keyDown(KeyEvent.VK_A)) {
 				double tempX = camera.x;
 				double tempZ = camera.z;
 				if(camera.x - Math.cos(rotatey * Math.PI / 180) <= 32D && camera.x - Math.cos(rotatey * Math.PI / 180) >= -32D){
 					tempX -= Math.cos(rotatey * Math.PI / 180) * speedx;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 						camera.x = tempX;
 					}
 				}
 				if (camera.z - Math.sin(rotatey * Math.PI / 180) <= 32D && camera.z - Math.sin(rotatey * Math.PI / 180) >= -32D) {
 					tempZ -= Math.sin(rotatey * Math.PI / 180) * speedz;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2+ (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 						camera.z = tempZ;
 					}
 				}
-				camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight;
+				camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight;
 			}
 			if (keyboard.keyDown(KeyEvent.VK_S)) {
 				if (keyboard.keyDown(KeyEvent.VK_CONTROL)) {
@@ -263,17 +264,17 @@ public class Game3D extends Applet implements Runnable {
 					double tempZ = camera.z;
 					if(camera.z - Math.cos(rotatey * Math.PI / 180) <= 32D && camera.z - Math.cos(rotatey * Math.PI / 180) >= -32D) {
 						tempZ -= Math.cos(rotatey * Math.PI / 180) * speedz;
-						if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
+						if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2+ (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 							camera.z = tempZ;
 						}
 					}
 					if( camera.x + Math.sin(rotatey * Math.PI / 180) <= 32D && camera.x + Math.sin(rotatey * Math.PI / 180) >= -32D) {
 						tempX += Math.sin(rotatey * Math.PI / 180) * speedx;
-						if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
+						if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 							camera.x = tempX;
 						}
 					}
-					camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight;
+					camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight;
 				}
 			}
 			if (keyboard.keyDown(KeyEvent.VK_D)) {
@@ -281,17 +282,17 @@ public class Game3D extends Applet implements Runnable {
 				double tempZ = camera.z;
 				if(camera.x + Math.cos(rotatey * Math.PI / 180) <= 32D && camera.x + Math.cos(rotatey * Math.PI / 180) >= -32D) {
 					tempX += Math.cos(rotatey * Math.PI / 180) * speedx;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 						camera.x = tempX;
 					}
 				}
 				if (camera.z + Math.sin(rotatey * Math.PI / 180) <= 32D && camera.z + Math.sin(rotatey * Math.PI / 180) >= -32D) {
 					tempZ += Math.sin(rotatey * Math.PI / 180) * speedz;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight - camera.y <= 2) {
+					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 						camera.z = tempZ;
 					}
 				}
-				camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 + (int)(tempX + 32)].avgY() + cameraHeight;
+				camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight;
 			}
 			
 			camera.x *= 10;

@@ -61,16 +61,26 @@ public class MapSector {
 	}
 	
 	public Face[] getTiles() {
-		Face[] t2 = new Face[tiles.length];
+		Face[] t2 = new Face[tiles.length * 2];
 		
+		int t = 0;
+		int c = 0;
 		for (int i = 0; i < 64; i++) {
 			for (int j = 0; j < 64; j++) {
-				t2[i * 64 + j] = new Face(new Vertex[] {
-						new Vertex(points[i * 65 + j]),
-						new Vertex(points[i * 65 + j + 1]),
-						new Vertex(points[(i + 1) * 65 + j + 1]),
-						new Vertex(points[(i + 1) * 65 + j])
-				}, ts[i * 64 + j]);
+				t2[t] = new Face(new Vertex[] {
+						points[i * 65 + j],
+						points[i * 65 + j + 1],
+						points[(i + 1) * 65 + j + 1]
+				}, ts[c]);
+				t++;
+				
+				t2[t] = new Face(new Vertex[] {
+						points[i * 65 + j],
+						points[(i + 1) * 65 + j + 1],
+						points[(i + 1) * 65 + j]
+				}, ts[c]);
+				t++;
+				c++;
 			}
 		}
 		
@@ -78,16 +88,26 @@ public class MapSector {
 	}
 	
 	public Face[] getTiles(Vertex[] points) {
-		Face[] t2 = new Face[tiles.length];
+		Face[] t2 = new Face[tiles.length * 2];
 		
+		int t = 0;
+		int c = 0;
 		for (int i = 0; i < 64; i++) {
 			for (int j = 0; j < 64; j++) {
-				t2[i * 64 + j] = new Face(new Vertex[] {
+				t2[t] = new Face(new Vertex[] {
 						points[i * 65 + j],
 						points[i * 65 + j + 1],
+						points[(i + 1) * 65 + j + 1]
+				}, ts[c]);
+				t++;
+				
+				t2[t] = new Face(new Vertex[] {
+						points[i * 65 + j],
 						points[(i + 1) * 65 + j + 1],
 						points[(i + 1) * 65 + j]
-				}, ts[i * 64 + j]);
+				}, ts[c]);
+				t++;
+				c++;
 			}
 		}
 		

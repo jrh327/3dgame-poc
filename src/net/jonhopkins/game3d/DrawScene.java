@@ -20,14 +20,18 @@ public class DrawScene {
 	public static int drawScene(Vertex[] points, Face[] tiles, Vertex camera, double cameraHeight, double viewingDistance, int halfScreenX, int halfScreenY, Graphics bufferGraphics, int tod, double rotatex, double rotatey) {
 		bufferGraphics.clearRect(0, 0, 600, 400);
 		
-		Face sun = new Face(new Vertex[] { new Vertex(-1, -32, 1), new Vertex(1, -32, 1), new Vertex(1, -32, -1), new Vertex(-1, -32, -1) }, 0xffff99);
+		Face sun1 = new Face(new Vertex[] { new Vertex(-1, -32, 1), new Vertex(1, -32, 1), new Vertex(1, -32, -1) }, 0xffff99);
+		Face sun2 = new Face(new Vertex[] { new Vertex(1, -32, 1), new Vertex(1, -32, -1), new Vertex(-1, -32, -1) }, 0xffff99);
 		
-		sun.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
-		sun.rotateY(rotatey);
-		sun.rotateX(rotatex);
+		sun1.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
+		sun1.rotateY(rotatey);
+		sun1.rotateX(rotatex);
+		sun2.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
+		sun2.rotateY(rotatey);
+		sun2.rotateX(rotatex);
 		
-		int xs[] = new int[4];
-		int ys[] = new int[4];
+		int xs[] = new int[3];
+		int ys[] = new int[3];
 		int closestToMouse = -1;
 		
 		double lightlevel = 0;
@@ -66,10 +70,13 @@ public class DrawScene {
 		
 		bufferGraphics.fillRect(0, 0, 2 * halfScreenX, 2 * halfScreenY);
 		
-		if (sun.avgZ() >= 0.0) {
-			sun.to2DCoords(halfScreenX, halfScreenY, xs, ys);
-			bufferGraphics.setColor(new Color(sun.getRGB()));
-			bufferGraphics.fillPolygon(xs, ys, 4);
+		if (sun1.avgZ() >= 0.0) {
+			sun1.to2DCoords(halfScreenX, halfScreenY, xs, ys);
+			bufferGraphics.setColor(new Color(sun1.getRGB()));
+			bufferGraphics.fillPolygon(xs, ys, xs.length);
+			sun2.to2DCoords(halfScreenX, halfScreenY, xs, ys);
+			bufferGraphics.setColor(new Color(sun2.getRGB()));
+			bufferGraphics.fillPolygon(xs, ys, xs.length);
 		}
 		
 		int counter = 0;
@@ -94,9 +101,9 @@ public class DrawScene {
 				if (newB > 255) newB = 255;
 				
 				bufferGraphics.setColor(new Color(newR, newG, newB));
-				bufferGraphics.fillPolygon(xs, ys, 4);
+				bufferGraphics.fillPolygon(xs, ys, xs.length);
 				
-				if (inpoly(xs, ys, 4, 300, 200)) {
+				if (inpoly(xs, ys, xs.length, 300, 200)) {
 					closestToMouse = counter;
 				}
 				counter++;
