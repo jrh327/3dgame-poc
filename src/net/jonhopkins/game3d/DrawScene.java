@@ -5,6 +5,8 @@ import java.awt.Graphics;
 
 import net.jonhopkins.game3d.geometry.Face;
 import net.jonhopkins.game3d.geometry.Vertex;
+import net.jonhopkins.game3d.light.Light;
+import net.jonhopkins.game3d.model.Sun;
 
 public class DrawScene {
 	private static int clamp(int value, int min, int max) {
@@ -16,19 +18,31 @@ public class DrawScene {
 		return value;
 	}
 	
+	private static Sun sun = new Sun();
 	
-	public static int drawScene(Vertex[] points, Face[] tiles, Vertex camera, double cameraHeight, double viewingDistance, int halfScreenX, int halfScreenY, Graphics bufferGraphics, int tod, double rotatex, double rotatey) {
+	public static int drawScene(Face[] tiles, Vertex camera, double cameraHeight, double viewingDistance, int halfScreenX, int halfScreenY, Graphics bufferGraphics, int tod, double rotatex, double rotatey) {
 		bufferGraphics.clearRect(0, 0, 600, 400);
 		
-		Face sun1 = new Face(new Vertex[] { new Vertex(-1, -32, 1), new Vertex(1, -32, 1), new Vertex(1, -32, -1) }, 0xffff99);
-		Face sun2 = new Face(new Vertex[] { new Vertex(1, -32, 1), new Vertex(1, -32, -1), new Vertex(-1, -32, -1) }, 0xffff99);
+		Vertex sunUL = new Vertex(-1, -32, 1);
+		Vertex sunUR = new Vertex(1, -32, 1);
+		Vertex sunLR = new Vertex(1, -32, -1);
+		Vertex sunLL = new Vertex(-1, -32, -1);
 		
-		sun1.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
-		sun1.rotateY(rotatey);
-		sun1.rotateX(rotatex);
-		sun2.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
-		sun2.rotateY(rotatey);
-		sun2.rotateX(rotatex);
+		Face sun1 = new Face(new Vertex[] { sunUL, sunUR, sunLR }, 0xffff99);
+		Face sun2 = new Face(new Vertex[] { sunUL, sunLR, sunLL }, 0xffff99);
+		
+		sunUL.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
+		sunUL.rotateY(rotatey);
+		sunUL.rotateX(rotatex);
+		sunUR.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
+		sunUR.rotateY(rotatey);
+		sunUR.rotateX(rotatex);
+		sunLR.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
+		sunLR.rotateY(rotatey);
+		sunLR.rotateX(rotatex);
+		sunLL.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
+		sunLL.rotateY(rotatey);
+		sunLL.rotateX(rotatex);
 		
 		int xs[] = new int[3];
 		int ys[] = new int[3];

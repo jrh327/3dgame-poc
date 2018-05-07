@@ -143,4 +143,22 @@ public class Vertex {
 		x = tempX;
 		y = tempY;
 	}
+	
+	public void translateX(double x) {
+		this.x += x;
+	}
+	
+	public void translateY(double y) {
+		this.y += y;
+	}
+	
+	public void translateZ(double z) {
+		this.z += z;
+	}
+	
+	public void translate(Vector translate) {
+		this.x += translate.x;
+		this.y += translate.y;
+		this.z += translate.z;
+	}
 }

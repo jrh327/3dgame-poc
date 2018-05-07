@@ -108,7 +108,7 @@ public class Game3D extends Applet implements Runnable {
 		DrawingPreparation.Quicksort(tempTiles, 0, tempTiles.length - 1);
 		bufferGraphics.clearRect(0, 0, 600, 400);
 		
-		int closestToMouse = DrawScene.drawScene(tempPoints, tempTiles, camera, cameraHeight, viewingDistance, halfScreenX, halfScreenY, bufferGraphics, tod, rotatex, rotatey);
+		int closestToMouse = DrawScene.drawScene(tempTiles, camera, cameraHeight, viewingDistance, halfScreenX, halfScreenY, bufferGraphics, tod, rotatex, rotatey);
 		
 		if (closestToMouse >= 0) {
 			Face closest = tempTiles[closestToMouse];

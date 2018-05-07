@@ -12,24 +12,6 @@ public class Face implements Comparable<Face> {
 		RGB = rgb;
 	}
 	
-	public void rotateX(double theta) {
-		for (Vertex vertex : vertices) {
-			vertex.rotateX(theta);
-		}
-	}
-	
-	public void rotateY(double theta) {
-		for (Vertex vertex : vertices) {
-			vertex.rotateY(theta);
-		}
-	}
-	
-	public void rotateZ(double theta) {
-		for (Vertex vertex : vertices) {
-			vertex.rotateZ(theta);
-		}
-	}
-	
 	public int getRGB() {
 		return RGB;
 	}
