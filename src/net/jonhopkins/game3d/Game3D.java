@@ -13,6 +13,7 @@ import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.gui.Menu;
 import net.jonhopkins.game3d.input.KeyboardInput;
 import net.jonhopkins.game3d.input.MouseInput;
+import net.jonhopkins.game3d.model.MapSector;
 
 public class Game3D extends Applet implements Runnable {
 	private static final long serialVersionUID = -429272861506526060L;
@@ -64,7 +65,7 @@ public class Game3D extends Applet implements Runnable {
 		Thread thread = new Thread(this, "Main thread");
 		thread.start();
 		
-		s1 = new MapSector(0, 0);
+		s1 = MapSector.getMapSector(0, 0);
 		getPoints();
 		getTiles();
 		
@@ -99,8 +100,8 @@ public class Game3D extends Applet implements Runnable {
 	}
 	
 	public void drawSector() {
-		Vertex[] tempPoints = s1.getPoints();
-		Face[] tempTiles = s1.getTiles(tempPoints);
+		Vertex[] tempPoints = s1.getVertices();
+		Face[] tempTiles = s1.getFaces();
 		DrawingPreparation.translatePointsWithRespectToCamera(tempPoints, camera);
 		if (rotatey != 0) DrawingPreparation.rotatePointsY(tempPoints, rotatey);
 		if (rotatex != 0) DrawingPreparation.rotatePointsX(tempPoints, rotatex);
@@ -159,11 +160,11 @@ public class Game3D extends Applet implements Runnable {
 	}
 	
 	public void getPoints() {
-		points = s1.getPoints();
+		points = s1.getVertices();
 	}
 	
 	public void getTiles() {
-		tiles = s1.getTiles(points);
+		tiles = s1.getFaces();
 	}
 	
 	@Override

@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import net.jonhopkins.game3d.geometry.Vertex;
+import net.jonhopkins.game3d.model.MapSector;
 
 public class MapEditor {
 	private BufferedImage pts;

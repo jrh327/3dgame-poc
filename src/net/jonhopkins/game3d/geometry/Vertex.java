@@ -18,6 +18,17 @@ public class Vertex {
 	}
 	
 	/**
+	 * Set the coordinates of this vertex to those of the other vertex.
+	 * 
+	 * @param vertex the other vertex
+	 */
+	public void setTo(Vertex vertex) {
+		this.x = vertex.x;
+		this.y = vertex.y;
+		this.z = vertex.z;
+	}
+	
+	/**
 	 * Convert degrees to radians.
 	 * 
 	 * @param theta the angle, in degrees, to convert
