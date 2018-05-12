@@ -23,7 +23,7 @@ public class MapEditor {
 	private final Color DEBUG_TEXT_COLOR = Color.white;
 	private final Color DEBUG_TILE_OUTLINE_COLOR = Color.black;
 	
-	private final String SECTORS_DIR = "sectors/";
+	private final String SECTORS_DIR = "res/sectors/";
 	private final String TILES_DIR = SECTORS_DIR + "tiles/";
 	private final String TILES_FILE = TILES_DIR + "Sector_%d_%d_tiles.png";
 	private final String POINTS_DIR = SECTORS_DIR + "points/";

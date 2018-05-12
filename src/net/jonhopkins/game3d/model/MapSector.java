@@ -15,7 +15,7 @@ public class MapSector extends Model {
 	private static final int SECTOR_WIDTH = 64;
 	private static final int SECTOR_HEIGHT = 64;
 	
-	private static final String SECTORS_DIR = "sectors/";
+	private static final String SECTORS_DIR = "res/sectors/";
 	private static final String TILES_DIR = SECTORS_DIR + "tiles/";
 	private static final String TILES_FILE = TILES_DIR + "Sector_%d_%d_tiles.png";
 	private static final String POINTS_DIR = SECTORS_DIR + "points/";

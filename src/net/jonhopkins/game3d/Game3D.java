@@ -1,12 +1,14 @@
 package net.jonhopkins.game3d;
 
-import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.Calendar;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import net.jonhopkins.game3d.geometry.Face;
 import net.jonhopkins.game3d.geometry.Vertex;
@@ -15,7 +17,7 @@ import net.jonhopkins.game3d.input.KeyboardInput;
 import net.jonhopkins.game3d.input.MouseInput;
 import net.jonhopkins.game3d.model.MapSector;
 
-public class Game3D extends Applet implements Runnable {
+public class Game3D extends JFrame implements Runnable {
 	private static final long serialVersionUID = -429272861506526060L;
 	private final Color GAME_BG_COLOR = new Color(0x999999);
 	private final Color PAUSED_OVERLAY_COLOR = new Color(0, 0, 0, 150);
@@ -48,6 +50,10 @@ public class Game3D extends Applet implements Runnable {
 	private KeyboardInput keyboard;
 	private MouseInput mouse;
 	
+	public static void main(String[] args) {
+		new Game3D().init();
+	}
+	
 	public Game3D() {
 		cameraHeight = 10;
 		viewingDistance = 320;
@@ -60,43 +66,60 @@ public class Game3D extends Applet implements Runnable {
 		halfScreenY = 200;
 	}
 	
-	@Override
-	public void start() {
-		Thread thread = new Thread(this, "Main thread");
-		thread.start();
+	public void init() {
+		System.out.println("init");
+		final Game3D game3d = this;
 		
-		s1 = MapSector.getMapSector(0, 0);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				setUpWindow(game3d);
+				setUpComponents(game3d);
+				initialize(game3d);
+				Thread thread = new Thread(game3d, "Main thread");
+				thread.start();
+			}
+		});
+	}
+	
+	public void setUpWindow(Game3D game3d) {
+		game3d.setBackground(GAME_BG_COLOR);
+		
+		int width = game3d.halfScreenX * 2;
+		int height = game3d.halfScreenY * 2;
+		
+		game3d.setSize(width, height);
+		game3d.setVisible(true);
+	}
+	
+	public void setUpComponents(Game3D game3d) {
+		int width = game3d.halfScreenX * 2;
+		int height = game3d.halfScreenY * 2;
+		game3d.buffer = createImage(width, height);
+		game3d.bufferGraphics = buffer.getGraphics();
+		
+		game3d.keyboard = new KeyboardInput();
+		game3d.addKeyListener(game3d.keyboard);
+		
+		game3d.mouse = new MouseInput(game3d);
+		game3d.mouse.setRelative(true);
+		game3d.addMouseListener(game3d.mouse);
+		game3d.addMouseMotionListener(game3d.mouse);
+		game3d.setFocusable(true);
+	}
+	
+	public void initialize(Game3D game3d) {
+		game3d.setGameRunning(false);
+		
+		game3d.s1 = MapSector.getMapSector(0, 0);
 		getPoints();
 		getTiles();
 		
 		updateTime();
 		
-		menu = new Menu(this);
-		menu.draw();
-	}
-	
-	@Override
-	public void init() {
-		setBackground(GAME_BG_COLOR);
+		game3d.menu = new Menu(this);
+		game3d.menu.draw();
 		
-		int width = halfScreenX * 2;
-		int height = halfScreenY * 2;
-		resize(width, height);
-		buffer = createImage(width, height);
-		bufferGraphics = buffer.getGraphics();
-		setVisible(true);
-		setFocusable(true);
-		
-		keyboard = new KeyboardInput();
-		addKeyListener(keyboard);
-		
-		mouse = new MouseInput(this);
-		mouse.setRelative(true);
-		addMouseListener(mouse);
-		addMouseMotionListener(mouse);
-		
-		setGameRunning(false);
-		requestFocus();
+		game3d.requestFocus();
 	}
 	
 	public void drawSector() {
@@ -195,7 +218,7 @@ public class Game3D extends Applet implements Runnable {
 					drawSector();
 					repaint();
 					
-					timesofar += ((System.currentTimeMillis() - time));
+					timesofar += (System.currentTimeMillis() - time);
 					if (ticks == 10) {
 						fps = 1000 / (int)(timesofar / framecount);
 						ticks = 0;
@@ -342,12 +365,12 @@ public class Game3D extends Applet implements Runnable {
 	
 	@Override
 	public void update(Graphics g) {
-		g.drawImage(buffer, 0, 0, this);
+		
 	}
 	
 	@Override
 	public void paint(Graphics g) {
-		
+		g.drawImage(buffer, 0, 0, this);
 	}
 	
 	public void setGameRunning(boolean running) {
