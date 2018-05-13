@@ -71,64 +71,68 @@ public class Game3D extends JFrame implements Runnable {
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				setUpWindow(game3d);
-				setUpComponents(game3d);
-				initialize(game3d);
+				setUpWindow();
+				setUpComponents();
+				initialize();
 				Thread thread = new Thread(game3d, "Main thread");
 				thread.start();
 			}
 		});
 	}
 	
-	public void setUpWindow(Game3D game3d) {
-		game3d.setBackground(GAME_BG_COLOR);
+	public void setUpWindow() {
+		setBackground(GAME_BG_COLOR);
 		
-		int width = game3d.halfScreenX * 2;
-		int height = game3d.halfScreenY * 2;
+		int width = halfScreenX * 2;
+		int height = halfScreenY * 2;
 		
-		game3d.setSize(width, height);
-		game3d.setUndecorated(true);
-		game3d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		game3d.setVisible(true);
+		setSize(width, height);
+		setUndecorated(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setVisible(true);
 	}
 	
-	public void setUpComponents(Game3D game3d) {
-		int width = game3d.halfScreenX * 2;
-		int height = game3d.halfScreenY * 2;
-		game3d.buffer = createImage(width, height);
-		game3d.bufferGraphics = buffer.getGraphics();
+	public void setUpComponents() {
+		int width = halfScreenX * 2;
+		int height = halfScreenY * 2;
+		buffer = createImage(width, height);
+		bufferGraphics = buffer.getGraphics();
 		
-		game3d.keyboard = new KeyboardInput();
-		game3d.addKeyListener(game3d.keyboard);
+		keyboard = new KeyboardInput();
+		addKeyListener(keyboard);
 		
-		game3d.mouse = new MouseInput(game3d);
-		game3d.mouse.setRelative(true);
-		game3d.addMouseListener(game3d.mouse);
-		game3d.addMouseMotionListener(game3d.mouse);
-		game3d.setFocusable(true);
+		mouse = new MouseInput(this);
+		mouse.setRelative(true);
+		addMouseListener(mouse);
+		addMouseMotionListener(mouse);
+		setFocusable(true);
 	}
 	
-	public void initialize(Game3D game3d) {
-		game3d.setGameRunning(false);
+	public void initialize() {
+		setGameRunning(false);
 		
-		game3d.s1 = MapSector.getMapSector(0, 0);
+		s1 = MapSector.getMapSector(0, 0);
 		getPoints();
 		getTiles();
 		
 		updateTime();
 		
-		game3d.menu = new Menu(this, bufferGraphics);
-		game3d.menu.draw();
+		menu = new Menu(this, bufferGraphics);
+		menu.draw();
 		
-		game3d.requestFocus();
+		requestFocus();
 	}
 	
 	public void drawSector() {
 		Vertex[] tempPoints = s1.getVertices();
 		Face[] tempTiles = s1.getFaces();
 		DrawingPreparation.translatePointsWithRespectToCamera(tempPoints, camera);
-		if (rotatey != 0) DrawingPreparation.rotatePointsY(tempPoints, rotatey);
-		if (rotatex != 0) DrawingPreparation.rotatePointsX(tempPoints, rotatex);
+		if (rotatey != 0) {
+			DrawingPreparation.rotatePointsY(tempPoints, rotatey);
+		}
+		if (rotatex != 0) {
+			DrawingPreparation.rotatePointsX(tempPoints, rotatex);
+		}
 		tempTiles = DrawingPreparation.backFaceCulling(tempTiles);
 		DrawingPreparation.Quicksort(tempTiles, 0, tempTiles.length - 1);
 		bufferGraphics.clearRect(0, 0, 600, 400);
@@ -250,7 +254,7 @@ public class Game3D extends JFrame implements Runnable {
 			if (keyboard.keyDown(KeyEvent.VK_W)) {
 				double tempX = camera.x;
 				double tempZ = camera.z;
-				if(camera.z + Math.cos(rotatey * Math.PI / 180) <= 32D && camera.z + Math.cos(rotatey * Math.PI / 180) >= -32D ) {
+				if (camera.z + Math.cos(rotatey * Math.PI / 180) <= 32D && camera.z + Math.cos(rotatey * Math.PI / 180) >= -32D ) {
 					tempZ += Math.cos(rotatey * Math.PI / 180) * speedz;
 					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 						camera.z = tempZ;
@@ -267,7 +271,7 @@ public class Game3D extends JFrame implements Runnable {
 			if (keyboard.keyDown(KeyEvent.VK_A)) {
 				double tempX = camera.x;
 				double tempZ = camera.z;
-				if(camera.x - Math.cos(rotatey * Math.PI / 180) <= 32D && camera.x - Math.cos(rotatey * Math.PI / 180) >= -32D){
+				if (camera.x - Math.cos(rotatey * Math.PI / 180) <= 32D && camera.x - Math.cos(rotatey * Math.PI / 180) >= -32D){
 					tempX -= Math.cos(rotatey * Math.PI / 180) * speedx;
 					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 						camera.x = tempX;
@@ -287,13 +291,13 @@ public class Game3D extends JFrame implements Runnable {
 				} else {
 					double tempX = camera.x;
 					double tempZ = camera.z;
-					if(camera.z - Math.cos(rotatey * Math.PI / 180) <= 32D && camera.z - Math.cos(rotatey * Math.PI / 180) >= -32D) {
+					if (camera.z - Math.cos(rotatey * Math.PI / 180) <= 32D && camera.z - Math.cos(rotatey * Math.PI / 180) >= -32D) {
 						tempZ -= Math.cos(rotatey * Math.PI / 180) * speedz;
 						if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2+ (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 							camera.z = tempZ;
 						}
 					}
-					if( camera.x + Math.sin(rotatey * Math.PI / 180) <= 32D && camera.x + Math.sin(rotatey * Math.PI / 180) >= -32D) {
+					if ( camera.x + Math.sin(rotatey * Math.PI / 180) <= 32D && camera.x + Math.sin(rotatey * Math.PI / 180) >= -32D) {
 						tempX += Math.sin(rotatey * Math.PI / 180) * speedx;
 						if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 							camera.x = tempX;
@@ -305,7 +309,7 @@ public class Game3D extends JFrame implements Runnable {
 			if (keyboard.keyDown(KeyEvent.VK_D)) {
 				double tempX = camera.x;
 				double tempZ = camera.z;
-				if(camera.x + Math.cos(rotatey * Math.PI / 180) <= 32D && camera.x + Math.cos(rotatey * Math.PI / 180) >= -32D) {
+				if (camera.x + Math.cos(rotatey * Math.PI / 180) <= 32D && camera.x + Math.cos(rotatey * Math.PI / 180) >= -32D) {
 					tempX += Math.cos(rotatey * Math.PI / 180) * speedx;
 					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
 						camera.x = tempX;
@@ -325,8 +329,7 @@ public class Game3D extends JFrame implements Runnable {
 			
 			if (keyboard.keyDown(KeyEvent.VK_PLUS)) {
 				mapeditor.changeRaisePoint('+');
-			} else
-			if (keyboard.keyDown(KeyEvent.VK_MINUS)) {
+			} else if (keyboard.keyDown(KeyEvent.VK_MINUS)) {
 				mapeditor.changeRaisePoint('-');
 			}
 			
@@ -347,15 +350,23 @@ public class Game3D extends JFrame implements Runnable {
 			//rotatey -= p.x;
 			//rotatex -= p.y;
 			
-			if (rotatey < 0) rotatey += 360;
-			else if (rotatey >= 360) rotatey -= 360;
-			if (rotatex < -89) rotatex = -89;
-			else if (rotatex > 89) rotatex = 89;
+			if (rotatey < 0) {
+				rotatey += 360;
+			} else if (rotatey >= 360) {
+				rotatey -= 360;
+			}
+			if (rotatex < -89) {
+				rotatex = -89;
+			} else if (rotatex > 89) {
+				rotatex = 89;
+			}
 			
-			if (mouse.buttonDown(1))
+			if (mouse.buttonDown(1)) {
 				mapeditor.raisePoint(mousePosition, s1, 1);
-			if (mouse.buttonDown(3))
+			}
+			if (mouse.buttonDown(3)) {
 				mapeditor.raisePoint(mousePosition, s1, -1);
+			}
 		} else {
 			if (mouse.buttonDown(1)) {
 				Point p = mouse.getPosition();
