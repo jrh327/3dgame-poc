@@ -87,6 +87,8 @@ public class Game3D extends JFrame implements Runnable {
 		int height = game3d.halfScreenY * 2;
 		
 		game3d.setSize(width, height);
+		game3d.setUndecorated(true);
+		game3d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		game3d.setVisible(true);
 	}
 	
