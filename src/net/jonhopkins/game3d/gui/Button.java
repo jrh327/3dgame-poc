@@ -3,8 +3,6 @@ package net.jonhopkins.game3d.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import net.jonhopkins.game3d.Game3D;
-
 public class Button extends GUI {
 	private final Color BUTTON_BG_COLOR = new Color(0x555555);
 	
@@ -14,8 +12,8 @@ public class Button extends GUI {
 	private int height = 30;
 	private String text = "";
 	
-	public Button(Game3D main, Menu menu, int x, int y, String s) {
-		super(main);
+	public Button(Graphics g, Menu menu, int x, int y, String s) {
+		super(g);
 		xpos = x;
 		ypos = y;
 		offsetx = menu.offsetx;
@@ -24,8 +22,6 @@ public class Button extends GUI {
 	}
 	
 	public void draw() {
-		Graphics g = main.getGraphics();
-		
 		g.setColor(BUTTON_BG_COLOR);
 		g.fillRect(offsetx + xpos, offsety + ypos, width, height);
 		

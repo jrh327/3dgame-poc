@@ -3,8 +3,6 @@ package net.jonhopkins.game3d.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import net.jonhopkins.game3d.Game3D;
-
 public class Label extends GUI {
 	private final Color LABEL_TEXT_COLOR = Color.white;
 	
@@ -14,8 +12,8 @@ public class Label extends GUI {
 	private int height = 30;
 	private String text = "";
 	
-	public Label(Game3D main, Menu menu, int x, int y, String s) {
-		super(main);
+	public Label(Graphics g, Menu menu, int x, int y, String s) {
+		super(g);
 		xpos = x;
 		ypos = y;
 		offsetx = menu.offsetx;
@@ -24,8 +22,6 @@ public class Label extends GUI {
 	}
 	
 	public void draw() {
-		Graphics g = main.getGraphics();
-		
 		g.setColor(LABEL_TEXT_COLOR);
 		g.drawString(text, offsetx + xpos + (width - text.length() * 6) / 2, offsety + ypos + height / 2);
 	}

@@ -67,7 +67,6 @@ public class Game3D extends JFrame implements Runnable {
 	}
 	
 	public void init() {
-		System.out.println("init");
 		final Game3D game3d = this;
 		
 		SwingUtilities.invokeLater(new Runnable() {
@@ -116,7 +115,7 @@ public class Game3D extends JFrame implements Runnable {
 		
 		updateTime();
 		
-		game3d.menu = new Menu(this);
+		game3d.menu = new Menu(this, bufferGraphics);
 		game3d.menu.draw();
 		
 		game3d.requestFocus();

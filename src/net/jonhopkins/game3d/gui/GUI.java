@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import net.jonhopkins.game3d.Game3D;
-
 public abstract class GUI {
 	private static final Color DEFAULT_BG_COLOR = new Color(0x777777);
 	
@@ -13,16 +11,14 @@ public abstract class GUI {
 	protected int height = 300;
 	protected int offsetx;
 	protected int offsety;
-	protected Game3D main;
+	protected Graphics g;
 	protected ArrayList<GUI> fields = new ArrayList<GUI>();
 	
-	public GUI(Game3D main) {
-		this.main = main;
+	public GUI(Graphics g) {
+		this.g = g;
 	}
 	
 	public void draw() {
-		Graphics g = main.getGraphics();
-		
 		g.setColor(DEFAULT_BG_COLOR);
 		g.fillRect(offsetx, offsety, width, height);
 		
