@@ -43,8 +43,6 @@ public class Game3D extends JFrame implements Runnable {
 	private int framecount = 0;
 	private double cameraHeight;
 	private int viewingDistance;
-	private Vertex[] points;
-	private Face[] tiles;
 	private int halfScreenX;
 	private int halfScreenY;
 	private KeyboardInput keyboard;
@@ -112,8 +110,6 @@ public class Game3D extends JFrame implements Runnable {
 		setGameRunning(false);
 		
 		s1 = MapSector.getMapSector(0, 0);
-		getPoints();
-		getTiles();
 		
 		updateTime();
 		
@@ -187,14 +183,6 @@ public class Game3D extends JFrame implements Runnable {
 		bufferGraphics.drawString((new StringBuilder("Time of Day: ")).append(tod / 60).append(":").append(new String("00").substring(new Integer(tod % 60).toString().length())).append((int)tod % 60).toString(), 10, 60);
 	}
 	
-	public void getPoints() {
-		points = s1.getVertices();
-	}
-	
-	public void getTiles() {
-		tiles = s1.getFaces();
-	}
-	
 	@Override
 	public void run() {
 		short ticks = 0;
@@ -207,6 +195,8 @@ public class Game3D extends JFrame implements Runnable {
 				
 				if (gameIsRunning) {
 					long time = System.currentTimeMillis();
+					
+					s1.resetVertices();
 					
 					if (keyboard.keyDown(KeyEvent.VK_ESCAPE) || (keyboard.keyDown(KeyEvent.VK_CONTROL) && keyboard.keyDown(KeyEvent.VK_C))) {
 						setGameRunning(false);
@@ -251,78 +241,48 @@ public class Game3D extends JFrame implements Runnable {
 			camera.x /= 10;
 			camera.z /= 10;
 			
+			double tempX = camera.x;
+			double tempZ = camera.z;
+			double cosY = Math.cos(rotatey * Math.PI / 180.0);
+			double sinY = Math.sin(rotatey * Math.PI / 180.0);
+			
 			if (keyboard.keyDown(KeyEvent.VK_W)) {
-				double tempX = camera.x;
-				double tempZ = camera.z;
-				if (camera.z + Math.cos(rotatey * Math.PI / 180) <= 32D && camera.z + Math.cos(rotatey * Math.PI / 180) >= -32D ) {
-					tempZ += Math.cos(rotatey * Math.PI / 180) * speedz;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
-						camera.z = tempZ;
-					}
-				}
-				if (camera.x - Math.sin(rotatey * Math.PI / 180) <= 32D && camera.x - Math.sin(rotatey * Math.PI / 180) >= -32D) {
-					tempX -= Math.sin(rotatey * Math.PI / 180) * speedx;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
-						camera.x = tempX;
-					}
-				}
-				camera.y = tiles[(int)(64 - (camera.z + 32)) * 64 * 2 + (int)(camera.x + 32) * 2].avgY() + cameraHeight;
+				tempZ += cosY * speedz;
+				tempX -= sinY * speedx;
 			}
 			if (keyboard.keyDown(KeyEvent.VK_A)) {
-				double tempX = camera.x;
-				double tempZ = camera.z;
-				if (camera.x - Math.cos(rotatey * Math.PI / 180) <= 32D && camera.x - Math.cos(rotatey * Math.PI / 180) >= -32D){
-					tempX -= Math.cos(rotatey * Math.PI / 180) * speedx;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
-						camera.x = tempX;
-					}
-				}
-				if (camera.z - Math.sin(rotatey * Math.PI / 180) <= 32D && camera.z - Math.sin(rotatey * Math.PI / 180) >= -32D) {
-					tempZ -= Math.sin(rotatey * Math.PI / 180) * speedz;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2+ (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
-						camera.z = tempZ;
-					}
-				}
-				camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight;
+				tempX -= cosY * speedx;
+				tempZ -= sinY * speedz;
 			}
 			if (keyboard.keyDown(KeyEvent.VK_S)) {
 				if (keyboard.keyDown(KeyEvent.VK_CONTROL)) {
 					//mapeditor.save(0, 0);
 				} else {
-					double tempX = camera.x;
-					double tempZ = camera.z;
-					if (camera.z - Math.cos(rotatey * Math.PI / 180) <= 32D && camera.z - Math.cos(rotatey * Math.PI / 180) >= -32D) {
-						tempZ -= Math.cos(rotatey * Math.PI / 180) * speedz;
-						if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2+ (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
-							camera.z = tempZ;
-						}
-					}
-					if ( camera.x + Math.sin(rotatey * Math.PI / 180) <= 32D && camera.x + Math.sin(rotatey * Math.PI / 180) >= -32D) {
-						tempX += Math.sin(rotatey * Math.PI / 180) * speedx;
-						if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
-							camera.x = tempX;
-						}
-					}
-					camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight;
+					tempZ -= cosY * speedz;
+					tempX += sinY * speedx;
 				}
 			}
 			if (keyboard.keyDown(KeyEvent.VK_D)) {
-				double tempX = camera.x;
-				double tempZ = camera.z;
-				if (camera.x + Math.cos(rotatey * Math.PI / 180) <= 32D && camera.x + Math.cos(rotatey * Math.PI / 180) >= -32D) {
-					tempX += Math.cos(rotatey * Math.PI / 180) * speedx;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
-						camera.x = tempX;
-					}
-				}
-				if (camera.z + Math.sin(rotatey * Math.PI / 180) <= 32D && camera.z + Math.sin(rotatey * Math.PI / 180) >= -32D) {
-					tempZ += Math.sin(rotatey * Math.PI / 180) * speedz;
-					if (tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight - camera.y <= 2) {
-						camera.z = tempZ;
-					}
-				}
-				camera.y = tiles[(int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2].avgY() + cameraHeight;
+				tempX += cosY * speedx;
+				tempZ += sinY * speedz;
 			}
+			
+			if (tempX <= -32.0) {
+				tempX = -32.0;
+			} else if (tempX >= 32.0) {
+				tempX = 31.99;
+			}
+			if (tempZ <= -32.0) {
+				tempZ = -31.999;
+			} else if (tempZ >= 32.0) {
+				tempZ = 32.0;
+			}
+			
+			camera.x = tempX;
+			camera.z = tempZ;
+			
+			int tileIndex = (int)(64 - (camera.z + 32)) * 64 * 2 + (int)(camera.x + 32) * 2;
+			camera.y = s1.getFaces()[tileIndex].avgY() + cameraHeight;
 			
 			camera.x *= 10;
 			camera.z *= 10;

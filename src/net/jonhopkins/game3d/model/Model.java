@@ -30,10 +30,13 @@ public class Model {
 		primaryBone.update(timestep);
 	}
 	
-	public Vertex[] getVertices() {
+	public void resetVertices() {
 		for (int i = 0; i < vertices.length; i++) {
 			vertices[i].setTo(origVertices[i]);
 		}
+	}
+	
+	public Vertex[] getVertices() {
 		return vertices;
 	}
 	
