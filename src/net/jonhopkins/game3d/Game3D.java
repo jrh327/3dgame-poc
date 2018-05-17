@@ -120,20 +120,8 @@ public class Game3D extends JFrame implements Runnable {
 	}
 	
 	public void drawSector() {
-		Vertex[] tempPoints = s1.getVertices();
-		Face[] tempTiles = s1.getFaces();
-		DrawingPreparation.translatePointsWithRespectToCamera(tempPoints, camera);
-		if (rotatey != 0) {
-			DrawingPreparation.rotatePointsY(tempPoints, rotatey);
-		}
-		if (rotatex != 0) {
-			DrawingPreparation.rotatePointsX(tempPoints, rotatex);
-		}
-		tempTiles = DrawingPreparation.backFaceCulling(tempTiles);
-		DrawingPreparation.Quicksort(tempTiles, 0, tempTiles.length - 1);
-		bufferGraphics.clearRect(0, 0, 600, 400);
-		
-		int closestToMouse = DrawScene.drawScene(tempTiles, camera, cameraHeight, viewingDistance, halfScreenX, halfScreenY, bufferGraphics, tod, rotatex, rotatey);
+		Face[] tempTiles = Renderer.prepareScene(s1, camera, rotatex, rotatey);
+		int closestToMouse = Renderer.drawScene(tempTiles, camera, cameraHeight, viewingDistance, halfScreenX, halfScreenY, bufferGraphics, tod, rotatex, rotatey);
 		
 		if (closestToMouse >= 0) {
 			Face closest = tempTiles[closestToMouse];

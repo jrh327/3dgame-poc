@@ -2,23 +2,36 @@ package net.jonhopkins.game3d;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import net.jonhopkins.game3d.geometry.Face;
+import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.light.Light;
+import net.jonhopkins.game3d.model.MapSector;
 import net.jonhopkins.game3d.model.Sun;
 
-public class DrawScene {
-	private static int clamp(int value, int min, int max) {
-		if (value < min) {
-			return min;
-		} else if (value > max) {
-			return max;
-		}
-		return value;
-	}
-	
+public class Renderer {
 	private static Sun sun = new Sun();
+	
+	public static Face[] prepareScene(MapSector s1, Vertex camera, double rotatex, double rotatey) {
+		Vertex[] tempPoints = s1.getVertices();
+		Face[] tempTiles = s1.getFaces();
+		Renderer.translatePointsWithRespectToCamera(tempPoints, camera);
+		if (rotatey != 0) {
+			Renderer.rotatePointsY(tempPoints, rotatey);
+		}
+		if (rotatex != 0) {
+			Renderer.rotatePointsX(tempPoints, rotatex);
+		}
+		tempTiles = Renderer.backFaceCulling(tempTiles);
+		Renderer.Quicksort(tempTiles, 0, tempTiles.length - 1);
+		
+		return tempTiles;
+	}
 	
 	public static int drawScene(Face[] tiles, Vertex camera, double cameraHeight, double viewingDistance, int halfScreenX, int halfScreenY, Graphics bufferGraphics, int tod, double rotatex, double rotatey) {
 		bufferGraphics.clearRect(0, 0, 600, 400);
@@ -126,6 +139,16 @@ public class DrawScene {
 		
 		return closestToMouse;
 	}
+	
+	private static int clamp(int value, int min, int max) {
+		if (value < min) {
+			return min;
+		} else if (value > max) {
+			return max;
+		}
+		return value;
+	}
+	
 	public static boolean inpoly(int xs[], int ys[], int npoints, int xt, int yt) {
 		int xnew, ynew;
 		int xold, yold;
@@ -163,5 +186,72 @@ public class DrawScene {
 			yold = ynew;
 		}
 		return inside;
+	}
+	
+	
+	
+	private static Face[] backFaceCulling(Face[] tiles) {
+		List<Face> visible = new ArrayList<>(tiles.length);
+		
+		for (Face tile : tiles) {
+			Vector normal = tile.getNormal();
+			
+			// camera is the "origin" here, so the vector between the camera
+			// and a point on the tile is just the negative of that point
+			Vertex center = tile.getCenter();
+			Vector camToTile = new Vector(-center.x, -center.y, -center.z);
+			double dot = Vector.dot(normal, camToTile);
+			if (dot > 0.0) {
+				visible.add(tile);
+			}
+		}
+		
+		return visible.toArray(new Face[visible.size()]);
+	}
+	
+	private static void Quicksort(Face[] list, int min, int max) {
+		Collections.sort(Arrays.asList(list));
+	}
+	
+	private static void rotatePointsX(Vertex[] points, double rotateX) {
+		Vertex.rotateX(points, rotateX);
+	}
+	
+	private static void rotatePointsY(Vertex[] points, double rotateY) {
+		Vertex.rotateY(points, rotateY);
+	}
+	
+	private static void rotatePointsZ(Vertex[] points, double rotateZ) {
+		Vertex.rotateZ(points, rotateZ);
+	}
+	
+	private static void translatePointsX(Vertex[] points, double offsetX) {
+		for (Vertex point : points) {
+			point.x += offsetX;
+		}
+	}
+	
+	private static void translatePointsY(Vertex[] points, double offsetY) {
+		for (Vertex point : points) {
+			point.y += offsetY;
+		}
+	}
+	
+	private static void translatePointsZ(Vertex[] points, double offsetZ) {
+		for (Vertex point : points) {
+			point.z += offsetZ;
+		}
+	}
+	
+	private static void translatePointsWithRespectToCamera(Vertex[] points, Vertex camera) {
+		double cameraX = camera.x;
+		double cameraY = camera.y;
+		double cameraZ = camera.z;
+		
+		for (Vertex point : points) {
+			point.x -= cameraX;
+			point.y -= cameraY;
+			point.z -= cameraZ;
+		}
 	}
 }
