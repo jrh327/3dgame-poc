@@ -10,7 +10,7 @@ import java.util.Calendar;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import net.jonhopkins.game3d.geometry.Face;
+import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.gui.Menu;
 import net.jonhopkins.game3d.input.KeyboardInput;
@@ -21,9 +21,6 @@ public class Game3D extends JFrame implements Runnable {
 	private static final long serialVersionUID = -429272861506526060L;
 	private final Color GAME_BG_COLOR = new Color(0x999999);
 	private final Color PAUSED_OVERLAY_COLOR = new Color(0, 0, 0, 150);
-	private final Color DEBUG_TEXT_COLOR = Color.white;
-	private final Color DEBUG_TILE_OUTLINE_COLOR = Color.black;
-	private final Color DEBUG_POINT_OUTLINE_COLOR = Color.red;
 	
 	private boolean gameIsRunning;
 	private int tod = 0;
@@ -33,13 +30,10 @@ public class Game3D extends JFrame implements Runnable {
 	private Image buffer;
 	private Graphics bufferGraphics;
 	private MapEditor mapeditor;
-	private Vertex camera;
+	private Camera camera;
 	private Vertex mousePosition;
-	private int rotatex;
-	private int rotatey;
 	private double speedx = 1;
 	private double speedz = 1;
-	private int fps = 0;
 	private int framecount = 0;
 	private double cameraHeight;
 	private int viewingDistance;
@@ -47,6 +41,8 @@ public class Game3D extends JFrame implements Runnable {
 	private int halfScreenY;
 	private KeyboardInput keyboard;
 	private MouseInput mouse;
+	private Renderer renderer;
+	private Scene scene;
 	
 	public static void main(String[] args) {
 		new Game3D().init();
@@ -55,11 +51,9 @@ public class Game3D extends JFrame implements Runnable {
 	public Game3D() {
 		cameraHeight = 10;
 		viewingDistance = 320;
-		camera = new Vertex(0D, cameraHeight, 0D);
+		camera = new Camera(new Vertex(0D, cameraHeight, 0D), new Vector(0.0, 0.0, 0.0));
 		mousePosition = new Vertex(0, 0, 0);
 		mapeditor = new MapEditor(0, 0);
-		rotatex = 0;
-		rotatey = 0;
 		halfScreenX = 300;
 		halfScreenY = 200;
 	}
@@ -109,6 +103,12 @@ public class Game3D extends JFrame implements Runnable {
 	public void initialize() {
 		setGameRunning(false);
 		
+		renderer = new Renderer(bufferGraphics);
+		renderer.setCamera(camera);
+		renderer.setDimensions(halfScreenX * 2, halfScreenY * 2);
+		renderer.setRenderDistance(viewingDistance);
+		scene = new MainScene();
+		
 		s1 = MapSector.getMapSector(0, 0);
 		
 		updateTime();
@@ -119,62 +119,11 @@ public class Game3D extends JFrame implements Runnable {
 		requestFocus();
 	}
 	
-	public void drawSector() {
-		Face[] tempTiles = Renderer.prepareScene(s1, camera, rotatex, rotatey);
-		int closestToMouse = Renderer.drawScene(tempTiles, camera, cameraHeight, viewingDistance, halfScreenX, halfScreenY, bufferGraphics, tod, rotatex, rotatey);
-		
-		if (closestToMouse >= 0) {
-			Face closest = tempTiles[closestToMouse];
-			int[] xs = new int[closest.vertices.length];
-			int[] ys = new int[closest.vertices.length];
-			closest.to2DCoords(halfScreenX, halfScreenY, xs, ys);
-			bufferGraphics.setColor(DEBUG_TILE_OUTLINE_COLOR);
-			bufferGraphics.drawPolygon(xs, ys, xs.length);
-			
-			int bestDist = 1000;
-			int index = 0;
-			
-			for (int i = 0; i < xs.length; i++) {
-				int dist = (int)Math.sqrt((xs[i] - 300) * (xs[i] - 300) + (ys[i] - 200) * (ys[i] - 200));
-				if (dist < bestDist) {
-					bestDist = dist;
-					index = i;
-				}
-			}
-			
-			bufferGraphics.setColor(DEBUG_POINT_OUTLINE_COLOR);
-			bufferGraphics.drawRect(xs[index], ys[index], 3, 3);
-			
-			Vertex vertex = tempTiles[closestToMouse].vertices[index];
-			mousePosition.x = vertex.x / 10.0;
-			mousePosition.y = vertex.y / 10.0;
-			mousePosition.z = vertex.z / 10.0;
-			mousePosition.rotateY(-rotatey);
-			mousePosition.x += camera.x / 10.0;
-			mousePosition.y += camera.y / 10.0;
-			mousePosition.z += camera.z / 10.0;
-			mousePosition.x = Math.round(mousePosition.x);
-			mousePosition.y = Math.round(mousePosition.y);
-			mousePosition.z = Math.round(mousePosition.z);
-		}
-		
-		bufferGraphics.setColor(DEBUG_TEXT_COLOR);
-		
-		bufferGraphics.drawLine(halfScreenX, halfScreenY - 10, halfScreenX, halfScreenY + 10);
-		bufferGraphics.drawLine(halfScreenX - 10, halfScreenY, halfScreenX + 10, halfScreenY);
-		
-		bufferGraphics.drawString((new StringBuilder(String.valueOf(camera.x))).append(", ").append(camera.y).append(", ").append(camera.z).toString(), 10, 10);
-		bufferGraphics.drawString((new StringBuilder("rotatex: ")).append(rotatex).toString(), 10, 20);
-		bufferGraphics.drawString((new StringBuilder("rotatey: ")).append(rotatey).toString(), 10, 30);
-		bufferGraphics.drawString(new StringBuilder("pointing at: ").append(mousePosition.x).append(", ").append(mousePosition.y).append(", ").append(mousePosition.z).toString(), 10, 40);
-		bufferGraphics.drawString((new StringBuilder("")).append(fps).append(" fps").toString(), 10, 50);
-		bufferGraphics.drawString((new StringBuilder("Time of Day: ")).append(tod / 60).append(":").append(new String("00").substring(new Integer(tod % 60).toString().length())).append((int)tod % 60).toString(), 10, 60);
-	}
-	
 	@Override
 	public void run() {
 		short ticks = 0;
 		long timesofar = 0;
+		long lastFrame = System.currentTimeMillis();
 		
 		try {
 			while (true) {
@@ -183,8 +132,10 @@ public class Game3D extends JFrame implements Runnable {
 				
 				if (gameIsRunning) {
 					long time = System.currentTimeMillis();
+					double timestep = (time - lastFrame) / 1000.0;
 					
-					s1.resetVertices();
+					//s1.resetVertices();
+					scene.update(timestep);
 					
 					if (keyboard.keyDown(KeyEvent.VK_ESCAPE) || (keyboard.keyDown(KeyEvent.VK_CONTROL) && keyboard.keyDown(KeyEvent.VK_C))) {
 						setGameRunning(false);
@@ -198,12 +149,12 @@ public class Game3D extends JFrame implements Runnable {
 					}
 					
 					framecount++;
-					drawSector();
+					renderer.renderScene(scene, timestep);
+					lastFrame = time;
 					repaint();
 					
 					timesofar += (System.currentTimeMillis() - time);
-					if (ticks == 10) {
-						fps = 1000 / (int)(timesofar / framecount);
+					if (ticks >= 10) {
 						ticks = 0;
 						timesofar = 0;
 						framecount = 0;
@@ -226,13 +177,13 @@ public class Game3D extends JFrame implements Runnable {
 	
 	public void processInput() {
 		if (gameIsRunning) {
-			camera.x /= 10;
-			camera.z /= 10;
+			camera.position.x /= 10;
+			camera.position.z /= 10;
 			
-			double tempX = camera.x;
-			double tempZ = camera.z;
-			double cosY = Math.cos(rotatey * Math.PI / 180.0);
-			double sinY = Math.sin(rotatey * Math.PI / 180.0);
+			double tempX = camera.position.x;
+			double tempZ = camera.position.z;
+			double cosY = Math.cos(camera.rotation.y * Math.PI / 180.0);
+			double sinY = Math.sin(camera.rotation.y * Math.PI / 180.0);
 			
 			if (keyboard.keyDown(KeyEvent.VK_W)) {
 				tempZ += cosY * speedz;
@@ -266,14 +217,14 @@ public class Game3D extends JFrame implements Runnable {
 				tempZ = 32.0;
 			}
 			
-			camera.x = tempX;
-			camera.z = tempZ;
+			camera.position.x = tempX;
+			camera.position.z = tempZ;
 			
-			int tileIndex = (int)(64 - (camera.z + 32)) * 64 * 2 + (int)(camera.x + 32) * 2;
-			camera.y = s1.getFaces()[tileIndex].avgY() + cameraHeight;
+			int tileIndex = (int)(64 - (camera.position.z + 32)) * 64 * 2 + (int)(camera.position.x + 32) * 2;
+			camera.position.y = s1.getFaces()[tileIndex].avgY() + cameraHeight;
 			
-			camera.x *= 10;
-			camera.z *= 10;
+			camera.position.x *= 10;
+			camera.position.z *= 10;
 			
 			if (keyboard.keyDown(KeyEvent.VK_PLUS)) {
 				mapeditor.changeRaisePoint('+');
@@ -282,31 +233,31 @@ public class Game3D extends JFrame implements Runnable {
 			}
 			
 			if (keyboard.keyDown(KeyEvent.VK_UP)) {
-				rotatex += 5;
+				camera.rotation.x += 5;
 			}
 			if (keyboard.keyDown(KeyEvent.VK_DOWN)) {
-				rotatex -= 5;
+				camera.rotation.x -= 5;
 			}
 			if (keyboard.keyDown(KeyEvent.VK_LEFT)) {
-				rotatey += 5;
+				camera.rotation.y += 5;
 			}
 			if (keyboard.keyDown(KeyEvent.VK_RIGHT)) {
-				rotatey -= 5;
+				camera.rotation.y -= 5;
 			}
 			
 			//Point p = mouse.getPosition();
 			//rotatey -= p.x;
 			//rotatex -= p.y;
 			
-			if (rotatey < 0) {
-				rotatey += 360;
-			} else if (rotatey >= 360) {
-				rotatey -= 360;
+			if (camera.rotation.y < 0) {
+				camera.rotation.y += 360;
+			} else if (camera.rotation.y >= 360) {
+				camera.rotation.y -= 360;
 			}
-			if (rotatex < -89) {
-				rotatex = -89;
-			} else if (rotatex > 89) {
-				rotatex = 89;
+			if (camera.rotation.x < -89) {
+				camera.rotation.x = -89;
+			} else if (camera.rotation.x > 89) {
+				camera.rotation.x = 89;
 			}
 			
 			if (mouse.buttonDown(1)) {

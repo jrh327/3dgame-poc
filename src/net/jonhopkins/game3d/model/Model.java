@@ -27,10 +27,13 @@ public class Model {
 	}
 	
 	public void update(double timestep) {
-		primaryBone.update(timestep);
+		resetVertices();
+		if (primaryBone != null) {
+			primaryBone.update(timestep);
+		}
 	}
 	
-	public void resetVertices() {
+	private void resetVertices() {
 		for (int i = 0; i < vertices.length; i++) {
 			vertices[i].setTo(origVertices[i]);
 		}

@@ -1,5 +1,7 @@
 package net.jonhopkins.game3d.geometry;
 
+import java.util.List;
+
 public class Vertex {
 	public double x;
 	public double y;
@@ -44,7 +46,7 @@ public class Vertex {
 	 * @param points the points to rotate
 	 * @param theta the angle by which to rotate, in degrees
 	 */
-	public static void rotateX(Vertex[] points, double theta) {
+	public static void rotateX(List<Vertex> points, double theta) {
 		theta = degreesToRadians(theta);
 		double cosTheta = Math.cos(theta);
 		double sinTheta = Math.sin(theta);
@@ -83,7 +85,7 @@ public class Vertex {
 	 * @param points the points to rotate
 	 * @param theta the angle by which to rotate, in degrees
 	 */
-	public static void rotateY(Vertex[] points, double theta) {
+	public static void rotateY(List<Vertex> points, double theta) {
 		theta = degreesToRadians(theta);
 		double cosTheta = Math.cos(theta);
 		double sinTheta = Math.sin(theta);
@@ -122,7 +124,7 @@ public class Vertex {
 	 * @param points the points to rotate
 	 * @param theta the angle by which to rotate, in degrees
 	 */
-	public static void rotateZ(Vertex[] points, double theta) {
+	public static void rotateZ(List<Vertex> points, double theta) {
 		theta = degreesToRadians(theta);
 		double cosTheta = Math.cos(theta);
 		double sinTheta = Math.sin(theta);
@@ -159,17 +161,47 @@ public class Vertex {
 		this.x += x;
 	}
 	
+	public static void translateX(List<Vertex> points, double offsetX) {
+		for (Vertex point : points) {
+			point.x += offsetX;
+		}
+	}
+	
 	public void translateY(double y) {
 		this.y += y;
+	}
+	
+	public static void translateY(List<Vertex> points, double offsetY) {
+		for (Vertex point : points) {
+			point.y += offsetY;
+		}
 	}
 	
 	public void translateZ(double z) {
 		this.z += z;
 	}
 	
+	public static void translateZ(List<Vertex> points, double offsetZ) {
+		for (Vertex point : points) {
+			point.z += offsetZ;
+		}
+	}
+	
 	public void translate(Vector translate) {
 		this.x += translate.x;
 		this.y += translate.y;
 		this.z += translate.z;
+	}
+	
+	public static void translate(List<Vertex> points, Vector translate) {
+		double translateX = translate.x;
+		double translateY = translate.y;
+		double translateZ = translate.z;
+		
+		for (Vertex point : points) {
+			point.x += translateX;
+			point.y += translateY;
+			point.z += translateZ;
+		}
 	}
 }

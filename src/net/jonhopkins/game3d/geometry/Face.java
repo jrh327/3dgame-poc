@@ -3,6 +3,7 @@ package net.jonhopkins.game3d.geometry;
 public class Face implements Comparable<Face> {
 	public Vertex[] vertices;
 	private int RGB;
+	private boolean visible;
 	
 	public Face(Vertex[] vertices, int rgb) {
 		if (vertices.length < 3) {
@@ -10,6 +11,7 @@ public class Face implements Comparable<Face> {
 		}
 		this.vertices = vertices.clone();
 		RGB = rgb;
+		visible = true;
 	}
 	
 	public int getRGB() {
@@ -82,6 +84,14 @@ public class Face implements Comparable<Face> {
 		Vector pr = new Vector(v3.x - v1.x, v3.y - v1.y, v3.z - v1.z);
 		Vector cross = Vector.cross(pq, pr);
 		return cross;
+	}
+	
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+	
+	public boolean isVisible() {
+		return visible;
 	}
 	
 	@Override

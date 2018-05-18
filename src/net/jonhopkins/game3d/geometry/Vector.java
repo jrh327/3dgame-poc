@@ -1,9 +1,9 @@
 package net.jonhopkins.game3d.geometry;
 
 public class Vector {
-	public final double x;
-	public final double y;
-	public final double z;
+	public double x;
+	public double y;
+	public double z;
 	
 	public Vector(double x, double y, double z) {
 		this.x = x;

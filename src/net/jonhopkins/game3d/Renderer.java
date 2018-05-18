@@ -4,58 +4,156 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
 import net.jonhopkins.game3d.geometry.Face;
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
-import net.jonhopkins.game3d.light.Light;
-import net.jonhopkins.game3d.model.MapSector;
-import net.jonhopkins.game3d.model.Sun;
+import net.jonhopkins.game3d.model.Model;
 
 public class Renderer {
-	private static Sun sun = new Sun();
+	private Graphics bufferGraphics;
+	private Camera camera;
+	private int halfScreenX;
+	private int halfScreenY;
+	private double viewingDistance;
+	private int frameCount = 0;
+	private double elapsedTime = 1;
+	private double tod = 720;
 	
-	public static Face[] prepareScene(MapSector s1, Vertex camera, double rotatex, double rotatey) {
-		Vertex[] tempPoints = s1.getVertices();
-		Face[] tempTiles = s1.getFaces();
-		Renderer.translatePointsWithRespectToCamera(tempPoints, camera);
-		if (rotatey != 0) {
-			Renderer.rotatePointsY(tempPoints, rotatey);
-		}
-		if (rotatex != 0) {
-			Renderer.rotatePointsX(tempPoints, rotatex);
-		}
-		tempTiles = Renderer.backFaceCulling(tempTiles);
-		Renderer.Quicksort(tempTiles, 0, tempTiles.length - 1);
+	private final Color DEBUG_TEXT_COLOR = Color.white;
+	private final Color DEBUG_TILE_OUTLINE_COLOR = Color.black;
+	private final Color DEBUG_POINT_OUTLINE_COLOR = Color.red;
+	
+	public Renderer(Graphics buffer) {
+		this.bufferGraphics = buffer;
 		
-		return tempTiles;
+		Calendar cal = Calendar.getInstance();
+		int hour = cal.get(Calendar.HOUR_OF_DAY);
+		int min = cal.get(Calendar.MINUTE);
+		int sec = cal.get(Calendar.SECOND);
+		tod++;
+		//tod = ((60 * hour + min) % 24) * 60 + sec;
+		if (tod >= 1440.0) {
+			tod = 0.0;
+		}
 	}
 	
-	public static int drawScene(Face[] tiles, Vertex camera, double cameraHeight, double viewingDistance, int halfScreenX, int halfScreenY, Graphics bufferGraphics, int tod, double rotatex, double rotatey) {
+	public void setCamera(Camera camera) {
+		this.camera = camera;
+	}
+	
+	public void setDimensions(int width, int height) {
+		this.halfScreenX = width / 2;
+		this.halfScreenY = height / 2;
+	}
+	
+	public void setRenderDistance(double renderDistance) {
+		this.viewingDistance = renderDistance;
+	}
+	
+	public void renderScene(Scene scene, double timestep) {
+		elapsedTime += timestep;
+		frameCount++;
+		
+		List<Face> tempTiles = prepareScene(scene, camera);
+		int closestToMouse = drawScene(tempTiles, camera, bufferGraphics);
+		
+		Vertex mousePosition = new Vertex(0.0, 0.0, 0.0);
+		Vertex cameraPosition = camera.position;
+		Vector cameraRotation = camera.rotation;
+		if (closestToMouse >= 0) {
+			Face closest = tempTiles.get(closestToMouse);
+			int[] xs = new int[closest.vertices.length];
+			int[] ys = new int[closest.vertices.length];
+			closest.to2DCoords(halfScreenX, halfScreenY, xs, ys);
+			bufferGraphics.setColor(DEBUG_TILE_OUTLINE_COLOR);
+			bufferGraphics.drawPolygon(xs, ys, xs.length);
+			
+			int bestDist = 1000;
+			int index = 0;
+			
+			for (int i = 0; i < xs.length; i++) {
+				int dist = (int)Math.sqrt((xs[i] - 300) * (xs[i] - 300) + (ys[i] - 200) * (ys[i] - 200));
+				if (dist < bestDist) {
+					bestDist = dist;
+					index = i;
+				}
+			}
+			
+			bufferGraphics.setColor(DEBUG_POINT_OUTLINE_COLOR);
+			bufferGraphics.drawRect(xs[index], ys[index], 3, 3);
+			
+			Vertex vertex = tempTiles.get(closestToMouse).vertices[index];
+			mousePosition.x = vertex.x / 10.0;
+			mousePosition.y = vertex.y / 10.0;
+			mousePosition.z = vertex.z / 10.0;
+			mousePosition.rotateY(-cameraRotation.y);
+			mousePosition.x += cameraPosition.x / 10.0;
+			mousePosition.y += cameraPosition.y / 10.0;
+			mousePosition.z += cameraPosition.z / 10.0;
+			mousePosition.x = Math.round(mousePosition.x);
+			mousePosition.y = Math.round(mousePosition.y);
+			mousePosition.z = Math.round(mousePosition.z);
+		}
+		
+		bufferGraphics.setColor(DEBUG_TEXT_COLOR);
+		
+		bufferGraphics.drawLine(halfScreenX, halfScreenY - 10, halfScreenX, halfScreenY + 10);
+		bufferGraphics.drawLine(halfScreenX - 10, halfScreenY, halfScreenX + 10, halfScreenY);
+		
+		bufferGraphics.drawString((new StringBuilder(String.valueOf(cameraPosition.x))).append(", ").append(cameraPosition.y).append(", ").append(cameraPosition.z).toString(), 10, 10);
+		bufferGraphics.drawString((new StringBuilder("rotatex: ")).append(cameraRotation.x).toString(), 10, 20);
+		bufferGraphics.drawString((new StringBuilder("rotatey: ")).append(cameraRotation.y).toString(), 10, 30);
+		bufferGraphics.drawString(new StringBuilder("pointing at: ").append(mousePosition.x).append(", ").append(mousePosition.y).append(", ").append(mousePosition.z).toString(), 10, 40);
+		
+		int framesPerMs = (int)(elapsedTime / frameCount);
+		if (framesPerMs == 0) {
+			framesPerMs = 1;
+		}
+		bufferGraphics.drawString((new StringBuilder("")).append(1000 / framesPerMs).append(" fps").toString(), 10, 50);
+		
+		tod += timestep;
+		if (tod >= 1440.0) {
+			tod = 0.0;
+		}
+		bufferGraphics.drawString((new StringBuilder("Time of Day: ")).append((int)(tod / 60)).append(":").append(new String("00").substring(new Integer((int)(tod % 60)).toString().length())).append((int)tod % 60).toString(), 10, 60);
+	}
+	
+	private List<Face> prepareScene(Scene scene, Camera camera) {
+		int numVertices = 0;
+		int numFaces = 0;
+		List<Model> models = scene.getModels();
+		for (Model model : models) {
+			numVertices += model.getVertices().length;
+			numFaces += model.getFaces().length;
+		}
+		
+		List<Vertex> vertices = new ArrayList<>(numVertices);
+		List<Face> faces = new ArrayList<>(numFaces);
+		
+		for (Model model : models) {
+			vertices.addAll(Arrays.asList(model.getVertices()));
+			faces.addAll(Arrays.asList(model.getFaces()));
+		}
+		
+		Vertex.translate(vertices, new Vector(-camera.position.x, -camera.position.y, -camera.position.z));
+		if (camera.rotation.y != 0) {
+			Vertex.rotateY(vertices, camera.rotation.y);
+		}
+		if (camera.rotation.x != 0) {
+			Vertex.rotateX(vertices, camera.rotation.x);
+		}
+		backFaceCulling(faces);
+		sort(faces, 0, faces.size() - 1);
+		
+		return faces;
+	}
+	
+	private int drawScene(List<Face> tiles, Camera camera, Graphics bufferGraphics) {
 		bufferGraphics.clearRect(0, 0, 600, 400);
-		
-		Vertex sunUL = new Vertex(-1, -32, 1);
-		Vertex sunUR = new Vertex(1, -32, 1);
-		Vertex sunLR = new Vertex(1, -32, -1);
-		Vertex sunLL = new Vertex(-1, -32, -1);
-		
-		Face sun1 = new Face(new Vertex[] { sunUL, sunUR, sunLR }, 0xffff99);
-		Face sun2 = new Face(new Vertex[] { sunUL, sunLR, sunLL }, 0xffff99);
-		
-		sunUL.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
-		sunUL.rotateY(rotatey);
-		sunUL.rotateX(rotatex);
-		sunUR.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
-		sunUR.rotateY(rotatey);
-		sunUR.rotateX(rotatex);
-		sunLR.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
-		sunLR.rotateY(rotatey);
-		sunLR.rotateX(rotatex);
-		sunLL.rotateZ((double)(-(tod - 60) * 360.0 / 1440.0));
-		sunLL.rotateY(rotatey);
-		sunLL.rotateX(rotatex);
 		
 		int xs[] = new int[3];
 		int ys[] = new int[3];
@@ -97,18 +195,13 @@ public class Renderer {
 		
 		bufferGraphics.fillRect(0, 0, 2 * halfScreenX, 2 * halfScreenY);
 		
-		if (sun1.avgZ() >= 0.0) {
-			sun1.to2DCoords(halfScreenX, halfScreenY, xs, ys);
-			bufferGraphics.setColor(new Color(sun1.getRGB()));
-			bufferGraphics.fillPolygon(xs, ys, xs.length);
-			sun2.to2DCoords(halfScreenX, halfScreenY, xs, ys);
-			bufferGraphics.setColor(new Color(sun2.getRGB()));
-			bufferGraphics.fillPolygon(xs, ys, xs.length);
-		}
-		
 		int counter = 0;
 		for (Face tile : tiles) {
-			double dist = Math.pow(Math.pow(tile.avgX(), 2) + Math.pow(tile.avgY() + cameraHeight, 2) + Math.pow(tile.avgZ(), 2), 0.5); 
+			if (!tile.isVisible()) {
+				continue;
+			}
+			
+			double dist = Math.pow(Math.pow(tile.avgX(), 2) + Math.pow(tile.avgY() + camera.position.y, 2) + Math.pow(tile.avgZ(), 2), 0.5); 
 			
 			if (tile.avgZ() >= 0.0 && dist < viewingDistance) {
 				tile.to2DCoords(halfScreenX, halfScreenY, xs, ys);
@@ -140,7 +233,7 @@ public class Renderer {
 		return closestToMouse;
 	}
 	
-	private static int clamp(int value, int min, int max) {
+	private int clamp(int value, int min, int max) {
 		if (value < min) {
 			return min;
 		} else if (value > max) {
@@ -149,7 +242,7 @@ public class Renderer {
 		return value;
 	}
 	
-	public static boolean inpoly(int xs[], int ys[], int npoints, int xt, int yt) {
+	private boolean inpoly(int xs[], int ys[], int npoints, int xt, int yt) {
 		int xnew, ynew;
 		int xold, yold;
 		int x1, y1;
@@ -188,11 +281,7 @@ public class Renderer {
 		return inside;
 	}
 	
-	
-	
-	private static Face[] backFaceCulling(Face[] tiles) {
-		List<Face> visible = new ArrayList<>(tiles.length);
-		
+	private void backFaceCulling(List<Face> tiles) {
 		for (Face tile : tiles) {
 			Vector normal = tile.getNormal();
 			
@@ -201,57 +290,11 @@ public class Renderer {
 			Vertex center = tile.getCenter();
 			Vector camToTile = new Vector(-center.x, -center.y, -center.z);
 			double dot = Vector.dot(normal, camToTile);
-			if (dot > 0.0) {
-				visible.add(tile);
-			}
-		}
-		
-		return visible.toArray(new Face[visible.size()]);
-	}
-	
-	private static void Quicksort(Face[] list, int min, int max) {
-		Collections.sort(Arrays.asList(list));
-	}
-	
-	private static void rotatePointsX(Vertex[] points, double rotateX) {
-		Vertex.rotateX(points, rotateX);
-	}
-	
-	private static void rotatePointsY(Vertex[] points, double rotateY) {
-		Vertex.rotateY(points, rotateY);
-	}
-	
-	private static void rotatePointsZ(Vertex[] points, double rotateZ) {
-		Vertex.rotateZ(points, rotateZ);
-	}
-	
-	private static void translatePointsX(Vertex[] points, double offsetX) {
-		for (Vertex point : points) {
-			point.x += offsetX;
+			tile.setVisible(dot > 0.0);
 		}
 	}
 	
-	private static void translatePointsY(Vertex[] points, double offsetY) {
-		for (Vertex point : points) {
-			point.y += offsetY;
-		}
-	}
-	
-	private static void translatePointsZ(Vertex[] points, double offsetZ) {
-		for (Vertex point : points) {
-			point.z += offsetZ;
-		}
-	}
-	
-	private static void translatePointsWithRespectToCamera(Vertex[] points, Vertex camera) {
-		double cameraX = camera.x;
-		double cameraY = camera.y;
-		double cameraZ = camera.z;
-		
-		for (Vertex point : points) {
-			point.x -= cameraX;
-			point.y -= cameraY;
-			point.z -= cameraZ;
-		}
+	private void sort(List<Face> list, int min, int max) {
+		Collections.sort(list);
 	}
 }
