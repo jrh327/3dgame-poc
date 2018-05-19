@@ -11,6 +11,7 @@ import java.util.List;
 import net.jonhopkins.game3d.geometry.Face;
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
+import net.jonhopkins.game3d.light.Light;
 import net.jonhopkins.game3d.model.Model;
 
 public class Renderer {
@@ -21,7 +22,7 @@ public class Renderer {
 	private double viewingDistance;
 	private int frameCount = 0;
 	private double elapsedTime = 1;
-	private double tod = 720;
+	private double tod = 0;
 	
 	private final Color DEBUG_TEXT_COLOR = Color.white;
 	private final Color DEBUG_TILE_OUTLINE_COLOR = Color.black;
@@ -34,8 +35,7 @@ public class Renderer {
 		int hour = cal.get(Calendar.HOUR_OF_DAY);
 		int min = cal.get(Calendar.MINUTE);
 		int sec = cal.get(Calendar.SECOND);
-		tod++;
-		//tod = ((60 * hour + min) % 24) * 60 + sec;
+		tod = ((60 * hour + min) % 24) * 60 + sec;
 		if (tod >= 1440.0) {
 			tod = 0.0;
 		}
@@ -59,7 +59,7 @@ public class Renderer {
 		frameCount++;
 		
 		List<Face> tempTiles = prepareScene(scene, camera);
-		int closestToMouse = drawScene(tempTiles, camera, bufferGraphics);
+		int closestToMouse = drawScene(tempTiles, scene.getLights(), camera, bufferGraphics);
 		
 		Vertex mousePosition = new Vertex(0.0, 0.0, 0.0);
 		Vertex cameraPosition = camera.position;
@@ -140,11 +140,20 @@ public class Renderer {
 		}
 		
 		Vertex.translate(vertices, new Vector(-camera.position.x, -camera.position.y, -camera.position.z));
+		for (Light light : scene.getLights()) {
+			light.getPosition().translate(new Vector(-camera.position.x, -camera.position.y, -camera.position.z));
+		}
 		if (camera.rotation.y != 0) {
 			Vertex.rotateY(vertices, camera.rotation.y);
+			for (Light light : scene.getLights()) {
+				light.getPosition().rotateY(camera.rotation.y);
+			}
 		}
 		if (camera.rotation.x != 0) {
 			Vertex.rotateX(vertices, camera.rotation.x);
+			for (Light light : scene.getLights()) {
+				light.getPosition().rotateX(camera.rotation.x);
+			}
 		}
 		backFaceCulling(faces);
 		sort(faces, 0, faces.size() - 1);
@@ -152,7 +161,7 @@ public class Renderer {
 		return faces;
 	}
 	
-	private int drawScene(List<Face> tiles, Camera camera, Graphics bufferGraphics) {
+	private int drawScene(List<Face> tiles, List<Light>lights, Camera camera, Graphics bufferGraphics) {
 		bufferGraphics.clearRect(0, 0, 600, 400);
 		
 		int xs[] = new int[3];
@@ -161,7 +170,7 @@ public class Renderer {
 		
 		double lightlevel = 0;
 		
-		if (tod < 240 || tod > 1320) {
+		/*if (tod < 240 || tod > 1320) {
 			lightlevel = 1;
 			bufferGraphics.setColor(new Color(0, 0, 50));
 		} else if (tod > 660 && tod < 900) {
@@ -189,7 +198,8 @@ public class Renderer {
 				
 				bufferGraphics.setColor(new Color(r, g, b));
 			}
-		}
+		}*/
+		bufferGraphics.setColor(new Color(153, 153, 205));
 		
 		double timeofdayscalar = (8.0 - Math.abs(lightlevel - 8.0)) / 8.0;
 		
@@ -206,12 +216,20 @@ public class Renderer {
 			if (tile.avgZ() >= 0.0 && dist < viewingDistance) {
 				tile.to2DCoords(halfScreenX, halfScreenY, xs, ys);
 				
-				double colorScaler = (1.0 - (dist / viewingDistance)) * timeofdayscalar;
+				double colorScalar = 0.0;
+				for (Light light : lights) {
+					double factor = light.getLightFactor(tile);
+					if (factor > 0) {
+						colorScalar += factor;
+					}
+				}
+				
+				colorScalar -= (dist / viewingDistance);
 				
 				int color = tile.getRGB();
-				int newR = (int)(((color & 0xff0000) >> 16) * colorScaler);
-				int newG = (int)(((color & 0xff00) >> 8) * colorScaler);
-				int newB = (int)(((color & 0xff)) * colorScaler);
+				int newR = (int)(((color & 0xff0000) >> 16) * colorScalar);
+				int newG = (int)(((color & 0xff00) >> 8) * colorScalar);
+				int newB = (int)(((color & 0xff)) * colorScalar);
 				
 				if (newR < 0) newR = 0;
 				if (newR > 255) newR = 255;

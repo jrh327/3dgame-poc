@@ -2,32 +2,30 @@ package net.jonhopkins.game3d.light;
 
 import java.awt.Color;
 
+import net.jonhopkins.game3d.geometry.Face;
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 
 public class DirectionalLight extends Light {
-	private Vertex position;
-	private Vector direction;
+	private Vertex target;
 	
-	public DirectionalLight(Vertex position, Vector direction, Color color, double intensity) {
-		super(color, intensity);
-		this.position = position;
-		this.direction = direction;
+	public DirectionalLight(Vertex position, Vertex target, Color color, double intensity) {
+		super(position, color, intensity);
+		this.target = target;
 	}
 	
-	public void setPosition(Vertex position) {
-		this.position = position;
+	public void setTarget(Vertex target) {
+		this.target = target;
 	}
 	
-	public Vertex getPosition() {
-		return position;
+	public Vertex getTarget() {
+		return target;
 	}
 	
-	public void setDirection(Vector direction) {
-		this.direction = direction;
-	}
-	
-	public Vector getDirection() {
-		return direction;
+	@Override
+	public double getLightFactor(Face face) {
+		Vector direction = new Vector(target.x - position.x,
+				target.y - position.y, target.z - position.z);
+		return Vector.dot(face.getNormal(), direction) * intensity;
 	}
 }

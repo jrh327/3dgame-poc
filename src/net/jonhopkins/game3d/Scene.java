@@ -17,6 +17,9 @@ public abstract class Scene {
 	}
 	
 	public void update(double timestep) {
+		for (Light light : lights) {
+			light.update(timestep);
+		}
 		for (Model model : models) {
 			model.update(timestep);
 		}

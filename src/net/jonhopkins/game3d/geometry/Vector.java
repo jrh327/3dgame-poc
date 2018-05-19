@@ -25,6 +25,13 @@ public class Vector {
 	}
 	
 	public static double dot(Vector v1, Vector v2) {
+		v1 = normalize(v1);
+		v2 = normalize(v2);
 		return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
+	}
+	
+	public static Vector normalize(Vector v) {
+		double magnitude = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+		return new Vector(v.x / magnitude, v.y / magnitude, v.z / magnitude);
 	}
 }

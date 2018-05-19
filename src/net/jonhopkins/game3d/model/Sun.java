@@ -3,7 +3,6 @@ package net.jonhopkins.game3d.model;
 import java.awt.Color;
 import java.util.Calendar;
 
-import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.light.DirectionalLight;
 import net.jonhopkins.game3d.light.Light;
@@ -38,7 +37,7 @@ public class Sun extends Model {
 		if (tod >= 1440.0) {
 			tod = 0.0;
 		}
-		light = new DirectionalLight(new Vertex(0, -32, 0), new Vector(0, 0, 0), Color.white, maxLightLevel);
+		light = new DirectionalLight(new Vertex(0, -32, 0), new Vertex(0, 0, 0), Color.white, maxLightLevel);
 	}
 	
 	@Override
@@ -50,7 +49,7 @@ public class Sun extends Model {
 			tod = 0.0;
 		}
 		
-		if (tod < 240 || tod > 1320) {
+		/*if (tod < 240 || tod > 1320) {
 			light.setIntensity(0.125);
 		} else if (tod > 660 && tod < 900) {
 			light.setIntensity(maxLightLevel);
@@ -62,11 +61,22 @@ public class Sun extends Model {
 			} else {
 				light.setIntensity(0);
 			}
-		}
+		}*/
 		
+		double centerX = 0.0;
+		double centerY = 0.0;
+		double centerZ = 0.0;
 		for (Vertex vertex : vertices) {
 			vertex.rotateZ(-(tod - 60.0) * 360.0 / 1440.0);
+			centerX += vertex.x;
+			centerY += vertex.y;
+			centerZ += vertex.z;
 		}
+		
+		Vertex lightPosition = light.getPosition();
+		lightPosition.x = (centerX / vertices.length);
+		lightPosition.y = (centerY / vertices.length);
+		lightPosition.z = (centerZ / vertices.length);
 	}
 	
 	public Light getLight() {
