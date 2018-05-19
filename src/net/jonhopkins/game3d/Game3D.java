@@ -134,7 +134,6 @@ public class Game3D extends JFrame implements Runnable {
 					long time = System.currentTimeMillis();
 					double timestep = (time - lastFrame) / 1000.0;
 					
-					//s1.resetVertices();
 					scene.update(timestep);
 					
 					if (keyboard.keyDown(KeyEvent.VK_ESCAPE) || (keyboard.keyDown(KeyEvent.VK_CONTROL) && keyboard.keyDown(KeyEvent.VK_C))) {

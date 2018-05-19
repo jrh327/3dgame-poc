@@ -8,7 +8,7 @@ import net.jonhopkins.game3d.light.DirectionalLight;
 import net.jonhopkins.game3d.light.Light;
 
 public class Sun extends Model {
-	private DirectionalLight light;
+	private Light light;
 	private final double maxLightLevel = 0.875;
 	private double tod = 720;
 	

@@ -25,6 +25,10 @@ public class Vector {
 	}
 	
 	public static double dot(Vector v1, Vector v2) {
+		return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
+	}
+	
+	public static double dotNormalized(Vector v1, Vector v2) {
 		v1 = normalize(v1);
 		v2 = normalize(v2);
 		return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);

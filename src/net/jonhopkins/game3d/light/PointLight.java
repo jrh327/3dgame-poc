@@ -19,6 +19,6 @@ public class PointLight extends Light {
 				position.x - center.x,
 				position.y - center.y,
 				position.z - center.z);
-		return Vector.dot(face.getNormal(), direction) * intensity;
+		return Vector.dotNormalized(face.getNormal(), direction) * intensity;
 	}
 }

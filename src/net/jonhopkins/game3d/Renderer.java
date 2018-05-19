@@ -231,12 +231,9 @@ public class Renderer {
 				int newG = (int)(((color & 0xff00) >> 8) * colorScalar);
 				int newB = (int)(((color & 0xff)) * colorScalar);
 				
-				if (newR < 0) newR = 0;
-				if (newR > 255) newR = 255;
-				if (newG < 0) newG = 0;
-				if (newG > 255) newG = 255;
-				if (newB < 0) newB = 0;
-				if (newB > 255) newB = 255;
+				newR = clamp(newR, 0, 255);
+				newG = clamp(newG, 0, 255);
+				newB = clamp(newB, 0, 255);
 				
 				bufferGraphics.setColor(new Color(newR, newG, newB));
 				bufferGraphics.fillPolygon(xs, ys, xs.length);
