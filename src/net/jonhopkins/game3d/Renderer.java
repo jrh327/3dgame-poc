@@ -218,10 +218,7 @@ public class Renderer {
 				
 				double colorScalar = 0.0;
 				for (Light light : lights) {
-					double factor = light.getLightFactor(tile);
-					if (factor > 0) {
-						colorScalar += factor;
-					}
+					colorScalar += light.getLightFactor(tile);
 				}
 				
 				colorScalar -= (dist / viewingDistance);
@@ -310,6 +307,9 @@ public class Renderer {
 	}
 	
 	private void sort(List<Face> list, int min, int max) {
+		for (Face face : list) {
+			face.precomputeForComparison();
+		}
 		Collections.sort(list);
 	}
 }

@@ -24,8 +24,12 @@ public class DirectionalLight extends Light {
 	
 	@Override
 	public double getLightFactor(Face face) {
-		Vector direction = new Vector(target.x - position.x,
-				target.y - position.y, target.z - position.z);
-		return Vector.dotNormalized(face.getNormal(), direction) * intensity;
+		Vector direction = new Vector(position.x - target.x,
+				position.y - target.y, position.z - target.z);
+		double factor = Vector.dotNormalized(face.getNormal(), direction) * intensity;
+		if (factor < 0.0) {
+			factor = 0.0;
+		}
+		return factor;
 	}
 }

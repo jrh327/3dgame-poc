@@ -94,10 +94,15 @@ public class Face implements Comparable<Face> {
 		return visible;
 	}
 	
+	private double precomputedAvgZ = 0.0;
+	public void precomputeForComparison() {
+		this.precomputedAvgZ = avgZ();
+	}
+	
 	@Override
 	public int compareTo(Face other) {
-		double thisZ = this.avgZ();
-		double otherZ = other.avgZ();
+		double thisZ = this.precomputedAvgZ;
+		double otherZ = other.precomputedAvgZ;
 		
 		if (thisZ > otherZ) {
 			return -1;
