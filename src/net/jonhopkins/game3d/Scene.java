@@ -5,14 +5,17 @@ import java.util.List;
 
 import net.jonhopkins.game3d.light.Light;
 import net.jonhopkins.game3d.model.Model;
+import net.jonhopkins.game3d.model.Prefab;
 
 public abstract class Scene {
 	protected List<Model> models;
+	protected List<Prefab> prefabs;
 	protected List<Light> lights;
 	protected Camera camera;
 	
 	protected Scene() {
 		models = new ArrayList<>();
+		prefabs = new ArrayList<>();
 		lights = new ArrayList<>();
 	}
 	
@@ -23,6 +26,9 @@ public abstract class Scene {
 		for (Model model : models) {
 			model.update(timestep);
 		}
+		for (Prefab prefab : prefabs) {
+			prefab.update(timestep);
+		}
 	}
 	
 	public void registerModel(Model model) {
@@ -31,6 +37,14 @@ public abstract class Scene {
 	
 	public void deregisterModel(Model model) {
 		models.remove(model);
+	}
+	
+	public void registerPrefab(Prefab prefab) {
+		prefabs.add(prefab);
+	}
+	
+	public void deregisterPrefab(Prefab prefab) {
+		prefabs.remove(prefab);
 	}
 	
 	public List<Model> getModels() {

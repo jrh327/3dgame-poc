@@ -17,7 +17,7 @@ public class MainScene extends Scene {
 		camera = new Camera(new Vertex(0.0, cameraHeight, 0.0), new Vector(0.0, 0.0, 0.0));
 		
 		Sun sun = new Sun();
-		registerModel(sun);
+		registerPrefab(sun);
 		registerModel(MapSector.getMapSector(0, 0));
 		registerLight(new AmbientLight(Color.white, 0.125));
 		registerLight(sun.getLight());
