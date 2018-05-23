@@ -12,7 +12,7 @@ public abstract class Light {
 	protected Vertex position;
 	
 	public Light(Color color, double intensity) {
-		this(new Vertex(0.0, 0.0, 0.0), color, intensity);
+		this(new Vertex(), color, intensity);
 	}
 	
 	public Light(Vertex position, Color color, double intensity) {
@@ -30,7 +30,7 @@ public abstract class Light {
 	}
 	
 	public void setPosition(Vertex position) {
-		this.originalPosition = new Vertex(position.x, position.y, position.z);
+		this.originalPosition = new Vertex(position);
 		this.position = position;
 	}
 	

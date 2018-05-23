@@ -9,10 +9,12 @@ import net.jonhopkins.game3d.model.Prefab;
 public class SunUpdateScript extends Script {
 	private double tod;
 	private Light light;
+	private Vertex origPosition;
 	
 	public SunUpdateScript(Prefab prefab, Light light) {
 		super(prefab);
 		this.light = light;
+		this.origPosition = new Vertex(prefab.getPosition());
 		
 		Calendar cal = Calendar.getInstance();
 		int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -26,24 +28,19 @@ public class SunUpdateScript extends Script {
 	
 	public void update(double timestep) {
 		tod += timestep;
-		if (tod >= 1440.0) {
-			tod = 0.0;
+		while (tod >= 1440.0) {
+			tod = tod - 1440.0;
 		}
 		
-		double centerX = 0.0;
-		double centerY = 0.0;
-		double centerZ = 0.0;
 		Vertex[] vertices = prefab.getModel().getVertices();
 		for (Vertex vertex : vertices) {
-			vertex.rotateZ(-(tod - 60.0) * 360.0 / 1440.0);
-			centerX += vertex.x;
-			centerY += vertex.y;
-			centerZ += vertex.z;
+			vertex.rotateZ(tod * 360.0 / 1440.0);
 		}
 		
-		Vertex lightPosition = light.getPosition();
-		lightPosition.x = (centerX / vertices.length);
-		lightPosition.y = (centerY / vertices.length);
-		lightPosition.z = (centerZ / vertices.length);
+		prefab.getRotation().z = tod * 360.0 / 1440.0;
+		Vertex newPosition = new Vertex(this.origPosition);
+		newPosition.rotateZ(tod * 360.0 / 1440.0);
+		prefab.getPosition().setTo(newPosition);
+		light.getPosition().setTo(prefab.getPosition());
 	}
 }

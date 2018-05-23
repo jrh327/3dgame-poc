@@ -13,6 +13,7 @@ import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.light.Light;
 import net.jonhopkins.game3d.model.Model;
+import net.jonhopkins.game3d.model.Prefab;
 
 public class Renderer {
 	private Graphics bufferGraphics;
@@ -61,7 +62,7 @@ public class Renderer {
 		List<Face> tempTiles = prepareScene(scene, camera);
 		int closestToMouse = drawScene(tempTiles, scene.getLights(), camera, bufferGraphics);
 		
-		Vertex mousePosition = new Vertex(0.0, 0.0, 0.0);
+		Vertex mousePosition = new Vertex();
 		Vertex cameraPosition = camera.position;
 		Vector cameraRotation = camera.rotation;
 		if (closestToMouse >= 0) {
@@ -125,7 +126,12 @@ public class Renderer {
 	private List<Face> prepareScene(Scene scene, Camera camera) {
 		int numVertices = 0;
 		int numFaces = 0;
-		List<Model> models = scene.getModels();
+		List<Model> models = new ArrayList<>(scene.getModels());
+		List<Prefab> prefabs = new ArrayList<>(scene.getPrefabs());
+		for (Prefab prefab : prefabs) {
+			models.add(prefab.getModel());
+		}
+		
 		for (Model model : models) {
 			numVertices += model.getVertices().length;
 			numFaces += model.getFaces().length;
@@ -137,6 +143,19 @@ public class Renderer {
 		for (Model model : models) {
 			vertices.addAll(Arrays.asList(model.getVertices()));
 			faces.addAll(Arrays.asList(model.getFaces()));
+		}
+		
+		for (Prefab prefab : prefabs) {
+			Model model = prefab.getModel();
+			Vector rotation = prefab.getRotation();
+			List<Vertex> verts = Arrays.asList(model.getVertices());
+			
+			Vertex.rotateX(verts, rotation.x);
+			Vertex.rotateY(verts, rotation.y);
+			Vertex.rotateZ(verts, rotation.z);
+			
+			Vertex position = prefab.getPosition();
+			Vertex.translate(verts, new Vector(position));
 		}
 		
 		Vertex.translate(vertices, new Vector(-camera.position.x, -camera.position.y, -camera.position.z));

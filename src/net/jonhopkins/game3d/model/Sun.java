@@ -14,10 +14,10 @@ public class Sun extends Prefab {
 	public Sun() {
 		model = ModelFactory.getModel("sun.obj");
 		
-		Vertex center = new Vertex(0, -32, 0);
-		Vertex pivot = new Vertex(0.0, 0.0, 0.0);
+		Vertex center = new Vertex(0, -320, 0);
+		Vertex pivot = new Vertex();
 		light = new DirectionalLight(center, pivot, Color.white, maxLightLevel);
-		position = center;
+		position = new Vertex(center);
 		
 		registerScript(new SunUpdateScript(this, light));
 	}

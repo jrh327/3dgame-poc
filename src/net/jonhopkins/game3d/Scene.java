@@ -27,6 +27,7 @@ public abstract class Scene {
 			model.update(timestep);
 		}
 		for (Prefab prefab : prefabs) {
+			prefab.updateScripts(timestep);
 			prefab.update(timestep);
 		}
 	}
@@ -39,6 +40,10 @@ public abstract class Scene {
 		models.remove(model);
 	}
 	
+	public List<Model> getModels() {
+		return models;
+	}
+	
 	public void registerPrefab(Prefab prefab) {
 		prefabs.add(prefab);
 	}
@@ -47,8 +52,8 @@ public abstract class Scene {
 		prefabs.remove(prefab);
 	}
 	
-	public List<Model> getModels() {
-		return models;
+	public List<Prefab> getPrefabs() {
+		return prefabs;
 	}
 	
 	public void registerLight(Light light) {

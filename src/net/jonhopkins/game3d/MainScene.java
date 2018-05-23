@@ -14,7 +14,7 @@ public class MainScene extends Scene {
 	public MainScene() {
 		super();
 		
-		camera = new Camera(new Vertex(0.0, cameraHeight, 0.0), new Vector(0.0, 0.0, 0.0));
+		camera = new Camera(new Vertex(0.0, cameraHeight, 0.0), new Vector());
 		
 		Sun sun = new Sun();
 		registerPrefab(sun);

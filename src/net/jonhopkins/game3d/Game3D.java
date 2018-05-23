@@ -51,8 +51,8 @@ public class Game3D extends JFrame implements Runnable {
 	public Game3D() {
 		cameraHeight = 10;
 		viewingDistance = 320;
-		camera = new Camera(new Vertex(0D, cameraHeight, 0D), new Vector(0.0, 0.0, 0.0));
-		mousePosition = new Vertex(0, 0, 0);
+		camera = new Camera(new Vertex(0D, cameraHeight, 0D), new Vector());
+		mousePosition = new Vertex();
 		mapeditor = new MapEditor(0, 0);
 		halfScreenX = 300;
 		halfScreenY = 200;

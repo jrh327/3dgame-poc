@@ -5,6 +5,12 @@ public class Vector {
 	public double y;
 	public double z;
 	
+	public Vector() {
+		x = 0.0;
+		y = 0.0;
+		z = 0.0;
+	}
+	
 	public Vector(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
@@ -15,6 +21,17 @@ public class Vector {
 		this.x = point.x;
 		this.y = point.y;
 		this.z = point.z;
+	}
+	
+	/**
+	 * Set the components of this vector to those of the other vector.
+	 * 
+	 * @param vector the other vector
+	 */
+	public void setTo(Vector vector) {
+		this.x = vector.x;
+		this.y = vector.y;
+		this.z = vector.z;
 	}
 	
 	public static Vector cross(Vector v1, Vector v2) {

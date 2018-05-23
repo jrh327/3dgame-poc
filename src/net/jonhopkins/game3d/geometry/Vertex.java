@@ -7,6 +7,12 @@ public class Vertex {
 	public double y;
 	public double z;
 	
+	public Vertex() {
+		x = 0.0;
+		y = 0.0;
+		z = 0.0;
+	}
+	
 	public Vertex(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
