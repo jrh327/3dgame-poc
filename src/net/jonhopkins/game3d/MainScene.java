@@ -5,6 +5,7 @@ import java.awt.Color;
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.light.AmbientLight;
+import net.jonhopkins.game3d.model.Cube;
 import net.jonhopkins.game3d.model.MapSector;
 import net.jonhopkins.game3d.model.Sun;
 
@@ -21,5 +22,8 @@ public class MainScene extends Scene {
 		registerModel(MapSector.getMapSector(0, 0));
 		registerLight(new AmbientLight(Color.white, 0.125));
 		registerLight(sun.getLight());
+		
+		Cube cube = new Cube();
+		registerPrefab(cube);
 	}
 }

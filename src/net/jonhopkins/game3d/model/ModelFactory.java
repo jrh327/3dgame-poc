@@ -62,7 +62,7 @@ public class ModelFactory {
 			} else if (parts[0].equals("f")) {
 				int[] vertexIndices = new int[parts.length - 2];
 				for (int i = 0; i < vertexIndices.length; i++) {
-					vertexIndices[i] = Integer.valueOf(parts[i + 1]);
+					vertexIndices[i] = Integer.valueOf(parts[i + 1]) - 1;
 				}
 				faces[faceCounter] = vertexIndices;
 				colors[faceCounter] = Integer.valueOf(parts[parts.length - 1].substring(1), 16);
