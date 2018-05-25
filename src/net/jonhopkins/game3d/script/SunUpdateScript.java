@@ -40,7 +40,7 @@ public class SunUpdateScript extends Script {
 		prefab.getRotation().z = tod * 360.0 / 1440.0;
 		Vertex newPosition = new Vertex(this.origPosition);
 		newPosition.rotateZ(tod * 360.0 / 1440.0);
-		prefab.getPosition().setTo(newPosition);
-		light.getPosition().setTo(prefab.getPosition());
+		prefab.setPosition(newPosition);
+		light.setPosition(prefab.getPosition());
 	}
 }

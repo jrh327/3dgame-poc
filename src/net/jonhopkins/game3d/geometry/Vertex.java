@@ -24,6 +24,19 @@ public class Vertex {
 		this.y = vertex.y;
 		this.z = vertex.z;
 	}
+
+	/**
+	 * Set the coordinates of this vertex to those given.
+	 * 
+	 * @param x the new x position
+	 * @param y the new y position
+	 * @param z the new z position
+	 */
+	public void setTo(double x, double y, double z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
 	
 	/**
 	 * Set the coordinates of this vertex to those of the other vertex.
@@ -193,6 +206,24 @@ public class Vertex {
 		}
 	}
 	
+	/**
+	 * Move the vertex coordinates by the given distances.
+	 * 
+	 * @param x the distance to move in the x direction
+	 * @param y the distance to move in the y direction
+	 * @param z the distance to move in the z direction
+	 */
+	public void translate(double x, double y, double z) {
+		this.x += x;
+		this.y += y;
+		this.z += z;
+	}
+	
+	/**
+	 * Move the vertex in the given direction.
+	 * 
+	 * @param translate vector representing the direction and distance to move
+	 */
 	public void translate(Vector translate) {
 		this.x += translate.x;
 		this.y += translate.y;

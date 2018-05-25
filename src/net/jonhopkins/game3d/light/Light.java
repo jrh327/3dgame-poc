@@ -2,20 +2,21 @@ package net.jonhopkins.game3d.light;
 
 import java.awt.Color;
 
+import net.jonhopkins.game3d.SceneObject;
 import net.jonhopkins.game3d.geometry.Face;
 import net.jonhopkins.game3d.geometry.Vertex;
 
-public abstract class Light {
+public abstract class Light extends SceneObject {
 	protected Color color;
 	protected double intensity;
 	protected Vertex originalPosition;
-	protected Vertex position;
 	
 	public Light(Color color, double intensity) {
 		this(new Vertex(), color, intensity);
 	}
 	
 	public Light(Vertex position, Color color, double intensity) {
+		super();
 		setPosition(position);
 		this.color = color;
 		this.intensity = intensity;
@@ -29,16 +30,15 @@ public abstract class Light {
 		return color;
 	}
 	
+	@Override
 	public void setPosition(Vertex position) {
+		super.setPosition(position);
 		this.originalPosition = new Vertex(position);
-		this.position = position;
 	}
 	
-	public Vertex getPosition() {
-		return position;
-	}
-	
+	@Override
 	public void update(double timestep) {
+		super.update(timestep);
 		resetPosition();
 	}
 	
