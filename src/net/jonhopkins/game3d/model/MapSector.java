@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import net.jonhopkins.game3d.geometry.Face;
 import net.jonhopkins.game3d.geometry.Vertex;
 
-public class MapSector extends Model {
+public class MapSector extends Prefab {
 	private BufferedImage bImgPoints;
 	private BufferedImage bImgTiles;
 	private static final int SECTOR_WIDTH = 64;
@@ -20,10 +20,6 @@ public class MapSector extends Model {
 	private static final String TILES_FILE = TILES_DIR + "Sector_%d_%d_tiles.png";
 	private static final String POINTS_DIR = SECTORS_DIR + "points/";
 	private static final String POINTS_FILE = POINTS_DIR + "Sector_%d_%d_points.png";
-	
-	public MapSector(Vertex[] vertices, int[][] faceVertices, int[] faceColors) {
-		super(vertices, faceVertices, faceColors);
-	}
 	
 	public static MapSector getMapSector(int x, int y) {
 		BufferedImage imgPoints = getPointsFile(x, y);
@@ -73,7 +69,8 @@ public class MapSector extends Model {
 			}
 		}
 		
-		MapSector sector = new MapSector(vertices, tileVertices, faceColors);
+		MapSector sector = new MapSector();
+		sector.model = new Model(vertices, tileVertices, faceColors);
 		sector.setPointsFile(imgPoints);
 		sector.setTilesFile(imgTiles);
 		return sector;

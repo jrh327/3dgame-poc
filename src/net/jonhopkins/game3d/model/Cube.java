@@ -9,7 +9,7 @@ public class Cube extends Prefab {
 		position = new Vertex(-100.0, 10.0, 10.0);
 		
 		final Prefab cube = this;
-		registerScript(new Script(cube) {
+		registerScript("rotation_script", new Script(cube) {
 			@Override
 			public void update(double timestep) {
 				this.prefab.rotation.x += timestep * 20.0;

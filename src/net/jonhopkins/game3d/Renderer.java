@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -126,7 +127,7 @@ public class Renderer {
 	private List<Face> prepareScene(Scene scene, Camera camera) {
 		int numVertices = 0;
 		int numFaces = 0;
-		List<Model> models = new ArrayList<>(scene.getModels());
+		List<Model> models = new ArrayList<>();
 		List<Prefab> prefabs = new ArrayList<>(scene.getPrefabs());
 		for (Prefab prefab : prefabs) {
 			models.add(prefab.getModel());
@@ -180,7 +181,7 @@ public class Renderer {
 		return faces;
 	}
 	
-	private int drawScene(List<Face> tiles, List<Light>lights, Camera camera, Graphics bufferGraphics) {
+	private int drawScene(List<Face> tiles, Collection<Light>lights, Camera camera, Graphics bufferGraphics) {
 		bufferGraphics.clearRect(0, 0, 600, 400);
 		
 		int xs[] = new int[3];

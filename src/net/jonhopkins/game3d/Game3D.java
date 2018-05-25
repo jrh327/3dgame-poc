@@ -220,7 +220,7 @@ public class Game3D extends JFrame implements Runnable {
 			camera.position.z = tempZ;
 			
 			int tileIndex = (int)(64 - (camera.position.z + 32)) * 64 * 2 + (int)(camera.position.x + 32) * 2;
-			camera.position.y = s1.getFaces()[tileIndex].avgY() + cameraHeight;
+			camera.position.y = s1.getModel().getFaces()[tileIndex].avgY() + cameraHeight;
 			
 			camera.position.x *= 10;
 			camera.position.z *= 10;

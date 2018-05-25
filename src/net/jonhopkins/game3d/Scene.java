@@ -1,71 +1,54 @@
 package net.jonhopkins.game3d;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.jonhopkins.game3d.light.Light;
-import net.jonhopkins.game3d.model.Model;
 import net.jonhopkins.game3d.model.Prefab;
 
 public abstract class Scene {
-	protected List<Model> models;
-	protected List<Prefab> prefabs;
-	protected List<Light> lights;
+	protected Map<String, Prefab> prefabs;
+	protected Map<String, Light> lights;
 	protected Camera camera;
 	
 	protected Scene() {
-		models = new ArrayList<>();
-		prefabs = new ArrayList<>();
-		lights = new ArrayList<>();
+		prefabs = new HashMap<>();
+		lights = new HashMap<>();
 	}
 	
 	public void update(double timestep) {
-		for (Light light : lights) {
+		for (Light light : lights.values()) {
 			light.update(timestep);
 		}
-		for (Model model : models) {
-			model.update(timestep);
-		}
-		for (Prefab prefab : prefabs) {
+		for (Prefab prefab : prefabs.values()) {
 			prefab.updateScripts(timestep);
 			prefab.update(timestep);
 		}
 	}
 	
-	public void registerModel(Model model) {
-		models.add(model);
+	public void registerPrefab(String name, Prefab prefab) {
+		prefabs.put(name, prefab);
 	}
 	
-	public void deregisterModel(Model model) {
-		models.remove(model);
+	public Prefab deregisterPrefab(String name) {
+		return prefabs.remove(name);
 	}
 	
-	public List<Model> getModels() {
-		return models;
+	public Collection<Prefab> getPrefabs() {
+		return prefabs.values();
 	}
 	
-	public void registerPrefab(Prefab prefab) {
-		prefabs.add(prefab);
+	public void registerLight(String name, Light light) {
+		lights.put(name, light);
 	}
 	
-	public void deregisterPrefab(Prefab prefab) {
-		prefabs.remove(prefab);
+	public Light deregisterLight(String name) {
+		return lights.remove(name);
 	}
 	
-	public List<Prefab> getPrefabs() {
-		return prefabs;
-	}
-	
-	public void registerLight(Light light) {
-		lights.add(light);
-	}
-	
-	public void deregisterLight(Light light) {
-		lights.remove(light);
-	}
-	
-	public List<Light> getLights() {
-		return lights;
+	public Collection<Light> getLights() {
+		return lights.values();
 	}
 	
 	public Camera getCamera() {

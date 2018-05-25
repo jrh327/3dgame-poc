@@ -19,7 +19,7 @@ public class Sun extends Prefab {
 		light = new DirectionalLight(center, pivot, Color.white, maxLightLevel);
 		position = new Vertex(center);
 		
-		registerScript(new SunUpdateScript(this, light));
+		registerScript("rotation_script", new SunUpdateScript(this, light));
 	}
 	
 	public Light getLight() {
