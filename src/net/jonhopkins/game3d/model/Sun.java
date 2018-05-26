@@ -12,14 +12,18 @@ public class Sun extends Prefab {
 	private final double maxLightLevel = 0.875;
 	
 	public Sun() {
-		model = ModelFactory.getModel("sun.obj");
-		
 		Vertex center = new Vertex(0, -320, 0);
 		Vertex pivot = new Vertex();
-		light = new DirectionalLight(center, pivot, Color.white, maxLightLevel);
-		position = new Vertex(center);
 		
-		registerScript("rotation_script", new SunUpdateScript(this, light));
+		model = ModelFactory.getModel("sun.obj");
+		model.setPosition(center);
+		light = new DirectionalLight(center, pivot, Color.white, maxLightLevel);
+		position = new Vertex(pivot);
+		
+		this.registerChild("sun_model", model);
+		this.registerChild("sun_light", light);
+		
+		registerScript("rotation_script", new SunUpdateScript(this));
 	}
 	
 	public Light getLight() {

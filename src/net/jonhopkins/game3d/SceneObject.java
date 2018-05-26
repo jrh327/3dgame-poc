@@ -12,7 +12,7 @@ public abstract class SceneObject {
 	protected Vector rotation;
 	protected Map<String, SceneObject> children;
 	protected Map<String, Script> scripts;
-
+	
 	public SceneObject() {
 		position = new Vertex();
 		rotation = new Vector();

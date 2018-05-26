@@ -1,9 +1,10 @@
 package net.jonhopkins.game3d.model;
 
+import net.jonhopkins.game3d.SceneObject;
 import net.jonhopkins.game3d.geometry.Face;
 import net.jonhopkins.game3d.geometry.Vertex;
 
-public class Model {
+public class Model extends SceneObject {
 	protected Vertex[] origVertices;
 	protected Vertex[] vertices;
 	protected Face[] faces;

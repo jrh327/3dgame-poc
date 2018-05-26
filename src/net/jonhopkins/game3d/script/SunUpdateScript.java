@@ -8,12 +8,10 @@ import net.jonhopkins.game3d.model.Prefab;
 
 public class SunUpdateScript extends Script {
 	private double tod;
-	private Light light;
 	private Vertex origPosition;
 	
-	public SunUpdateScript(Prefab prefab, Light light) {
+	public SunUpdateScript(Prefab prefab) {
 		super(prefab);
-		this.light = light;
 		this.origPosition = new Vertex(prefab.getPosition());
 		
 		Calendar cal = Calendar.getInstance();
@@ -31,16 +29,17 @@ public class SunUpdateScript extends Script {
 		while (tod >= 1440.0) {
 			tod = tod - 1440.0;
 		}
+		prefab.getRotation().z = tod * 360.0 / 1440.0;
 		
-		Vertex[] vertices = prefab.getModel().getVertices();
+		/*Vertex[] vertices = prefab.getModel().getVertices();
 		for (Vertex vertex : vertices) {
 			vertex.rotateZ(tod * 360.0 / 1440.0);
 		}
 		
-		prefab.getRotation().z = tod * 360.0 / 1440.0;
 		Vertex newPosition = new Vertex(this.origPosition);
 		newPosition.rotateZ(tod * 360.0 / 1440.0);
 		prefab.setPosition(newPosition);
 		light.setPosition(prefab.getPosition());
+		*/
 	}
 }
