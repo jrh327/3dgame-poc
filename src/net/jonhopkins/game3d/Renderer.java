@@ -13,8 +13,10 @@ import net.jonhopkins.game3d.geometry.Face;
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.light.Light;
+import net.jonhopkins.game3d.model.Drawable;
 import net.jonhopkins.game3d.model.Model;
-import net.jonhopkins.game3d.model.Prefab;
+import net.jonhopkins.game3d.object.GameObject;
+import net.jonhopkins.game3d.object.Prefab;
 
 public class Renderer {
 	private Graphics bufferGraphics;
@@ -124,40 +126,86 @@ public class Renderer {
 		bufferGraphics.drawString((new StringBuilder("Time of Day: ")).append((int)(tod / 60)).append(":").append(new String("00").substring(new Integer((int)(tod % 60)).toString().length())).append((int)tod % 60).toString(), 10, 60);
 	}
 	
+	private List<Drawable> getModels(List<GameObject> objects) {
+		List<Drawable> models = new ArrayList<>();
+		
+		for (GameObject object : objects) {
+			if (object instanceof Drawable) {
+				models.add((Drawable)object);
+			}
+			models.addAll(getModels(object.getChildren()));
+		}
+		
+		return models;
+	}
+	
+	private void rotateModelsRelativeToParents(Vector toRotate, List<GameObject> objects) {
+		for (GameObject object : objects) {
+			Vector curRotate = object.getRotation();
+			Vector newRotate = new Vector();
+			newRotate.x = toRotate.x + curRotate.x;
+			newRotate.y = toRotate.y + curRotate.y;
+			newRotate.z = toRotate.z + curRotate.z;
+			
+			if (object instanceof Drawable) {
+				List<Vertex> verts = ((Drawable)object).getVertices();
+				Vertex.rotateX(verts, newRotate.x);
+				Vertex.rotateY(verts, newRotate.y);
+				Vertex.rotateZ(verts, newRotate.z);
+			}
+			rotateModelsRelativeToParents(newRotate, object.getChildren());
+		}
+	}
+	
+	private void translateModelsRelativeToParents(Vector toTranslate, List<GameObject> objects) {
+		for (GameObject object : objects) {
+			Vector curTranslate = object.getRotation();
+			Vector newTranslate = new Vector();
+			newTranslate.x = toTranslate.x + curTranslate.x;
+			newTranslate.y = toTranslate.y + curTranslate.y;
+			newTranslate.z = toTranslate.z + curTranslate.z;
+			
+			if (object instanceof Drawable) {
+				List<Vertex> verts = ((Drawable)object).getVertices();
+				Vertex.translate(verts, newTranslate);
+			}
+			translateModelsRelativeToParents(newTranslate, object.getChildren());
+		}
+	}
+	
 	private List<Face> prepareScene(Scene scene, Camera camera) {
 		int numVertices = 0;
 		int numFaces = 0;
-		List<Model> models = new ArrayList<>();
-		List<Prefab> prefabs = new ArrayList<>(scene.getPrefabs());
-		for (Prefab prefab : prefabs) {
-			models.add(prefab.getModel());
-		}
+		List<GameObject> objects = new ArrayList<>(scene.getObjects());
+		List<Drawable> models = getModels(objects);
+		rotateModelsRelativeToParents(new Vector(), objects);
+		translateModelsRelativeToParents(new Vector(), objects);
 		
-		for (Model model : models) {
-			numVertices += model.getVertices().length;
-			numFaces += model.getFaces().length;
+		for (Drawable model : models) {
+			numVertices += model.getVertices().size();
+			numFaces += model.getFaces().size();
 		}
 		
 		List<Vertex> vertices = new ArrayList<>(numVertices);
 		List<Face> faces = new ArrayList<>(numFaces);
 		
-		for (Model model : models) {
-			vertices.addAll(Arrays.asList(model.getVertices()));
-			faces.addAll(Arrays.asList(model.getFaces()));
+		for (Drawable model : models) {
+			vertices.addAll(model.getVertices());
+			faces.addAll(model.getFaces());
 		}
 		
-		for (Prefab prefab : prefabs) {
-			Model model = prefab.getModel();
-			Vector rotation = prefab.getRotation();
-			List<Vertex> verts = Arrays.asList(model.getVertices());
+		/*for (GameObject object : objects) {
+			Model model = object.getModel();
+			Vector rotation = object.getRotation();
+			List<Vertex> verts = model.getVertices();
 			
 			Vertex.rotateX(verts, rotation.x);
 			Vertex.rotateY(verts, rotation.y);
 			Vertex.rotateZ(verts, rotation.z);
 			
-			Vertex position = prefab.getPosition();
+			Vertex position = object.getPosition();
 			Vertex.translate(verts, new Vector(position));
-		}
+		}*/
 		
 		Vertex.translate(vertices, new Vector(-camera.position.x, -camera.position.y, -camera.position.z));
 		for (Light light : scene.getLights()) {

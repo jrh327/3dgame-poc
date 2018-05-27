@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.light.Light;
-import net.jonhopkins.game3d.model.Prefab;
+import net.jonhopkins.game3d.object.Prefab;
 
 public class SunUpdateScript extends Script {
 	private double tod;

@@ -15,7 +15,8 @@ import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.gui.Menu;
 import net.jonhopkins.game3d.input.KeyboardInput;
 import net.jonhopkins.game3d.input.MouseInput;
-import net.jonhopkins.game3d.model.MapSector;
+import net.jonhopkins.game3d.model.Drawable;
+import net.jonhopkins.game3d.object.MapSector;
 
 public class Game3D extends JFrame implements Runnable {
 	private static final long serialVersionUID = -429272861506526060L;
@@ -220,7 +221,7 @@ public class Game3D extends JFrame implements Runnable {
 			camera.position.z = tempZ;
 			
 			int tileIndex = (int)(64 - (camera.position.z + 32)) * 64 * 2 + (int)(camera.position.x + 32) * 2;
-			camera.position.y = s1.getModel().getFaces()[tileIndex].avgY() + cameraHeight;
+			camera.position.y = ((Drawable)s1.getChild("sector")).getFaces().get(tileIndex).avgY() + cameraHeight;
 			
 			camera.position.x *= 10;
 			camera.position.z *= 10;

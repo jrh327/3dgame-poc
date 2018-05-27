@@ -1,6 +1,6 @@
 package net.jonhopkins.game3d.script;
 
-import net.jonhopkins.game3d.model.Prefab;
+import net.jonhopkins.game3d.object.Prefab;
 
 public abstract class Script {
 	protected Prefab prefab;

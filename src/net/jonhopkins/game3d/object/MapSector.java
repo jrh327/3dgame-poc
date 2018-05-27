@@ -1,4 +1,4 @@
-package net.jonhopkins.game3d.model;
+package net.jonhopkins.game3d.object;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 
 import net.jonhopkins.game3d.geometry.Face;
 import net.jonhopkins.game3d.geometry.Vertex;
+import net.jonhopkins.game3d.model.Model;
 
 public class MapSector extends Prefab {
 	private BufferedImage bImgPoints;
@@ -70,7 +71,7 @@ public class MapSector extends Prefab {
 		}
 		
 		MapSector sector = new MapSector();
-		sector.model = new Model(vertices, tileVertices, faceColors);
+		sector.registerChild("sector", new Model(vertices, tileVertices, faceColors));
 		sector.setPointsFile(imgPoints);
 		sector.setTilesFile(imgTiles);
 		return sector;

@@ -1,38 +1,33 @@
-package net.jonhopkins.game3d;
+package net.jonhopkins.game3d.object;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
-import net.jonhopkins.game3d.script.Script;
 
-public abstract class SceneObject {
+public abstract class GameObject {
+	/**
+	 * Position relative to parent, or relative to scene if top-level object
+	 */
 	protected Vertex position;
-	protected Vector rotation;
-	protected Map<String, SceneObject> children;
-	protected Map<String, Script> scripts;
 	
-	public SceneObject() {
+	/**
+	 * Rotation relative to parent, or relative to scene if top-level object
+	 */
+	protected Vector rotation;
+	protected Map<String, GameObject> children;
+	
+	public GameObject() {
 		position = new Vertex();
 		rotation = new Vector();
 		children = new HashMap<>();
-		scripts = new HashMap<>();
-	}
-	
-	public void updateScripts(double timestep) {
-		for (SceneObject child : children.values()) {
-			child.updateScripts(timestep);
-		}
-		for (Script script : scripts.values()) {
-			if (script.isEnabled()) {
-				script.update(timestep);
-			}
-		}
 	}
 	
 	public void update(double timestep) {
-		for (SceneObject child : children.values()) {
+		for (GameObject child : children.values()) {
 			child.update(timestep);
 		}
 	}
@@ -75,19 +70,19 @@ public abstract class SceneObject {
 		return rotation;
 	}
 	
-	public void registerChild(String name, SceneObject child) {
+	public GameObject getChild(String child) {
+		return this.children.get(child);
+	}
+	
+	public List<GameObject> getChildren() {
+		return new ArrayList<GameObject>(this.children.values());
+	}
+	
+	public void registerChild(String name, GameObject child) {
 		this.children.put(name, child);
 	}
 	
-	public SceneObject deregisterChild(String name) {
+	public GameObject deregisterChild(String name) {
 		return children.remove(name);
-	}
-	
-	public void registerScript(String name, Script script) {
-		this.scripts.put(name, script);
-	}
-	
-	public Script deregisterScript(String name) {
-		return scripts.remove(name);
 	}
 }
