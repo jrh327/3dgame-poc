@@ -1,13 +1,14 @@
 package net.jonhopkins.game3d.script;
 
-import net.jonhopkins.game3d.object.Prefab;
+import net.jonhopkins.game3d.object.GameObject;
+import net.jonhopkins.game3d.object.Scriptable;
 
 public abstract class Script {
-	protected Prefab prefab;
+	protected GameObject object;
 	protected boolean enabled = true;
 	
-	public Script(Prefab prefab) {
-		this.prefab = prefab;
+	public Script(Scriptable object) {
+		this.object = (GameObject)object;
 	}
 	
 	public abstract void update(double timestep);

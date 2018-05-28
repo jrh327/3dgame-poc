@@ -14,6 +14,7 @@ public class Model extends GameObject implements Drawable {
 	protected Bone primaryBone;
 	
 	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors) {
+		super();
 		this.origVertices = vertices;
 		this.vertices = new ArrayList<>(vertices.length);
 		for (int i = 0; i < vertices.length; i++) {

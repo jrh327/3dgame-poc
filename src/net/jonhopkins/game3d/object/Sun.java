@@ -20,7 +20,7 @@ public class Sun extends Prefab {
 		Model model = ModelFactory.getModel("sun.obj");
 		model.setPosition(center);
 		light = new DirectionalLight(center, pivot, Color.white, maxLightLevel);
-		position = new Vertex(pivot);
+		relativePosition = new Vertex(pivot);
 		
 		this.registerChild("sun_model", model);
 		this.registerChild("sun_light", light);

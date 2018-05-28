@@ -35,6 +35,10 @@ public abstract class Scene {
 		objects.put(name, object);
 	}
 	
+	public GameObject getObject(String name) {
+		return objects.get(name);
+	}
+	
 	public GameObject deregisterObject(String name) {
 		return objects.remove(name);
 	}

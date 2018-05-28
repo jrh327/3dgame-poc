@@ -9,65 +9,170 @@ import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 
 public abstract class GameObject {
+	
 	/**
 	 * Position relative to parent, or relative to scene if top-level object
 	 */
-	protected Vertex position;
+	protected Vertex relativePosition;
+	
+	/**
+	 * Absolute position within scene
+	 */
+	protected Vertex absolutePosition;
 	
 	/**
 	 * Rotation relative to parent, or relative to scene if top-level object
 	 */
-	protected Vector rotation;
+	protected Vector relativeRotation;
+	
+	/**
+	 * Absolute rotation within scene
+	 */
+	protected Vector absoluteRotation;
 	protected Map<String, GameObject> children;
 	
 	public GameObject() {
-		position = new Vertex();
-		rotation = new Vector();
+		relativePosition = new Vertex();
+		absolutePosition = new Vertex();
+		relativeRotation = new Vector();
+		absoluteRotation = new Vector();
 		children = new HashMap<>();
 	}
 	
 	public void update(double timestep) {
+		resetPosition();
+		resetRotation();
 		for (GameObject child : children.values()) {
 			child.update(timestep);
 		}
 	}
 	
 	public void translate(Vector translate) {
-		this.position.x += translate.x;
-		this.position.y += translate.y;
-		this.position.z += translate.z;
+		this.relativePosition.x += translate.x;
+		this.relativePosition.y += translate.y;
+		this.relativePosition.z += translate.z;
+		resetPosition();
 	}
 	
 	public void setPosition(double x, double y, double z) {
-		this.position.setTo(x, y, z);
+		this.relativePosition.setTo(x, y, z);
+		resetPosition();
 	}
 	
 	public void setPosition(Vertex position) {
-		this.position.setTo(position);
+		this.relativePosition.setTo(position);
+		resetPosition();
 	}
 	
 	public Vertex getPosition() {
-		return new Vertex(position);
+		return new Vertex(relativePosition);
+	}
+	
+	public void translateAbsolute(Vector translate) {
+		this.absolutePosition.x += translate.x;
+		this.absolutePosition.y += translate.y;
+		this.absolutePosition.z += translate.z;
+	}
+	
+	public void setAbsolutePosition(double x, double y, double z) {
+		this.absolutePosition.setTo(x, y, z);
+	}
+	
+	public void setAbsolutePosition(Vertex position) {
+		this.absolutePosition.setTo(position);
+	}
+	
+	public Vertex getAbsolutePosition() {
+		return absolutePosition;
+	}
+	
+	public void resetPosition() {
+		this.absolutePosition.setTo(this.relativePosition);
+	}
+	
+	private void clampRotation(Vector rotation) {
+		if (rotation.x < 0.0) {
+			while (rotation.x < 360.0) {
+				rotation.x += 360.0;
+			}
+		} else {
+			while (rotation.x > 360.0) {
+				rotation.x -= 360.0;
+			}
+		}
+		if (rotation.y < 0.0) {
+			while (rotation.y < 360.0) {
+				rotation.y += 360.0;
+			}
+		} else {
+			while (rotation.y > 360.0) {
+				rotation.y -= 360.0;
+			}
+		}
+		if (rotation.z < 0.0) {
+			while (rotation.z < 360.0) {
+				rotation.z += 360.0;
+			}
+		} else {
+			while (rotation.z > 360.0) {
+				rotation.z -= 360.0;
+			}
+		}
 	}
 	
 	public void rotate(double x, double y, double z) {
-		this.rotation.x += x;
-		this.rotation.y += y;
-		this.rotation.z += z;
+		this.relativeRotation.x += x;
+		this.relativeRotation.y += y;
+		this.relativeRotation.z += z;
+		clampRotation(this.relativeRotation);
+		resetRotation();
 	}
 	
 	public void rotate(Vector rotation) {
-		this.rotation.x += rotation.x;
-		this.rotation.y += rotation.y;
-		this.rotation.z += rotation.z;
+		this.relativeRotation.x += rotation.x;
+		this.relativeRotation.y += rotation.y;
+		this.relativeRotation.z += rotation.z;
+		clampRotation(this.relativeRotation);
+		resetRotation();
 	}
 	
 	public void setRotation(Vector rotation) {
-		this.rotation.setTo(rotation);
+		this.relativeRotation.setTo(rotation);
+		clampRotation(this.relativeRotation);
+		resetRotation();
 	}
 	
 	public Vector getRotation() {
-		return rotation;
+		return relativeRotation;
+	}
+	
+	public void rotateAbsolute(double x, double y, double z) {
+		this.absoluteRotation.x += x;
+		this.absoluteRotation.y += y;
+		this.absoluteRotation.z += z;
+		clampRotation(this.absoluteRotation);
+	}
+	
+	public void rotateAbsolute(Vector rotation) {
+		this.absoluteRotation.x += rotation.x;
+		this.absoluteRotation.y += rotation.y;
+		this.absoluteRotation.z += rotation.z;
+		clampRotation(this.absoluteRotation);
+	}
+	
+	public void setAbsoluteRotation(Vector rotation) {
+		this.absoluteRotation.setTo(rotation);
+		clampRotation(this.absoluteRotation);
+	}
+	
+	public Vector getAbsoluteRotation() {
+		return absoluteRotation;
+	}
+	
+	public void resetRotation() {
+		this.absoluteRotation.x = relativeRotation.x;
+		this.absoluteRotation.y = relativeRotation.y;
+		this.absoluteRotation.z = relativeRotation.z;
 	}
 	
 	public GameObject getChild(String child) {

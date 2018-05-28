@@ -8,11 +8,11 @@ public class Cube extends Prefab {
 		registerChild("cube", ModelFactory.getModel("cube.obj"));
 		setPosition(-100.0, 10.0, 10.0);
 		
-		final Prefab cube = this;
-		registerScript("rotation_script", new Script(cube) {
+		final GameObject cube = this.getChild("cube");
+		registerScript("rotation_script", new Script(this) {
 			@Override
 			public void update(double timestep) {
-				this.prefab.rotate(timestep * 20.0, timestep * 10.0, timestep * -10.0);
+				cube.rotate(timestep * 20.0, timestep * 10.0, timestep * -10.0);
 			}
 		});
 	}
