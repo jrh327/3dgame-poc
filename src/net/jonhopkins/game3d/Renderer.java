@@ -140,16 +140,19 @@ public class Renderer {
 		for (GameObject object : objects) {
 			if (object instanceof Drawable) {
 				Vector rotate = object.getRotation();
+				Vertex pivot = object.getPivot();
 				List<Vertex> verts = ((Drawable)object).getVertices();
+				Vertex.translate(verts, new Vector(-pivot.x, -pivot.y, -pivot.z));
 				Vertex.rotateX(verts, rotate.x);
 				Vertex.rotateY(verts, rotate.y);
 				Vertex.rotateZ(verts, rotate.z);
+				Vertex.translate(verts, new Vector(pivot));
 			}
 			rotateModels(object.getChildren());
 		}
 	}
 	
-	private void rotateObjectsRelativeToParents(Vector toRotate, List<GameObject> objects) {
+	private void rotateAndTranslateRelative(Vector toTranslate, Vector toRotate, List<GameObject> objects) {
 		for (GameObject object : objects) {
 			Vector curRotate = object.getRotation();
 			Vector newRotate = new Vector();
@@ -157,35 +160,37 @@ public class Renderer {
 			newRotate.y = toRotate.y + curRotate.y;
 			newRotate.z = toRotate.z + curRotate.z;
 			
-			Vertex position = object.getAbsolutePosition();
-			position.rotateX(toRotate.x);
-			position.rotateY(toRotate.y);
-			position.rotateZ(toRotate.z);
-			
-			if (object instanceof Drawable) {
-				List<Vertex> verts = ((Drawable)object).getVertices();
-				Vertex.rotateX(verts, toRotate.x);
-				Vertex.rotateY(verts, toRotate.y);
-				Vertex.rotateZ(verts, toRotate.z);
-			}
-			rotateObjectsRelativeToParents(newRotate, object.getChildren());
-		}
-	}
-	
-	private void translateObjectsRelativeToParents(Vector toTranslate, List<GameObject> objects) {
-		for (GameObject object : objects) {
 			Vertex curTranslate = object.getPosition();
 			Vector newTranslate = new Vector();
 			newTranslate.x = toTranslate.x + curTranslate.x;
 			newTranslate.y = toTranslate.y + curTranslate.y;
 			newTranslate.z = toTranslate.z + curTranslate.z;
 			
-			object.translateAbsolute(toTranslate);
 			if (object instanceof Drawable) {
 				List<Vertex> verts = ((Drawable)object).getVertices();
-				Vertex.translate(verts, newTranslate);
+				
+				// move to offset within parent
+				Vertex.translate(verts, new Vector(curTranslate));
+				
+				// rotate relative to center of parent object the amount
+				// rotated by all ancestors
+				Vertex.rotateX(verts, newRotate.x);
+				Vertex.rotateY(verts, newRotate.y);
+				Vertex.rotateZ(verts, newRotate.z);
+				
+				// move to final position relative to all ancestors
+				Vertex.translate(verts, toTranslate);
 			}
-			translateObjectsRelativeToParents(newTranslate, object.getChildren());
+			
+			// same steps as vertices, but no need to move to offset
+			// within parent, position is that offset
+			Vertex position = object.getAbsolutePosition();
+			position.rotateX(newRotate.x);
+			position.rotateY(newRotate.y);
+			position.rotateZ(newRotate.z);
+			object.translateAbsolute(toTranslate);
+			
+			rotateAndTranslateRelative(newTranslate, newRotate, object.getChildren());
 		}
 	}
 	
@@ -196,8 +201,7 @@ public class Renderer {
 		List<Drawable> models = getModels(objects);
 		
 		rotateModels(objects);
-		translateObjectsRelativeToParents(new Vector(), objects);
-		rotateObjectsRelativeToParents(new Vector(), objects);
+		rotateAndTranslateRelative(new Vector(), new Vector(), objects);
 		
 		for (Drawable model : models) {
 			numVertices += model.getVertices().size();

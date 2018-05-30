@@ -29,6 +29,12 @@ public abstract class GameObject {
 	 * Absolute rotation within scene
 	 */
 	protected Vector absoluteRotation;
+	
+	/**
+	 * Point around which to rotate, relative to parent
+	 */
+	protected Vertex pivot;
+	
 	protected Map<String, GameObject> children;
 	
 	public GameObject() {
@@ -36,6 +42,7 @@ public abstract class GameObject {
 		absolutePosition = new Vertex();
 		relativeRotation = new Vector();
 		absoluteRotation = new Vector();
+		pivot = new Vertex();
 		children = new HashMap<>();
 	}
 	
@@ -173,6 +180,14 @@ public abstract class GameObject {
 		this.absoluteRotation.x = relativeRotation.x;
 		this.absoluteRotation.y = relativeRotation.y;
 		this.absoluteRotation.z = relativeRotation.z;
+	}
+	
+	public void setPivot(Vertex pivot) {
+		this.pivot.setTo(pivot);
+	}
+	
+	public Vertex getPivot() {
+		return pivot;
 	}
 	
 	public GameObject getChild(String child) {

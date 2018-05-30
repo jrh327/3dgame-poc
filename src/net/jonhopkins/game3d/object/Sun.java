@@ -4,31 +4,25 @@ import java.awt.Color;
 
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.light.DirectionalLight;
-import net.jonhopkins.game3d.light.Light;
 import net.jonhopkins.game3d.model.Model;
 import net.jonhopkins.game3d.model.ModelFactory;
 import net.jonhopkins.game3d.script.SunUpdateScript;
 
 public class Sun extends Prefab {
-	private Light light;
 	private final double maxLightLevel = 0.875;
+	private final Vertex center = new Vertex(0, -320, 0);
 	
 	public Sun() {
-		Vertex center = new Vertex(0, -320, 0);
-		Vertex pivot = new Vertex();
+		pivot = new Vertex();
+		relativePosition = new Vertex();
 		
 		Model model = ModelFactory.getModel("sun.obj");
-		model.setPosition(center);
-		light = new DirectionalLight(center, pivot, Color.white, maxLightLevel);
-		relativePosition = new Vertex(pivot);
+		model.setPosition(new Vertex(center));
+		DirectionalLight light = new DirectionalLight(
+				new Vertex(center), new Vertex(), Color.white, maxLightLevel);
 		
-		this.registerChild("sun_model", model);
-		this.registerChild("sun_light", light);
-		
+		registerChild("sun_model", model);
+		registerChild("sun_light", light);
 		registerScript("rotation_script", new SunUpdateScript(this));
-	}
-	
-	public Light getLight() {
-		return light;
 	}
 }
