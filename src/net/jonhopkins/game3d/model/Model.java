@@ -1,7 +1,9 @@
 package net.jonhopkins.game3d.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.jonhopkins.game3d.geometry.Face;
 import net.jonhopkins.game3d.geometry.Vertex;
@@ -11,9 +13,15 @@ public class Model extends GameObject implements Drawable {
 	protected Vertex[] origVertices;
 	protected List<Vertex> vertices;
 	protected List<Face> faces;
+	protected Map<String, Animation> animations;
 	protected Bone primaryBone;
 	
 	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors) {
+		this(vertices, faceVertices, faceColors, new HashMap<String, Animation>(), null);
+	}
+	
+	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors,
+			Map<String, Animation> animations, Bone primaryBone) {
 		super();
 		this.origVertices = vertices;
 		this.vertices = new ArrayList<>(vertices.length);
@@ -29,6 +37,8 @@ public class Model extends GameObject implements Drawable {
 			}
 			this.faces.add(i, new Face(verts, faceColors[i]));
 		}
+		this.animations = animations;
+		this.primaryBone = primaryBone;
 	}
 	
 	@Override
@@ -53,5 +63,9 @@ public class Model extends GameObject implements Drawable {
 	@Override
 	public List<Face> getFaces() {
 		return faces;
+	}
+	
+	public void setAnimationActive(String name, boolean active) {
+		animations.get(name).setActive(active);
 	}
 }
