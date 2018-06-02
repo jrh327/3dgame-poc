@@ -156,7 +156,7 @@ public class ModelFactory {
 		Vertex[][] bonesVertices = new Vertex[numBones][];
 		for (int i = 0; i < numBones; i++) {
 			bonesChildren[i] = new Bone[boneChildren[i].length];
-			bones[i] = new Bone(bonePivots[i], bonesVertices[i], bonesChildren[i], null);
+			bones[i] = new Bone(bonePivots[i], bonesVertices[i], bonesChildren[i]);
 		}
 		
 		for (int i = 0; i < numBones; i++) {

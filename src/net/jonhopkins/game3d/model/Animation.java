@@ -1,17 +1,19 @@
 package net.jonhopkins.game3d.model;
 
-import net.jonhopkins.game3d.geometry.Vector;
-
 class Animation {
-	private Vector translate;
-	private Vector rotate;
-	private double duration;
+	private AnimationKey[] keys;
+	private double[] keyStarts;
+	private double timeElapsed;
 	private boolean active = false;
 	
-	public Animation(Vector translate, Vector rotate, double duration) {
-		this.translate = translate;
-		this.rotate = rotate;
-		this.duration = duration;
+	public Animation(AnimationKey[] keys, double[] keyStarts) {
+		this.keys = keys;
+		this.keyStarts = keyStarts;
+		this.timeElapsed = 0.0;
+	}
+	
+	public void update(double timestep) {
+		timeElapsed += timestep;
 	}
 	
 	public void setActive(boolean active) {
@@ -20,17 +22,5 @@ class Animation {
 	
 	public boolean isActive() {
 		return active;
-	}
-	
-	public Vector getTranslate() {
-		return translate;
-	}
-	
-	public Vector getRotate() {
-		return rotate;
-	}
-	
-	public double getDuration() {
-		return duration;
 	}
 }

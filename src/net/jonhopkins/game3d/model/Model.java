@@ -44,8 +44,8 @@ public class Model extends GameObject implements Drawable {
 	@Override
 	public void update(double timestep) {
 		resetVertices();
-		if (primaryBone != null) {
-			primaryBone.update(timestep);
+		for (Animation animation : animations.values()) {
+			animation.update(timestep);
 		}
 	}
 	
