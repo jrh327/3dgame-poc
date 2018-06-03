@@ -2,13 +2,13 @@ package net.jonhopkins.game3d.model;
 
 class Animation {
 	private AnimationKey[] keys;
-	private double[] keyStarts;
+	private double[] keyTimes;
 	private double timeElapsed;
 	private boolean active = false;
 	
-	public Animation(AnimationKey[] keys, double[] keyStarts) {
+	public Animation(AnimationKey[] keys, double[] keyTimes) {
 		this.keys = keys;
-		this.keyStarts = keyStarts;
+		this.keyTimes = keyTimes;
 		this.timeElapsed = 0.0;
 	}
 	

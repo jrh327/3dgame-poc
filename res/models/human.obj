@@ -336,8 +336,8 @@ b b14 7.0 5.0 0.0 97 98 99 100 101 102 103 104
 # right hand
 b 11.0 5.0 0.0 105 106 107 108 109 110 111 112
 
-# animation_key - k duration bone1_index translate1 rotate1 bone2_index translate2 rotate2 ...
-k 2.0 3 0.0 0.0 0.0 0.0 0.0 -45.0 6 0.0 0.0 0.0 0.0 0.0 45.0 9 0.0 0.0 0.0 0.0 0.0 -60.0 12 0.0 0.0 0.0 0.0 0.0 60.0
-k 2.0 3 0.0 0.0 0.0 0.0 0.0 0.0 6 0.0 0.0 0.0 0.0 0.0 0.0 9 0.0 0.0 0.0 0.0 0.0 60.0 12 0.0 0.0 0.0 0.0 0.0 -60.0
-# animation - a name key1_index key1_start key2_index key2_start ...
-a test_animation 4.0 1 0.0 2 2.0
+# animation_key - k bone1_index translate1 rotate1 bone2_index translate2 rotate2 ...
+k 3 0.0 0.0 0.0 0.0 0.0 -45.0 6 0.0 0.0 0.0 0.0 0.0 45.0 9 0.0 0.0 0.0 0.0 0.0 -60.0 12 0.0 0.0 0.0 0.0 0.0 60.0
+k 3 0.0 0.0 0.0 0.0 0.0 0.0 6 0.0 0.0 0.0 0.0 0.0 0.0 9 0.0 0.0 0.0 0.0 0.0 60.0 12 0.0 0.0 0.0 0.0 0.0 -60.0
+# animation - a name key1_index key1_time key2_index key2_time ...
+a test_animation 1 2.0 2 4.0
