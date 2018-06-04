@@ -8,6 +8,7 @@ import net.jonhopkins.game3d.light.AmbientLight;
 import net.jonhopkins.game3d.light.Light;
 import net.jonhopkins.game3d.object.Cube;
 import net.jonhopkins.game3d.object.MapSector;
+import net.jonhopkins.game3d.object.Person;
 import net.jonhopkins.game3d.object.Sun;
 
 public class MainScene extends Scene {
@@ -26,5 +27,6 @@ public class MainScene extends Scene {
 		
 		Cube cube = new Cube();
 		registerObject("cube", cube);
+		registerObject("person", new Person());
 	}
 }

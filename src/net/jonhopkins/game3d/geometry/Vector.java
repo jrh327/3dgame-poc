@@ -23,6 +23,12 @@ public class Vector {
 		this.z = point.z;
 	}
 	
+	public Vector(Vector vector) {
+		this.x = vector.x;
+		this.y = vector.y;
+		this.z = vector.z;
+	}
+
 	/**
 	 * Set the components of this vector to those of the other vector.
 	 * 

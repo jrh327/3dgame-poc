@@ -47,6 +47,9 @@ public class Model extends GameObject implements Drawable {
 		for (Animation animation : animations.values()) {
 			animation.update(timestep);
 		}
+		if (primaryBone != null) {
+			primaryBone.rotateAndTranslate();
+		}
 	}
 	
 	private void resetVertices() {

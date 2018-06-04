@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 
 public class ModelFactory {
@@ -69,13 +70,22 @@ public class ModelFactory {
 		Vertex[] vertices = new Vertex[numVertices];
 		int[][] faces = new int[numFaces][];
 		int[] colors = new int[numFaces];
-		Map<String, Animation> animations = new HashMap<>();
-		Bone primaryBone = null;
 		
 		int boneCounter = 0;
 		Vertex[] bonePivots = new Vertex[numBones];
 		int[][] boneChildren = new int[numBones][];
 		int[][] boneVerts = new int[numBones][];
+		
+		int keyCounter = 0;
+		int[][] keyBoneIndices = new int[numKeys][];
+		Vector[][] keyTranslations = new Vector[numKeys][];
+		Vector[][] keyRotations = new Vector[numKeys][];
+		
+		int animationCounter = 0;
+		String[] animationNames = new String[numAnimations];
+		int[][] animationKeyIndices = new int[numAnimations][];
+		double[][] animationKeyTimes = new double[numAnimations][];
+		Map<String, Animation> animations = new HashMap<>();
 		
 		int vertexCounter = 0;
 		int faceCounter = 0;
@@ -119,7 +129,7 @@ public class ModelFactory {
 				int[] bchildren = new int[numChildren];
 				boneChildren[boneCounter] = bchildren;
 				for (int i = 0; i < numChildren; i++) {
-					bchildren[i] = Integer.valueOf(parts[i + 1].substring(1));
+					bchildren[i] = Integer.valueOf(parts[i + 1].substring(1)) - 1;
 				}
 				
 				double pivotX = Double.valueOf(parts[numChildren + 1]);
@@ -131,7 +141,7 @@ public class ModelFactory {
 				boneVerts[boneCounter] = bverts;
 				int vert = 0;
 				for (int i = numChildren + 4; i < parts.length; i++) {
-					bverts[vert] = Integer.valueOf(parts[i]);
+					bverts[vert] = Integer.valueOf(parts[i]) - 1;
 					vert++;
 				}
 				
@@ -139,11 +149,57 @@ public class ModelFactory {
 				break;
 			}
 			case 'k': {
+				//animation_key - k bone1_index translate1 rotate1 bone2_index translate2 rotate2 ...
 				String[] parts = line.split(" ");
+				int numKeyBones = (parts.length - 1) / 7;
+				
+				int[] keyBones = new int[numKeyBones];
+				keyBoneIndices[keyCounter] = keyBones;
+				Vector[] translations  = new Vector[numKeyBones];
+				keyTranslations[keyCounter] = translations;
+				Vector[] rotations = new Vector[numKeyBones];
+				keyRotations[keyCounter] = rotations;
+				
+				int bone = 1;
+				for (int i = 0; i < numKeyBones; i++) {
+					keyBones[i] = Integer.valueOf(parts[bone]) - 1;
+					
+					double translateX = Double.valueOf(parts[bone + 1]);
+					double translateY = Double.valueOf(parts[bone + 2]);
+					double translateZ = Double.valueOf(parts[bone + 3]);
+					translations[i] = new Vector(translateX, translateY, translateZ);
+					
+					double rotateX = Double.valueOf(parts[bone + 4]);
+					double rotateY = Double.valueOf(parts[bone + 5]);
+					double rotateZ = Double.valueOf(parts[bone + 6]);
+					rotations[i] = new Vector(rotateX, rotateY, rotateZ);
+					
+					bone += 7;
+				}
+				
+				keyCounter++;
+				
 				break;
 			}
 			case 'a': {
+				//animation - a name key1_index key1_time key2_index key2_time ...
 				String[] parts = line.split(" ");
+				int numAnimationKeys = (parts.length - 2) / 2;
+				
+				int[] keyIndices = new int[numAnimationKeys];
+				animationKeyIndices[animationCounter] = keyIndices;
+				animationKeyTimes[animationCounter] = new double[numAnimationKeys];
+				
+				animationNames[animationCounter] = parts[1];
+				
+				int animation = 2;
+				for (int i = 0; i < numAnimationKeys; i++) {
+					keyIndices[i] = Integer.valueOf(parts[animation]) - 1;
+					animationKeyTimes[animationCounter][i] = Double.valueOf(parts[animation + 1]);
+					animation += 2;
+				}
+				
+				animationCounter++;
 				break;
 			}
 			default:
@@ -156,6 +212,7 @@ public class ModelFactory {
 		Vertex[][] bonesVertices = new Vertex[numBones][];
 		for (int i = 0; i < numBones; i++) {
 			bonesChildren[i] = new Bone[boneChildren[i].length];
+			bonesVertices[i] = new Vertex[boneVerts[i].length];
 			bones[i] = new Bone(bonePivots[i], bonesVertices[i], bonesChildren[i]);
 		}
 		
@@ -168,11 +225,34 @@ public class ModelFactory {
 			
 			Vertex[] bverts = bonesVertices[i];
 			int[] verticesIndices = boneVerts[i];
-			for (int j = 0; j < bchildren.length; j++) {
+			for (int j = 0; j < bverts.length; j++) {
 				bverts[j] = vertices[verticesIndices[j]];
 			}
 		}
 		
+		AnimationKey[] keys = new AnimationKey[numKeys];
+		for (int i = 0; i < numKeys; i++) {
+			int[] boneIndices = keyBoneIndices[i];
+			Bone[] keyBones = new Bone[boneIndices.length];
+			for (int b = 0; b < keyBones.length; b++) {
+				keyBones[b] = bones[boneIndices[b]];
+			}
+			keys[i] = new AnimationKey(keyBones, keyTranslations[i], keyRotations[i]);
+		}
+		
+		for (int i = 0; i < numAnimations; i++) {
+			int[] keyIndices = animationKeyIndices[i];
+			AnimationKey[] animationKeys = new AnimationKey[keyIndices.length];
+			for (int k = 0; k < animationKeys.length; k++) {
+				animationKeys[k] = keys[keyIndices[k]];
+			}
+			animations.put(animationNames[i], new Animation(animationKeys, animationKeyTimes[i]));
+		}
+		
+		Bone primaryBone = null;
+		if (bones.length > 0) {
+			primaryBone = bones[0];
+		}
 		return new Model(vertices, faces, colors, animations, primaryBone);
 	}
 }
