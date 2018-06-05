@@ -22,7 +22,7 @@ public class Renderer {
 	private int halfScreenY;
 	private double viewingDistance;
 	private int frameCount = 0;
-	private double elapsedTime = 1;
+	private double elapsedTime = 0;
 	private double tod = 0;
 	
 	private final Color DEBUG_TEXT_COLOR = Color.white;
@@ -110,11 +110,15 @@ public class Renderer {
 		bufferGraphics.drawString((new StringBuilder("rotatey: ")).append(cameraRotation.y).toString(), 10, 30);
 		bufferGraphics.drawString(new StringBuilder("pointing at: ").append(mousePosition.x).append(", ").append(mousePosition.y).append(", ").append(mousePosition.z).toString(), 10, 40);
 		
-		int framesPerMs = (int)(elapsedTime / frameCount);
+		double framesPerMs = (elapsedTime / frameCount);
 		if (framesPerMs == 0) {
 			framesPerMs = 1;
 		}
-		bufferGraphics.drawString((new StringBuilder("")).append(1000 / framesPerMs).append(" fps").toString(), 10, 50);
+		bufferGraphics.drawString((new StringBuilder("")).append((int)(1.0 / framesPerMs)).append(" fps").toString(), 10, 50);
+		if (elapsedTime > 1) {
+			elapsedTime = 0;
+			frameCount = 0;
+		}
 		
 		tod += timestep;
 		if (tod >= 1440.0) {
@@ -245,41 +249,7 @@ public class Renderer {
 		int ys[] = new int[3];
 		int closestToMouse = -1;
 		
-		double lightlevel = 0;
-		
-		/*if (tod < 240 || tod > 1320) {
-			lightlevel = 1;
-			bufferGraphics.setColor(new Color(0, 0, 50));
-		} else if (tod > 660 && tod < 900) {
-			lightlevel = 8;
-			bufferGraphics.setColor(new Color(153, 153, 255));
-		} else {
-			if (tod <= 660) {
-				lightlevel = (double)(tod / 60 - 3 + (tod % 60) / 60.0);
-				int r = clamp((int)(lightlevel * 153 / 8), 0, 255);
-				int g = clamp((int)(lightlevel * 153 / 8), 0, 255);
-				int b = clamp(50 + (int)(lightlevel * 205 / 8), 0, 255);
-				
-				bufferGraphics.setColor(new Color(r, g, b));
-			} else if (tod >= 900) {
-				lightlevel = (double)(tod / 60 - (9 + 2 * (tod / 60 - 16)) - (1 - (tod % 60) / 60.0));
-				int r = clamp((int)((1 - lightlevel) * 153 / 8), 0, 255);
-				int g = clamp((int)((1 - lightlevel) * 153 / 8), 0, 255);
-				int b = clamp(50 + (int)((1 - lightlevel) * 205 / 8), 0, 255);
-				
-				bufferGraphics.setColor(new Color(r, g, b));
-			} else {
-				int r = clamp((int)(lightlevel * 153 / 8), 0, 255);
-				int g = clamp((int)(lightlevel * 153 / 8), 0, 255);
-				int b = clamp(50 + (int)(lightlevel * 205 / 8), 0, 255);
-				
-				bufferGraphics.setColor(new Color(r, g, b));
-			}
-		}*/
 		bufferGraphics.setColor(new Color(153, 153, 205));
-		
-		double timeofdayscalar = (8.0 - Math.abs(lightlevel - 8.0)) / 8.0;
-		
 		bufferGraphics.fillRect(0, 0, 2 * halfScreenX, 2 * halfScreenY);
 		
 		int counter = 0;

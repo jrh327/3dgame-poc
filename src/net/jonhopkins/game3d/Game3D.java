@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
-import java.util.Calendar;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -24,7 +23,6 @@ public class Game3D extends JFrame implements Runnable {
 	private final Color PAUSED_OVERLAY_COLOR = new Color(0, 0, 0, 150);
 	
 	private boolean gameIsRunning;
-	private int tod = 0;
 	
 	private Menu menu;
 	private MapSector s1;
@@ -35,7 +33,6 @@ public class Game3D extends JFrame implements Runnable {
 	private Vertex mousePosition;
 	private double speedx = 1;
 	private double speedz = 1;
-	private int framecount = 0;
 	private double cameraHeight;
 	private int viewingDistance;
 	private int halfScreenX;
@@ -112,8 +109,6 @@ public class Game3D extends JFrame implements Runnable {
 		
 		s1 = MapSector.getMapSector(0, 0);
 		
-		updateTime();
-		
 		menu = new Menu(this, bufferGraphics);
 		menu.draw();
 		
@@ -122,8 +117,6 @@ public class Game3D extends JFrame implements Runnable {
 	
 	@Override
 	public void run() {
-		short ticks = 0;
-		long timesofar = 0;
 		long lastFrame = System.currentTimeMillis();
 		
 		try {
@@ -132,12 +125,13 @@ public class Game3D extends JFrame implements Runnable {
 				mouse.poll();
 				
 				if (gameIsRunning) {
-					long time = System.currentTimeMillis();
-					double timestep = (time - lastFrame) / 1000.0;
+					long startOfFrame = System.currentTimeMillis();
+					double timestep = (startOfFrame - lastFrame) / 1000.0;
 					
 					scene.update(timestep);
 					
-					if (keyboard.keyDown(KeyEvent.VK_ESCAPE) || (keyboard.keyDown(KeyEvent.VK_CONTROL) && keyboard.keyDown(KeyEvent.VK_C))) {
+					if (keyboard.keyDown(KeyEvent.VK_ESCAPE)
+							|| (keyboard.keyDown(KeyEvent.VK_CONTROL) && keyboard.keyDown(KeyEvent.VK_C))) {
 						setGameRunning(false);
 						break;
 					} else if (keyboard.keyDown(KeyEvent.VK_P)){
@@ -148,25 +142,22 @@ public class Game3D extends JFrame implements Runnable {
 						processInput();
 					}
 					
-					framecount++;
 					renderer.renderScene(scene, timestep);
-					lastFrame = time;
 					repaint();
 					
-					timesofar += (System.currentTimeMillis() - time);
-					if (ticks >= 10) {
-						ticks = 0;
-						timesofar = 0;
-						framecount = 0;
-						updateTime();
+					lastFrame = startOfFrame;
+					
+					long timeForFrame = System.currentTimeMillis() - startOfFrame;
+					if (timeForFrame < 15) {
+						try {
+							Thread.sleep(15 - timeForFrame);
+						} catch (InterruptedException e) {
+							// just move on to the next frame
+						}
 					}
-					ticks++;
 				} else {
 					processInput();
 				}
-				try {
-					Thread.sleep(50L);
-				} catch(InterruptedException interruptedexception) { }
 			}
 		} finally {
 			if (bufferGraphics != null) bufferGraphics.dispose();
@@ -296,17 +287,6 @@ public class Game3D extends JFrame implements Runnable {
 			repaint();
 			mouse.setRelative(false);
 			mouse.enableCursor();
-		}
-	}
-	
-	public void updateTime() {
-		Calendar cal = Calendar.getInstance();
-		int hour = cal.get(Calendar.HOUR_OF_DAY);
-		int min = cal.get(Calendar.MINUTE);
-		int sec = cal.get(Calendar.SECOND);
-		tod = ((60 * hour + min) % 24) * 60 + sec;
-		if (tod > 1439) {
-			tod = 0;
 		}
 	}
 }
