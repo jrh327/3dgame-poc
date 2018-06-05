@@ -30,7 +30,7 @@ public class ModelFactory {
 	public static Model getModel(String filename) {
 		List<String> lines;
 		try {
-			lines = Files.readAllLines(new File("res/models/" + filename).toPath());
+			lines = Files.readAllLines(new File("src/main/resources/models/" + filename).toPath());
 		} catch (IOException e) {
 			e.printStackTrace();
 			return new Model(new Vertex[0], new int[0][], new int[0]);
