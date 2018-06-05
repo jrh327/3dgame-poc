@@ -27,26 +27,23 @@ class Bone {
 	
 	public void rotateAndTranslate() {
 		for (Bone child : children) {
-			child.pivot.translate(new Vector(-pivot.x, -pivot.y, -pivot.z));
-			child.pivot.rotateX(rotation.x);
-			child.pivot.rotateY(rotation.y);
-			child.pivot.rotateZ(rotation.z);
-			child.pivot.translate(translation);
 			child.rotateAndTranslate();
-			child.pivot.translate(new Vector(-translation.x, -translation.y, -translation.z));
-			child.pivot.rotateZ(-rotation.z);
-			child.pivot.rotateY(-rotation.y);
-			child.pivot.rotateX(-rotation.x);
-			child.pivot.translate(new Vector(pivot));
 		}
-		
+		rotateAndTranslate(pivot, translation, rotation);
+	}
+	
+	private void rotateAndTranslate(Vertex pivot, Vector translate, Vector rotate) {
 		List<Vertex> verts = Arrays.asList(vertices);
 		Vertex.translate(verts, new Vector(-pivot.x, -pivot.y, -pivot.z));
-		Vertex.rotateX(verts, rotation.x);
-		Vertex.rotateY(verts, rotation.y);
-		Vertex.rotateZ(verts, rotation.z);
+		Vertex.rotateX(verts, rotate.x);
+		Vertex.rotateY(verts, rotate.y);
+		Vertex.rotateZ(verts, rotate.z);
 		Vertex.translate(verts, new Vector(pivot));
-		Vertex.translate(verts, translation);
+		Vertex.translate(verts, translate);
+		
+		for (Bone child : children) {
+			child.rotateAndTranslate(pivot, translate, rotate);
+		}
 	}
 	
 	public Vertex[] getVertices() {

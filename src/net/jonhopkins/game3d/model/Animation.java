@@ -22,6 +22,7 @@ class Animation {
 		
 		this.previousTranslations = new HashMap<>();
 		this.previousRotations = new HashMap<>();
+		reset();
 	}
 	
 	public void update(double timestep) {
@@ -59,43 +60,59 @@ class Animation {
 		Vector[] translations = key.getTranslations();
 		Vector[] rotations = key.getRotations();
 		if (newKey) {
-			for (Bone bone : bones) {
-				previousTranslations.put(bone, new Vector(bone.getTranslation()));
-				previousRotations.put(bone, new Vector(bone.getRotation()));
+			Bone[] prevBones = keys[currentKey - 1].getBones();
+			Vector[] prevTranslations = keys[currentKey - 1].getTranslations();
+			Vector[] prevRotations = keys[currentKey - 1].getRotations();
+			for (int i = 0; i < prevBones.length; i++) {
+				previousTranslations.put(prevBones[i], new Vector(prevTranslations[i]));
+				previousRotations.put(prevBones[i], new Vector(prevRotations[i]));
 			}
 		}
 		
 		for (int i = 0; i < bones.length; i++) {
 			Vector curTranslation = bones[i].getTranslation();
+			Vector startTranslation = previousTranslations.get(bones[i]);
 			Vector targetTranslation = translations[i];
 			
-			double dx = (targetTranslation.x - curTranslation.x) * fractionOfKey;
-			double dy = (targetTranslation.y - curTranslation.y) * fractionOfKey;
-			double dz = (targetTranslation.z - curTranslation.z) * fractionOfKey;
+			double dx = startTranslation.x + (targetTranslation.x - startTranslation.x) * fractionOfKey;
+			double dy = startTranslation.y + (targetTranslation.y - startTranslation.y) * fractionOfKey;
+			double dz = startTranslation.z + (targetTranslation.z - startTranslation.z) * fractionOfKey;
 			
-			curTranslation.x += dx;
-			curTranslation.y += dy;
-			curTranslation.z += dz;
+			curTranslation.x = dx;
+			curTranslation.y = dy;
+			curTranslation.z = dz;
 			
 			Vector curRotation = bones[i].getRotation();
+			Vector startRotation = previousRotations.get(bones[i]);
 			Vector targetRotation = rotations[i];
 			
-			dx = (targetRotation.x - curRotation.x) * fractionOfKey;
-			dy = (targetRotation.y - curRotation.y) * fractionOfKey;
-			dz = (targetRotation.z - curRotation.z) * fractionOfKey;
+			dx = startRotation.x + (targetRotation.x - startRotation.x) * fractionOfKey;
+			dy = startRotation.y + (targetRotation.y - startRotation.y) * fractionOfKey;
+			dz = startRotation.z + (targetRotation.z - startRotation.z) * fractionOfKey;
 			
-			curRotation.x += dx;
-			curRotation.y += dy;
-			curRotation.z += dz;
+			curRotation.x = dx;
+			curRotation.y = dy;
+			curRotation.z = dz;
 		}
 	}
 	
 	public void setActive(boolean active) {
 		if (active && !this.active) {
-			timeElapsed = 0.0;
-			currentKey = 0;
+			reset();
 		}
 		this.active = active;
+	}
+	
+	public void reset() {
+		timeElapsed = 0.0;
+		currentKey = 0;
+		Bone[] bones = keys[0].getBones();
+		for (Bone bone : bones) {
+			Vector translation = new Vector(bone.getTranslation());
+			Vector rotation = new Vector(bone.getRotation());
+			previousTranslations.put(bone, translation);
+			previousRotations.put(bone, rotation);
+		}
 	}
 	
 	public boolean isActive() {

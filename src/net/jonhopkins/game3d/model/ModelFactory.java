@@ -149,7 +149,6 @@ public class ModelFactory {
 				break;
 			}
 			case 'k': {
-				//animation_key - k bone1_index translate1 rotate1 bone2_index translate2 rotate2 ...
 				String[] parts = line.split(" ");
 				int numKeyBones = (parts.length - 1) / 7;
 				
@@ -182,7 +181,6 @@ public class ModelFactory {
 				break;
 			}
 			case 'a': {
-				//animation - a name key1_index key1_time key2_index key2_time ...
 				String[] parts = line.split(" ");
 				int numAnimationKeys = (parts.length - 2) / 2;
 				

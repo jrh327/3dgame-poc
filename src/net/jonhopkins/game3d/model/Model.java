@@ -1,6 +1,7 @@
 package net.jonhopkins.game3d.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +24,10 @@ public class Model extends GameObject implements Drawable {
 	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors,
 			Map<String, Animation> animations, Bone primaryBone) {
 		super();
-		this.origVertices = vertices;
-		this.vertices = new ArrayList<>(vertices.length);
+		this.vertices = Arrays.asList(vertices);
+		this.origVertices = new Vertex[vertices.length];
 		for (int i = 0; i < vertices.length; i++) {
-			this.vertices.add(i, new Vertex(this.origVertices[i]));
+			this.origVertices[i] = new Vertex(vertices[i]);
 		}
 		this.faces = new ArrayList<>(faceVertices.length);
 		for (int i = 0; i < faceVertices.length; i++) {
