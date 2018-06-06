@@ -142,25 +142,20 @@ public class Game3D extends JFrame implements Runnable {
 						processInput();
 					}
 					
-					renderer.renderScene(scene, timestep);
-					repaint();
+					synchronized (buffer) {
+						renderer.renderScene(scene, timestep);
+						repaint();
+					}
 					
 					lastFrame = startOfFrame;
-					
-					long timeForFrame = System.currentTimeMillis() - startOfFrame;
-					if (timeForFrame < 15) {
-						try {
-							Thread.sleep(15 - timeForFrame);
-						} catch (InterruptedException e) {
-							// just move on to the next frame
-						}
-					}
 				} else {
 					processInput();
 				}
 			}
 		} finally {
-			if (bufferGraphics != null) bufferGraphics.dispose();
+			if (bufferGraphics != null) {
+				bufferGraphics.dispose();
+			}
 		}
 		
 		System.exit(0);
@@ -272,7 +267,9 @@ public class Game3D extends JFrame implements Runnable {
 	
 	@Override
 	public void paint(Graphics g) {
-		g.drawImage(buffer, 0, 0, this);
+		synchronized (buffer) {
+			g.drawImage(buffer, 0, 0, this);
+		}
 	}
 	
 	public void setGameRunning(boolean running) {
