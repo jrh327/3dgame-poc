@@ -31,8 +31,10 @@ public class Game3D extends JFrame implements Runnable {
 	private MapEditor mapeditor;
 	private Camera camera;
 	private Vertex mousePosition;
-	private double speedx = 1;
-	private double speedz = 1;
+	private double speedx = 10;
+	private double speedz = 10;
+	private double camVertSpeed = 50;
+	private double camHorizSpeed = 50;
 	private double cameraHeight;
 	private int viewingDistance;
 	private int halfScreenX;
@@ -124,10 +126,10 @@ public class Game3D extends JFrame implements Runnable {
 				keyboard.poll();
 				mouse.poll();
 				
+				long startOfFrame = System.currentTimeMillis();
+				double timestep = (startOfFrame - lastFrame) / 1000.0;
+				
 				if (gameIsRunning) {
-					long startOfFrame = System.currentTimeMillis();
-					double timestep = (startOfFrame - lastFrame) / 1000.0;
-					
 					scene.update(timestep);
 					
 					if (keyboard.keyDown(KeyEvent.VK_ESCAPE)
@@ -139,7 +141,7 @@ public class Game3D extends JFrame implements Runnable {
 						menu.draw();
 						continue;
 					} else {
-						processInput();
+						processInput(timestep);
 					}
 					
 					synchronized (buffer) {
@@ -149,7 +151,7 @@ public class Game3D extends JFrame implements Runnable {
 					
 					lastFrame = startOfFrame;
 				} else {
-					processInput();
+					processInput(timestep);
 				}
 			}
 		} finally {
@@ -161,7 +163,7 @@ public class Game3D extends JFrame implements Runnable {
 		System.exit(0);
 	}
 	
-	public void processInput() {
+	public void processInput(double timestep) {
 		if (gameIsRunning) {
 			camera.position.x /= 10;
 			camera.position.z /= 10;
@@ -172,24 +174,24 @@ public class Game3D extends JFrame implements Runnable {
 			double sinY = Math.sin(camera.rotation.y * Math.PI / 180.0);
 			
 			if (keyboard.keyDown(KeyEvent.VK_W)) {
-				tempZ += cosY * speedz;
-				tempX -= sinY * speedx;
+				tempZ += cosY * speedz * timestep;
+				tempX -= sinY * speedx * timestep;
 			}
 			if (keyboard.keyDown(KeyEvent.VK_A)) {
-				tempX -= cosY * speedx;
-				tempZ -= sinY * speedz;
+				tempX -= cosY * speedx * timestep;
+				tempZ -= sinY * speedz * timestep;
 			}
 			if (keyboard.keyDown(KeyEvent.VK_S)) {
 				if (keyboard.keyDown(KeyEvent.VK_CONTROL)) {
 					//mapeditor.save(0, 0);
 				} else {
-					tempZ -= cosY * speedz;
-					tempX += sinY * speedx;
+					tempZ -= cosY * speedz * timestep;
+					tempX += sinY * speedx * timestep;
 				}
 			}
 			if (keyboard.keyDown(KeyEvent.VK_D)) {
-				tempX += cosY * speedx;
-				tempZ += sinY * speedz;
+				tempX += cosY * speedx * timestep;
+				tempZ += sinY * speedz * timestep;
 			}
 			
 			if (tempX <= -32.0) {
@@ -219,16 +221,16 @@ public class Game3D extends JFrame implements Runnable {
 			}
 			
 			if (keyboard.keyDown(KeyEvent.VK_UP)) {
-				camera.rotation.x += 5;
+				camera.rotation.x += Math.ceil(camVertSpeed * timestep);
 			}
 			if (keyboard.keyDown(KeyEvent.VK_DOWN)) {
-				camera.rotation.x -= 5;
+				camera.rotation.x -= Math.ceil(camVertSpeed * timestep);
 			}
 			if (keyboard.keyDown(KeyEvent.VK_LEFT)) {
-				camera.rotation.y += 5;
+				camera.rotation.y += Math.ceil(camHorizSpeed * timestep);
 			}
 			if (keyboard.keyDown(KeyEvent.VK_RIGHT)) {
-				camera.rotation.y -= 5;
+				camera.rotation.y -= Math.ceil(camHorizSpeed * timestep);
 			}
 			
 			//Point p = mouse.getPosition();
