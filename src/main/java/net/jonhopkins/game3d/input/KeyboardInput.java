@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 
 public class KeyboardInput implements KeyListener {
 	private static final int KEY_COUNT = 256;
+	private static final KeyboardInput instance = new KeyboardInput();
 	
 	private enum KeyState {
 		RELEASED, // Not down
@@ -18,7 +19,7 @@ public class KeyboardInput implements KeyListener {
 	// Polled keyboard state
 	private KeyState[] keys = null;
 	
-	public KeyboardInput() {
+	private KeyboardInput() {
 		currentKeys = new boolean[KEY_COUNT];
 		keys = new KeyState[KEY_COUNT];
 		for (int i = 0; i < KEY_COUNT; i++) {
@@ -26,35 +27,39 @@ public class KeyboardInput implements KeyListener {
 		}
 	}
 	
-	public synchronized void poll() {
+	public static KeyboardInput getInstance() {
+		return instance;
+	}
+	
+	public static void poll() {
 		for (int i = 0; i < KEY_COUNT; i++) {
 			// Set the key state 
-			if (currentKeys[i]) {
+			if (instance.currentKeys[i]) {
 				// If the key is down now, but was not
 				// down last frame, set it to ONCE,
 				// otherwise, set it to PRESSED
-				if (keys[i] == KeyState.RELEASED) {
-					keys[i] = KeyState.ONCE;
+				if (instance.keys[i] == KeyState.RELEASED) {
+					instance.keys[i] = KeyState.ONCE;
 				} else {
-					keys[i] = KeyState.PRESSED;
+					instance.keys[i] = KeyState.PRESSED;
 				}
 			} else {
-				keys[i] = KeyState.RELEASED;
+				instance.keys[i] = KeyState.RELEASED;
 			}
 		}
 	}
 	
-	public boolean keyDown(int keyCode) {
-		if (keyCode < 0 || keyCode >= keys.length) {
+	public static boolean keyDown(int keyCode) {
+		if (keyCode < 0 || keyCode >= instance.keys.length) {
 			return false;
 		}
 		
-		return keys[keyCode] == KeyState.ONCE ||
-				keys[keyCode] == KeyState.PRESSED;
+		return instance.keys[keyCode] == KeyState.ONCE ||
+				instance.keys[keyCode] == KeyState.PRESSED;
 	}
 	
-	public boolean keyDownOnce(int keyCode) {
-		return keys[keyCode] == KeyState.ONCE;
+	public static boolean keyDownOnce(int keyCode) {
+		return instance.keys[keyCode] == KeyState.ONCE;
 	}
 	
 	@Override

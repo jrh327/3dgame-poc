@@ -20,6 +20,7 @@ public abstract class Scene {
 	}
 	
 	public void update(double timestep) {
+		camera.update(timestep);
 		for (Light light : lights.values()) {
 			light.update(timestep);
 		}

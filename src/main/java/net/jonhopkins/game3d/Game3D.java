@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.gui.Menu;
 import net.jonhopkins.game3d.input.KeyboardInput;
@@ -33,13 +32,10 @@ public class Game3D extends JFrame implements Runnable {
 	private Vertex mousePosition;
 	private double speedx = 10;
 	private double speedz = 10;
-	private double camVertSpeed = 50;
-	private double camHorizSpeed = 50;
 	private double cameraHeight;
 	private int viewingDistance;
 	private int halfScreenX;
 	private int halfScreenY;
-	private KeyboardInput keyboard;
 	private MouseInput mouse;
 	private Renderer renderer;
 	private Scene scene;
@@ -51,7 +47,6 @@ public class Game3D extends JFrame implements Runnable {
 	public Game3D() {
 		cameraHeight = 10;
 		viewingDistance = 320;
-		camera = new Camera(new Vertex(0D, cameraHeight, 0D), new Vector());
 		mousePosition = new Vertex();
 		mapeditor = new MapEditor(0, 0);
 		halfScreenX = 300;
@@ -90,8 +85,7 @@ public class Game3D extends JFrame implements Runnable {
 		buffer = createImage(width, height);
 		bufferGraphics = buffer.getGraphics();
 		
-		keyboard = new KeyboardInput();
-		addKeyListener(keyboard);
+		addKeyListener(KeyboardInput.getInstance());
 		
 		mouse = new MouseInput(this);
 		mouse.setRelative(true);
@@ -103,11 +97,12 @@ public class Game3D extends JFrame implements Runnable {
 	public void initialize() {
 		setGameRunning(false);
 		
+		scene = new MainScene();
+		camera = scene.getCamera();
 		renderer = new Renderer(bufferGraphics);
 		renderer.setCamera(camera);
 		renderer.setDimensions(halfScreenX * 2, halfScreenY * 2);
 		renderer.setRenderDistance(viewingDistance);
-		scene = new MainScene();
 		
 		s1 = MapSector.getMapSector(0, 0);
 		
@@ -123,7 +118,7 @@ public class Game3D extends JFrame implements Runnable {
 		
 		try {
 			while (true) {
-				keyboard.poll();
+				KeyboardInput.poll();
 				mouse.poll();
 				
 				long startOfFrame = System.currentTimeMillis();
@@ -132,11 +127,11 @@ public class Game3D extends JFrame implements Runnable {
 				if (gameIsRunning) {
 					scene.update(timestep);
 					
-					if (keyboard.keyDown(KeyEvent.VK_ESCAPE)
-							|| (keyboard.keyDown(KeyEvent.VK_CONTROL) && keyboard.keyDown(KeyEvent.VK_C))) {
+					if (KeyboardInput.keyDown(KeyEvent.VK_ESCAPE)
+							|| (KeyboardInput.keyDown(KeyEvent.VK_CONTROL) && KeyboardInput.keyDown(KeyEvent.VK_C))) {
 						setGameRunning(false);
 						break;
-					} else if (keyboard.keyDown(KeyEvent.VK_P)){
+					} else if (KeyboardInput.keyDown(KeyEvent.VK_P)){
 						setGameRunning(false);
 						menu.draw();
 						continue;
@@ -173,23 +168,23 @@ public class Game3D extends JFrame implements Runnable {
 			double cosY = Math.cos(camera.rotation.y * Math.PI / 180.0);
 			double sinY = Math.sin(camera.rotation.y * Math.PI / 180.0);
 			
-			if (keyboard.keyDown(KeyEvent.VK_W)) {
+			if (KeyboardInput.keyDown(KeyEvent.VK_W)) {
 				tempZ += cosY * speedz * timestep;
 				tempX -= sinY * speedx * timestep;
 			}
-			if (keyboard.keyDown(KeyEvent.VK_A)) {
+			if (KeyboardInput.keyDown(KeyEvent.VK_A)) {
 				tempX -= cosY * speedx * timestep;
 				tempZ -= sinY * speedz * timestep;
 			}
-			if (keyboard.keyDown(KeyEvent.VK_S)) {
-				if (keyboard.keyDown(KeyEvent.VK_CONTROL)) {
+			if (KeyboardInput.keyDown(KeyEvent.VK_S)) {
+				if (KeyboardInput.keyDown(KeyEvent.VK_CONTROL)) {
 					//mapeditor.save(0, 0);
 				} else {
 					tempZ -= cosY * speedz * timestep;
 					tempX += sinY * speedx * timestep;
 				}
 			}
-			if (keyboard.keyDown(KeyEvent.VK_D)) {
+			if (KeyboardInput.keyDown(KeyEvent.VK_D)) {
 				tempX += cosY * speedx * timestep;
 				tempZ += sinY * speedz * timestep;
 			}
@@ -214,38 +209,10 @@ public class Game3D extends JFrame implements Runnable {
 			camera.position.x *= 10;
 			camera.position.z *= 10;
 			
-			if (keyboard.keyDown(KeyEvent.VK_PLUS)) {
+			if (KeyboardInput.keyDown(KeyEvent.VK_PLUS)) {
 				mapeditor.changeRaisePoint('+');
-			} else if (keyboard.keyDown(KeyEvent.VK_MINUS)) {
+			} else if (KeyboardInput.keyDown(KeyEvent.VK_MINUS)) {
 				mapeditor.changeRaisePoint('-');
-			}
-			
-			if (keyboard.keyDown(KeyEvent.VK_UP)) {
-				camera.rotation.x += Math.ceil(camVertSpeed * timestep);
-			}
-			if (keyboard.keyDown(KeyEvent.VK_DOWN)) {
-				camera.rotation.x -= Math.ceil(camVertSpeed * timestep);
-			}
-			if (keyboard.keyDown(KeyEvent.VK_LEFT)) {
-				camera.rotation.y += Math.ceil(camHorizSpeed * timestep);
-			}
-			if (keyboard.keyDown(KeyEvent.VK_RIGHT)) {
-				camera.rotation.y -= Math.ceil(camHorizSpeed * timestep);
-			}
-			
-			//Point p = mouse.getPosition();
-			//rotatey -= p.x;
-			//rotatex -= p.y;
-			
-			if (camera.rotation.y < 0) {
-				camera.rotation.y += 360;
-			} else if (camera.rotation.y >= 360) {
-				camera.rotation.y -= 360;
-			}
-			if (camera.rotation.x < -89) {
-				camera.rotation.x = -89;
-			} else if (camera.rotation.x > 89) {
-				camera.rotation.x = 89;
 			}
 			
 			if (mouse.buttonDown(1)) {

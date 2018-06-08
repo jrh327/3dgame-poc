@@ -17,7 +17,7 @@ public class MainScene extends Scene {
 	public MainScene() {
 		super();
 		
-		camera = new Camera(new Vertex(0.0, cameraHeight, 0.0), new Vector());
+		camera = new FirstPersonCamera(new Vertex(0.0, cameraHeight, 0.0), new Vector());
 		
 		Sun sun = new Sun();
 		registerObject("sun", sun);
