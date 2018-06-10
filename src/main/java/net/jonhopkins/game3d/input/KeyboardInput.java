@@ -32,19 +32,21 @@ public class KeyboardInput implements KeyListener {
 	}
 	
 	public static void poll() {
-		for (int i = 0; i < KEY_COUNT; i++) {
-			// Set the key state 
-			if (instance.currentKeys[i]) {
-				// If the key is down now, but was not
-				// down last frame, set it to ONCE,
-				// otherwise, set it to PRESSED
-				if (instance.keys[i] == KeyState.RELEASED) {
-					instance.keys[i] = KeyState.ONCE;
+		synchronized (instance) {
+			for (int i = 0; i < KEY_COUNT; i++) {
+				// Set the key state 
+				if (instance.currentKeys[i]) {
+					// If the key is down now, but was not
+					// down last frame, set it to ONCE,
+					// otherwise, set it to PRESSED
+					if (instance.keys[i] == KeyState.RELEASED) {
+						instance.keys[i] = KeyState.ONCE;
+					} else {
+						instance.keys[i] = KeyState.PRESSED;
+					}
 				} else {
-					instance.keys[i] = KeyState.PRESSED;
+					instance.keys[i] = KeyState.RELEASED;
 				}
-			} else {
-				instance.keys[i] = KeyState.RELEASED;
 			}
 		}
 	}
@@ -79,7 +81,7 @@ public class KeyboardInput implements KeyListener {
 	}
 	
 	@Override
-	public void keyTyped(KeyEvent e) {
+	public synchronized void keyTyped(KeyEvent e) {
 		// Not needed
 	}
 }
