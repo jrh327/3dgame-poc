@@ -32,7 +32,6 @@ public class Game3D extends JFrame implements Runnable {
 	private int viewingDistance;
 	private int halfScreenX;
 	private int halfScreenY;
-	private MouseInput mouse;
 	private Renderer renderer;
 	private Scene scene;
 	
@@ -82,10 +81,11 @@ public class Game3D extends JFrame implements Runnable {
 		
 		addKeyListener(KeyboardInput.getInstance());
 		
-		mouse = new MouseInput(this);
-		mouse.setRelative(true);
-		addMouseListener(mouse);
-		addMouseMotionListener(mouse);
+		MouseInput mouseInput = MouseInput.getInstance();
+		MouseInput.setComponent(this);
+		MouseInput.setRelative(true);
+		addMouseListener(mouseInput);
+		addMouseMotionListener(mouseInput);
 		setFocusable(true);
 	}
 	
@@ -114,7 +114,7 @@ public class Game3D extends JFrame implements Runnable {
 		try {
 			while (true) {
 				KeyboardInput.poll();
-				mouse.poll();
+				MouseInput.poll();
 				
 				long startOfFrame = System.currentTimeMillis();
 				double timestep = (startOfFrame - lastFrame) / 1000.0;
@@ -161,15 +161,15 @@ public class Game3D extends JFrame implements Runnable {
 				mapeditor.changeRaisePoint('-');
 			}
 			
-			if (mouse.buttonDown(1)) {
+			if (MouseInput.buttonDown(1)) {
 				mapeditor.raisePoint(mousePosition, s1, 1);
 			}
-			if (mouse.buttonDown(3)) {
+			if (MouseInput.buttonDown(3)) {
 				mapeditor.raisePoint(mousePosition, s1, -1);
 			}
 		} else {
-			if (mouse.buttonDown(1)) {
-				Point p = mouse.getPosition();
+			if (MouseInput.buttonDown(MouseInput.LEFT_BUTTON)) {
+				Point p = MouseInput.getPosition();
 				menu.click(600, 400, p.x, p.y);
 			}
 		}
@@ -191,14 +191,14 @@ public class Game3D extends JFrame implements Runnable {
 		gameIsRunning = running;
 		
 		if (gameIsRunning) {
-			mouse.setRelative(true);
-			mouse.disableCursor();
+			MouseInput.setRelative(true);
+			MouseInput.disableCursor();
 		} else {
 			bufferGraphics.setColor(PAUSED_OVERLAY_COLOR);
 			bufferGraphics.fillRect(0, 0, 2 * halfScreenX, 2 * halfScreenY);
 			repaint();
-			mouse.setRelative(false);
-			mouse.enableCursor();
+			MouseInput.setRelative(false);
+			MouseInput.enableCursor();
 		}
 	}
 }

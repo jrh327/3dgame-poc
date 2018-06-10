@@ -7,6 +7,9 @@ import java.awt.event.MouseMotionListener;
 //import javax.swing.SwingUtilities;
 
 public class MouseInput implements MouseListener, MouseMotionListener {
+	public static final int LEFT_BUTTON = 1;
+	public static final int MIDDLE_BUTTON = 2;
+	public static final int RIGHT_BUTTON = 3;
 	private static final int BUTTON_COUNT = 3;
 	// Used for relative movement
 	private int dx, dy;
@@ -27,19 +30,15 @@ public class MouseInput implements MouseListener, MouseMotionListener {
 	// Polled mouse buttons
 	private MouseState[] poll = null;
 	
+	private static final MouseInput instance = new MouseInput();
+	
 	private enum MouseState {
 		RELEASED, // Not down
 		PRESSED,  // Down, but not the first time
 		ONCE      // Down for the first time
 	}
 	
-	public MouseInput(Component component) {
-		// Need the component object to convert screen coordinates 
-		//this.component = component;
-		// Calculate the component center
-		int w = component.getBounds().width;
-		int h = component.getBounds().height;
-		center = new Point(w / 2, h / 2);
+	private MouseInput() {
 		/*try {
 			robot = new Robot();
 		} catch (Exception e) {
@@ -57,58 +56,67 @@ public class MouseInput implements MouseListener, MouseMotionListener {
 		}
 	}
 	
-	public synchronized void poll() {
-		// If relative, return only the delta movements,
-		// otherwise return the current position...
-		if (isRelative()) {
-			mousePos = new Point(dx, dy);
-		} else {
-			mousePos = new Point(currentPos);
-		}
-		
-		// Since we have polled, need to reset the delta
-		// so the values do not accumulate
-		dx = dy = 0;
-		// Check each mouse button
-		for (int i = 0; i < BUTTON_COUNT; i++) {
-			// If the button is down for the first
-			// time, it is ONCE, otherwise it is
-			// PRESSED.  
-			if (state[i]) {
-				if (poll[i] == MouseState.RELEASED) {
-					poll[i] = MouseState.ONCE;
-				} else {
-					poll[i] = MouseState.PRESSED;
-				}
+	public static void setComponent(Component component) {
+		// Need the component object to convert screen coordinates 
+		//this.component = component;
+		// Calculate the component center
+		int w = component.getBounds().width;
+		int h = component.getBounds().height;
+		instance.center = new Point(w / 2, h / 2);
+	}
+	
+	public static MouseInput getInstance() {
+		return instance;
+	}
+	
+	public static void poll() {
+		synchronized (instance) {
+			if (isRelative()) {
+				instance.mousePos = new Point(instance.dx, instance.dy);
+				instance.dx = 0;
+				instance.dy = 0;
 			} else {
-				// Button is not down
-				poll[i] = MouseState.RELEASED;
+				instance.mousePos = new Point(instance.currentPos);
+			}
+			
+			for (int i = 0; i < BUTTON_COUNT; i++) {
+				if (instance.state[i]) {
+					if (instance.poll[i] == MouseState.RELEASED) {
+						instance.poll[i] = MouseState.ONCE;
+					} else {
+						instance.poll[i] = MouseState.PRESSED;
+					}
+				} else {
+					instance.poll[i] = MouseState.RELEASED;
+				}
 			}
 		}
 	}
 	
-	public boolean isRelative() {
-		return relative;
+	public static boolean isRelative() {
+		return instance.relative;
 	}
 	
-	public void setRelative(boolean relative) {
-		this.relative = relative;
+	public static void setRelative(boolean relative) {
+		instance.relative = relative;
 		if (relative) {
 			centerMouse();
+			instance.dx = 0;
+			instance.dy = 0;
 		}
 	}
 	
-	public Point getPosition() {
-		return mousePos;
+	public static Point getPosition() {
+		return instance.mousePos;
 	}
 	
-	public boolean buttonDownOnce(int button) {
-		return poll[button - 1] == MouseState.ONCE;
+	public static boolean buttonDownOnce(int button) {
+		return instance.poll[button - 1] == MouseState.ONCE;
 	}
 	
-	public boolean buttonDown(int button) {
-		return poll[button - 1] == MouseState.ONCE ||
-				poll[button - 1] == MouseState.PRESSED;
+	public static boolean buttonDown(int button) {
+		return instance.poll[button - 1] == MouseState.ONCE ||
+				instance.poll[button - 1] == MouseState.PRESSED;
 	}
 	
 	@Override
@@ -153,7 +161,7 @@ public class MouseInput implements MouseListener, MouseMotionListener {
 		// Not needed
 	}
 	
-	private void centerMouse() {
+	private static void centerMouse() {
 		/*if (robot != null && component.isShowing()) {
 			// Because the convertPointToScreen method 
 			// changes the object, make a copy!
@@ -164,7 +172,7 @@ public class MouseInput implements MouseListener, MouseMotionListener {
 		*/
 	}
 	
-	public void disableCursor() {
+	public static void disableCursor() {
 		/*Toolkit tk = Toolkit.getDefaultToolkit();
 		Image image = tk.createImage("");
 		Point point = new Point(0, 0);
@@ -174,7 +182,7 @@ public class MouseInput implements MouseListener, MouseMotionListener {
 		*/
 	}
 	
-	public void enableCursor() {
+	public static void enableCursor() {
 		//component.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 }
