@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.jonhopkins.game3d.geometry.Face;
+import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.object.GameObject;
 
@@ -16,6 +17,7 @@ public class Model extends GameObject implements Drawable {
 	protected List<Face> faces;
 	protected Map<String, Animation> animations;
 	protected Bone primaryBone;
+	protected Vector scale;
 	
 	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors) {
 		this(vertices, faceVertices, faceColors, new HashMap<String, Animation>(), null);
@@ -40,6 +42,7 @@ public class Model extends GameObject implements Drawable {
 		}
 		this.animations = animations;
 		this.primaryBone = primaryBone;
+		this.scale = new Vector(1.0, 1.0, 1.0);
 	}
 	
 	@Override
@@ -55,7 +58,11 @@ public class Model extends GameObject implements Drawable {
 	
 	private void resetVertices() {
 		for (int i = 0; i < origVertices.length; i++) {
-			vertices.get(i).setTo(origVertices[i]);
+			Vertex v = vertices.get(i);
+			v.setTo(origVertices[i]);
+			v.x *= scale.x;
+			v.y *= scale.y;
+			v.z *= scale.z;
 		}
 	}
 	
@@ -67,6 +74,16 @@ public class Model extends GameObject implements Drawable {
 	@Override
 	public List<Face> getFaces() {
 		return faces;
+	}
+	
+	public Vector getScale() {
+		return scale;
+	}
+	
+	public void setScale(Vector scale) {
+		this.scale.setTo(scale);
+		resetVertices();
+		primaryBone.setScale(scale);
 	}
 	
 	public void setAnimationActive(String name, boolean active) {

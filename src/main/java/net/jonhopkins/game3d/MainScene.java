@@ -23,10 +23,9 @@ public class MainScene extends Scene {
 		registerLight("ambient", new AmbientLight(Color.white, 0.125));
 		registerLight("sun", (Light)sun.getChild("sun_light"));
 		
-		Cube cube = new Cube();
-		registerObject("cube", cube);
+		registerObject("cube", new Cube());
 		registerObject("person", new Person());
-
+		
 		camera = new FirstPersonCamera(new Vertex(), new Vector());
 		Player player = new Player(camera, sector);
 		registerObject("player", player);
