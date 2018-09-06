@@ -8,7 +8,6 @@ import net.jonhopkins.game3d.light.AmbientLight;
 import net.jonhopkins.game3d.light.Light;
 import net.jonhopkins.game3d.object.Cube;
 import net.jonhopkins.game3d.object.MapSector;
-import net.jonhopkins.game3d.object.Person;
 import net.jonhopkins.game3d.object.Player;
 import net.jonhopkins.game3d.object.Sun;
 
@@ -24,10 +23,10 @@ public class MainScene extends Scene {
 		registerLight("sun", (Light)sun.getChild("sun_light"));
 		
 		registerObject("cube", new Cube());
-		registerObject("person", new Person());
 		
-		camera = new FirstPersonCamera(new Vertex(), new Vector());
+		camera = new ThirdPersonCamera(new Vertex(), new Vector());
 		Player player = new Player(camera, sector);
 		registerObject("player", player);
+		((ThirdPersonCamera)camera).setTarget(player);
 	}
 }

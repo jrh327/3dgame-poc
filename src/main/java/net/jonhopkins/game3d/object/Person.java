@@ -9,8 +9,8 @@ public class Person extends Prefab {
 	public Person() {
 		final Model model = ModelFactory.getModel("human.obj");
 		registerChild("human", model);
-		setPosition(10.0, 12.0, -50.0);
-		model.setScale(new Vector(0.1, 0.1, 0.1));
+		setPosition(15.0, 7.5, -85.0);
+		model.setScale(new Vector(0.75, 0.75, 0.75));
 		
 		registerScript("animation_script", new Script(this) {
 			@Override
