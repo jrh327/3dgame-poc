@@ -29,37 +29,42 @@ public class ThirdPersonCamera extends Camera {
 			hasChanged = true;
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_LEFT)) {
-			rotation.y += Math.ceil(camHorizSpeed * timestep);
+			rotation.y -= Math.ceil(camHorizSpeed * timestep);
 			hasChanged = true;
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_RIGHT)) {
-			rotation.y -= Math.ceil(camHorizSpeed * timestep);
+			rotation.y += Math.ceil(camHorizSpeed * timestep);
 			hasChanged = true;
 		}
 		
 		if (hasChanged) {
-			if (rotation.y < 0) {
-				rotation.y += 360;
-			} else if (rotation.y >= 360) {
-				rotation.y -= 360;
-			}
-			if (rotation.x > -15) {
-				rotation.x = -15;
-			} else if (rotation.x < -75) {
-				rotation.x = -75;
-			}
-			
-			Vertex v = new Vertex(distance, 0, 0);
-			v.rotateX(-rotation.x);
-			v.rotateY(-rotation.y);
-			this.position.setTo(v);
-			this.position.translate(new Vector(target.getPosition()));
-			this.position.translateY(10.0);
+			setPosition();
 		}
+	}
+	
+	private void setPosition() {
+		if (rotation.y < 0) {
+			rotation.y += 360;
+		} else if (rotation.y >= 360) {
+			rotation.y -= 360;
+		}
+		if (rotation.x > -15) {
+			rotation.x = -15;
+		} else if (rotation.x < -75) {
+			rotation.x = -75;
+		}
+		
+		Vertex v = new Vertex(distance, 0, 0);
+		v.rotateX(rotation.x);
+		v.rotateY(-rotation.y + 90);
+		this.position.setTo(v);
+		this.position.translate(new Vector(target.getPosition()));
+		this.position.translateY(10.0);
 	}
 	
 	public void setTarget(GameObject object) {
 		this.target = object;
+		setPosition();
 	}
 	
 	public void setDistance(double distance) {
