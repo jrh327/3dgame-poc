@@ -19,27 +19,20 @@ public class ThirdPersonCamera extends Camera {
 	
 	@Override
 	public void update(double timestep) {
-		boolean hasChanged = false;
 		if (KeyboardInput.keyDown(KeyEvent.VK_UP)) {
 			rotation.x -= Math.ceil(camVertSpeed * timestep);
-			hasChanged = true;
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_DOWN)) {
 			rotation.x += Math.ceil(camVertSpeed * timestep);
-			hasChanged = true;
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_LEFT)) {
 			rotation.y -= Math.ceil(camHorizSpeed * timestep);
-			hasChanged = true;
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_RIGHT)) {
 			rotation.y += Math.ceil(camHorizSpeed * timestep);
-			hasChanged = true;
 		}
 		
-		if (hasChanged) {
-			setPosition();
-		}
+		setPosition();
 	}
 	
 	private void setPosition() {
