@@ -47,12 +47,13 @@ public class ThirdPersonCamera extends Camera {
 			rotation.x = -75;
 		}
 		
-		Vertex v = new Vertex(distance, 0, 0);
+		Vertex v = new Vertex(0, 10, distance);
 		v.rotateX(rotation.x);
-		v.rotateY(-rotation.y + 90);
+		v.rotateY(-rotation.y);
+		v.x = -v.x;
+		v.z = -v.z;
 		this.position.setTo(v);
 		this.position.translate(new Vector(target.getPosition()));
-		this.position.translateY(10.0);
 	}
 	
 	public void setTarget(GameObject object) {
