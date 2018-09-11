@@ -59,6 +59,10 @@ public abstract class GameObject {
 		this.relativePosition.y += translate.y;
 		this.relativePosition.z += translate.z;
 		resetPosition();
+		
+		for (GameObject child : children.values()) {
+			child.translate(translate);
+		}
 	}
 	
 	public void setPosition(double x, double y, double z) {
@@ -79,6 +83,10 @@ public abstract class GameObject {
 		this.absolutePosition.x += translate.x;
 		this.absolutePosition.y += translate.y;
 		this.absolutePosition.z += translate.z;
+		
+		for (GameObject child : children.values()) {
+			child.translateAbsolute(translate);
+		}
 	}
 	
 	public void setAbsolutePosition(double x, double y, double z) {

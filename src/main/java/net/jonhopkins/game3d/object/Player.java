@@ -9,5 +9,6 @@ public class Player extends Prefab {
 		characterController.setMapSector(sector);
 		registerScript("character_controller", characterController);
 		registerChild("person", new Person());
+		registerChild("camera", camera);
 	}
 }

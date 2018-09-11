@@ -63,8 +63,8 @@ public class Renderer {
 		int closestToMouse = drawScene(tempTiles, scene.getLights(), camera, bufferGraphics);
 		
 		Vertex mousePosition = new Vertex();
-		Vertex cameraPosition = camera.position;
-		Vector cameraRotation = camera.rotation;
+		Vertex cameraPosition = camera.getAbsolutePosition();
+		Vector cameraRotation = camera.getRotation();
 		if (closestToMouse >= 0) {
 			Face closest = tempTiles.get(closestToMouse);
 			int[] xs = new int[closest.vertices.length];
@@ -220,20 +220,23 @@ public class Renderer {
 			faces.addAll(model.getFaces());
 		}
 		
-		Vertex.translate(vertices, new Vector(-camera.position.x, -camera.position.y, -camera.position.z));
+		Vertex cameraPosition = camera.getAbsolutePosition();
+		Vertex.translate(vertices, new Vector(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z));
 		for (Light light : scene.getLights()) {
-			light.getPosition().translate(new Vector(-camera.position.x, -camera.position.y, -camera.position.z));
+			light.getPosition().translate(new Vector(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z));
 		}
-		if (camera.rotation.y != 0) {
-			Vertex.rotateY(vertices, camera.rotation.y);
+		
+		Vector cameraRotation = camera.getRotation();
+		if (cameraRotation.y != 0) {
+			Vertex.rotateY(vertices, cameraRotation.y);
 			for (Light light : scene.getLights()) {
-				light.getPosition().rotateY(camera.rotation.y);
+				light.getPosition().rotateY(cameraRotation.y);
 			}
 		}
-		if (camera.rotation.x != 0) {
-			Vertex.rotateX(vertices, camera.rotation.x);
+		if (cameraRotation.x != 0) {
+			Vertex.rotateX(vertices, cameraRotation.x);
 			for (Light light : scene.getLights()) {
-				light.getPosition().rotateX(camera.rotation.x);
+				light.getPosition().rotateX(cameraRotation.x);
 			}
 		}
 		backFaceCulling(faces);
@@ -258,7 +261,7 @@ public class Renderer {
 				continue;
 			}
 			
-			double dist = Math.pow(Math.pow(tile.avgX(), 2) + Math.pow(tile.avgY() + camera.position.y, 2) + Math.pow(tile.avgZ(), 2), 0.5); 
+			double dist = Math.pow(Math.pow(tile.avgX(), 2) + Math.pow(tile.avgY() + camera.getAbsolutePosition().y, 2) + Math.pow(tile.avgZ(), 2), 0.5); 
 			
 			if (tile.avgZ() >= 0.0 && dist < viewingDistance) {
 				tile.to2DCoords(halfScreenX, halfScreenY, xs, ys);

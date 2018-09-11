@@ -17,31 +17,31 @@ public class FirstPersonCamera extends Camera {
 	@Override
 	public void update(double timestep) {
 		if (KeyboardInput.keyDown(KeyEvent.VK_UP)) {
-			rotation.x += Math.ceil(camVertSpeed * timestep);
+			relativeRotation.x += Math.ceil(camVertSpeed * timestep);
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_DOWN)) {
-			rotation.x -= Math.ceil(camVertSpeed * timestep);
+			relativeRotation.x -= Math.ceil(camVertSpeed * timestep);
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_LEFT)) {
-			rotation.y += Math.ceil(camHorizSpeed * timestep);
+			relativeRotation.y += Math.ceil(camHorizSpeed * timestep);
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_RIGHT)) {
-			rotation.y -= Math.ceil(camHorizSpeed * timestep);
+			relativeRotation.y -= Math.ceil(camHorizSpeed * timestep);
 		}
 		
 		//Point p = mouse.getPosition();
 		//rotatey -= p.x;
 		//rotatex -= p.y;
 		
-		if (rotation.y < 0) {
-			rotation.y += 360;
-		} else if (rotation.y >= 360) {
-			rotation.y -= 360;
+		if (relativeRotation.y < 0) {
+			relativeRotation.y += 360;
+		} else if (relativeRotation.y >= 360) {
+			relativeRotation.y -= 360;
 		}
-		if (rotation.x < -89) {
-			rotation.x = -89;
-		} else if (rotation.x > 89) {
-			rotation.x = 89;
+		if (relativeRotation.x < -89) {
+			relativeRotation.x = -89;
+		} else if (relativeRotation.x > 89) {
+			relativeRotation.x = 89;
 		}
 	}
 }

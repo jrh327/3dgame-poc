@@ -3,6 +3,8 @@ package net.jonhopkins.game3d.script;
 import java.awt.event.KeyEvent;
 
 import net.jonhopkins.game3d.Camera;
+import net.jonhopkins.game3d.geometry.Vector;
+import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.input.KeyboardInput;
 import net.jonhopkins.game3d.model.Drawable;
 import net.jonhopkins.game3d.object.MapSector;
@@ -18,18 +20,23 @@ public class CharacterController extends Script {
 	public CharacterController(Scriptable object, Camera camera) {
 		super(object);
 		this.camera = camera;
-		this.camera.position.y = cameraHeight;
+		Vertex position = this.camera.getPosition();
+		position.y = cameraHeight;
+		this.camera.setPosition(position);
 	}
 	
 	@Override
 	public void update(double timestep) {
-		camera.position.x /= 10;
-		camera.position.z /= 10;
+		Vertex position = this.camera.getPosition();
+		position.x /= 10;
+		position.z /= 10;
 		
-		double tempX = camera.position.x;
-		double tempZ = camera.position.z;
-		double cosY = Math.cos(camera.rotation.y * Math.PI / 180.0);
-		double sinY = Math.sin(camera.rotation.y * Math.PI / 180.0);
+		double tempX = position.x;
+		double tempZ = position.z;
+		
+		Vector rotation = camera.getRotation();
+		double cosY = Math.cos(rotation.y * Math.PI / 180.0);
+		double sinY = Math.sin(rotation.y * Math.PI / 180.0);
 		
 		if (KeyboardInput.keyDown(KeyEvent.VK_W)) {
 			tempZ += cosY * speedz * timestep;
@@ -63,14 +70,16 @@ public class CharacterController extends Script {
 			tempZ = 32.0;
 		}
 		
-		camera.position.x = tempX;
-		camera.position.z = tempZ;
+		position.x = tempX;
+		position.z = tempZ;
 		
-		int tileIndex = (int)(64 - (camera.position.z + 32)) * 64 * 2 + (int)(camera.position.x + 32) * 2;
-		camera.position.y = ((Drawable)currentSector.getChild("sector")).getFaces().get(tileIndex).avgY() + cameraHeight;
+		int tileIndex = (int)(64 - (position.z + 32)) * 64 * 2 + (int)(position.x + 32) * 2;
+		position.y = ((Drawable)currentSector.getChild("sector")).getFaces().get(tileIndex).avgY() + cameraHeight;
 		
-		camera.position.x *= 10;
-		camera.position.z *= 10;
+		position.x *= 10;
+		position.z *= 10;
+		
+		camera.setPosition(position);
 	}
 	
 	public void setMapSector(MapSector sector) {

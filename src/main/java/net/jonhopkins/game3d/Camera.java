@@ -2,15 +2,12 @@ package net.jonhopkins.game3d;
 
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
+import net.jonhopkins.game3d.object.GameObject;
 
-public abstract class Camera {
-	public Vertex position;
-	public Vector rotation;
-	
+public abstract class Camera extends GameObject {
 	public Camera(Vertex position, Vector direction) {
-		this.position = position;
-		this.rotation = direction;
+		super();
+		this.relativePosition = position;
+		this.relativeRotation = direction;
 	}
-	
-	public abstract void update(double timestep);
 }

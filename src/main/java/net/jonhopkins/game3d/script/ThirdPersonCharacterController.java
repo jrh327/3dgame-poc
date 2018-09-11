@@ -3,6 +3,7 @@ package net.jonhopkins.game3d.script;
 import java.awt.event.KeyEvent;
 
 import net.jonhopkins.game3d.Camera;
+import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.input.KeyboardInput;
 import net.jonhopkins.game3d.model.Drawable;
@@ -22,14 +23,14 @@ public class ThirdPersonCharacterController extends Script {
 	
 	@Override
 	public void update(double timestep) {
-		Vertex position = this.object.getPosition();
-		position.x /= 10;
-		position.z /= 10;
+		Vertex position = this.object.getAbsolutePosition();
 		
-		double tempX = position.x;
-		double tempZ = position.z;
-		double cosY = Math.cos(camera.rotation.y * Math.PI / 180.0);
-		double sinY = Math.sin(camera.rotation.y * Math.PI / 180.0);
+		double tempX = position.x / 10;
+		double tempZ = position.z / 10;
+		
+		Vector rotation = camera.getRotation();
+		double cosY = Math.cos(rotation.y * Math.PI / 180.0);
+		double sinY = Math.sin(rotation.y * Math.PI / 180.0);
 		
 		if (KeyboardInput.keyDown(KeyEvent.VK_W)) {
 			tempZ += cosY * speedz * timestep;
@@ -63,16 +64,14 @@ public class ThirdPersonCharacterController extends Script {
 			tempZ = 32.0;
 		}
 		
-		position.x = tempX;
-		position.z = tempZ;
+		int tileIndex = (int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2;
+		double tempY = ((Drawable)currentSector.getChild("sector")).getFaces().get(tileIndex).avgY();
 		
-		int tileIndex = (int)(64 - (position.z + 32)) * 64 * 2 + (int)(position.x + 32) * 2;
-		position.y = ((Drawable)currentSector.getChild("sector")).getFaces().get(tileIndex).avgY();
+		tempX *= 10;
+		tempZ *= 10;
 		
-		position.x *= 10;
-		position.z *= 10;
-		
-		this.object.setPosition(position);
+		this.object.translateAbsolute(new Vector(tempX - position.x, tempY - position.y, tempZ - position.z));
+		//this.object.setPosition(position);
 	}
 	
 	public void setMapSector(MapSector sector) {
