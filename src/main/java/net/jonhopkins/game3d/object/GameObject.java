@@ -59,10 +59,6 @@ public abstract class GameObject {
 		this.relativePosition.y += translate.y;
 		this.relativePosition.z += translate.z;
 		resetPosition();
-		
-		for (GameObject child : children.values()) {
-			child.translate(translate);
-		}
 	}
 	
 	public void setPosition(double x, double y, double z) {
@@ -98,11 +94,17 @@ public abstract class GameObject {
 	}
 	
 	public Vertex getAbsolutePosition() {
-		return absolutePosition;
+		double x = absolutePosition.x + relativePosition.x;
+		double y = absolutePosition.y + relativePosition.y;
+		double z = absolutePosition.z + relativePosition.z;
+		return new Vertex(x, y, z);
 	}
 	
 	public void resetPosition() {
 		this.absolutePosition.setTo(this.relativePosition);
+		for (GameObject child : children.values()) {
+			child.resetPosition();
+		}
 	}
 	
 	private void clampRotation(Vector rotation) {

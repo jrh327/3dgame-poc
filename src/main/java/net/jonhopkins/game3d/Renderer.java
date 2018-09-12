@@ -268,7 +268,8 @@ public class Renderer {
 				
 				double colorScalar = 0.0;
 				for (Light light : lights) {
-					colorScalar += light.getLightFactor(tile);
+					double lightFactor = light.getLightFactor(tile);
+					colorScalar += lightFactor * 8;
 				}
 				
 				colorScalar -= (dist / viewingDistance);

@@ -23,7 +23,7 @@ public class ThirdPersonCharacterController extends Script {
 	
 	@Override
 	public void update(double timestep) {
-		Vertex position = this.object.getAbsolutePosition();
+		Vertex position = this.object.getPosition();
 		
 		double tempX = position.x / 10;
 		double tempZ = position.z / 10;
@@ -70,8 +70,7 @@ public class ThirdPersonCharacterController extends Script {
 		tempX *= 10;
 		tempZ *= 10;
 		
-		this.object.translateAbsolute(new Vector(tempX - position.x, tempY - position.y, tempZ - position.z));
-		//this.object.setPosition(position);
+		this.object.translate(new Vector(tempX - position.x, tempY - position.y, tempZ - position.z));
 	}
 	
 	public void setMapSector(MapSector sector) {

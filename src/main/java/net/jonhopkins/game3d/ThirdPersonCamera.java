@@ -32,10 +32,10 @@ public class ThirdPersonCamera extends Camera {
 			relativeRotation.y += Math.ceil(camHorizSpeed * timestep);
 		}
 		
-		setPosition();
+		updatePosition();
 	}
 	
-	private void setPosition() {
+	private void updatePosition() {
 		if (relativeRotation.y < 0) {
 			relativeRotation.y += 360;
 		} else if (relativeRotation.y >= 360) {
@@ -57,7 +57,7 @@ public class ThirdPersonCamera extends Camera {
 	
 	public void setTarget(GameObject object) {
 		this.target = object;
-		setPosition();
+		updatePosition();
 	}
 	
 	public void setDistance(double distance) {
