@@ -13,12 +13,7 @@ public abstract class GameObject {
 	/**
 	 * Position relative to parent, or relative to scene if top-level object
 	 */
-	protected Vertex relativePosition;
-	
-	/**
-	 * Absolute position within scene
-	 */
-	protected Vertex absolutePosition;
+	protected Vertex position;
 	
 	/**
 	 * Rotation relative to parent, or relative to scene if top-level object
@@ -35,19 +30,19 @@ public abstract class GameObject {
 	 */
 	protected Vertex pivot;
 	
+	protected GameObject parent;
 	protected Map<String, GameObject> children;
 	
 	public GameObject() {
-		relativePosition = new Vertex();
-		absolutePosition = new Vertex();
+		position = new Vertex();
 		relativeRotation = new Vector();
 		absoluteRotation = new Vector();
 		pivot = new Vertex();
+		parent = null;
 		children = new HashMap<>();
 	}
 	
 	public void update(double timestep) {
-		resetPosition();
 		resetRotation();
 		for (GameObject child : children.values()) {
 			child.update(timestep);
@@ -55,56 +50,32 @@ public abstract class GameObject {
 	}
 	
 	public void translate(Vector translate) {
-		this.relativePosition.x += translate.x;
-		this.relativePosition.y += translate.y;
-		this.relativePosition.z += translate.z;
-		resetPosition();
+		this.position.x += translate.x;
+		this.position.y += translate.y;
+		this.position.z += translate.z;
 	}
 	
 	public void setPosition(double x, double y, double z) {
-		this.relativePosition.setTo(x, y, z);
-		resetPosition();
+		this.position.setTo(x, y, z);
 	}
 	
 	public void setPosition(Vertex position) {
-		this.relativePosition.setTo(position);
-		resetPosition();
+		this.position.setTo(position);
 	}
 	
 	public Vertex getPosition() {
-		return new Vertex(relativePosition);
-	}
-	
-	public void translateAbsolute(Vector translate) {
-		this.absolutePosition.x += translate.x;
-		this.absolutePosition.y += translate.y;
-		this.absolutePosition.z += translate.z;
-		
-		for (GameObject child : children.values()) {
-			child.translateAbsolute(translate);
-		}
-	}
-	
-	public void setAbsolutePosition(double x, double y, double z) {
-		this.absolutePosition.setTo(x, y, z);
-	}
-	
-	public void setAbsolutePosition(Vertex position) {
-		this.absolutePosition.setTo(position);
+		return new Vertex(position);
 	}
 	
 	public Vertex getAbsolutePosition() {
-		double x = absolutePosition.x + relativePosition.x;
-		double y = absolutePosition.y + relativePosition.y;
-		double z = absolutePosition.z + relativePosition.z;
-		return new Vertex(x, y, z);
-	}
-	
-	public void resetPosition() {
-		this.absolutePosition.setTo(this.relativePosition);
-		for (GameObject child : children.values()) {
-			child.resetPosition();
+		if (parent != null) {
+			Vertex parentPosition = parent.getAbsolutePosition();
+			double x = parentPosition.x + position.x;
+			double y = parentPosition.y + position.y;
+			double z = parentPosition.z + position.z;
+			return new Vertex(x, y, z);
 		}
+		return new Vertex(position);
 	}
 	
 	private void clampRotation(Vector rotation) {
@@ -210,6 +181,7 @@ public abstract class GameObject {
 	
 	public void registerChild(String name, GameObject child) {
 		this.children.put(name, child);
+		child.parent = this;
 	}
 	
 	public GameObject deregisterChild(String name) {

@@ -9,16 +9,17 @@ import net.jonhopkins.game3d.geometry.Vertex;
 public class PointLight extends Light {
 	public PointLight(Vertex position, Color color, double intensity) {
 		super(color, intensity);
-		this.absolutePosition = position;
+		this.position = new Vertex(position);
 	}
 	
 	@Override
 	public double getLightFactor(Face face) {
 		Vertex center = face.getCenter();
+		Vertex position = getAbsolutePosition();
 		Vector direction = new Vector(
-				absolutePosition.x - center.x,
-				absolutePosition.y - center.y,
-				absolutePosition.z - center.z);
+				position.x - center.x,
+				position.y - center.y,
+				position.z - center.z);
 		double factor = Vector.dotNormalized(face.getNormal(), direction) * intensity;
 		if (factor < 0.0) {
 			factor = 0.0;

@@ -52,7 +52,7 @@ public class ThirdPersonCamera extends Camera {
 		v.rotateY(-relativeRotation.y);
 		v.x = -v.x;
 		v.z = -v.z;
-		this.relativePosition.setTo(v);
+		this.position.setTo(v);
 	}
 	
 	public void setTarget(GameObject object) {

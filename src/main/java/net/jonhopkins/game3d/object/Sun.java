@@ -13,8 +13,7 @@ public class Sun extends Prefab {
 	private final Vertex center = new Vertex(0, -320, 0);
 	
 	public Sun() {
-		pivot = new Vertex();
-		relativePosition = new Vertex();
+		super();
 		
 		Model model = ModelFactory.getModel("sun.obj");
 		model.setPosition(new Vertex(center));

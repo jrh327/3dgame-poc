@@ -192,7 +192,6 @@ public class Renderer {
 			position.rotateX(newRotate.x);
 			position.rotateY(newRotate.y);
 			position.rotateZ(newRotate.z);
-			object.translateAbsolute(toTranslate);
 			
 			rotateAndTranslateRelative(newTranslate, newRotate, object.getChildren());
 		}
@@ -269,7 +268,7 @@ public class Renderer {
 				double colorScalar = 0.0;
 				for (Light light : lights) {
 					double lightFactor = light.getLightFactor(tile);
-					colorScalar += lightFactor * 8;
+					colorScalar += lightFactor;
 				}
 				
 				colorScalar -= (dist / viewingDistance);

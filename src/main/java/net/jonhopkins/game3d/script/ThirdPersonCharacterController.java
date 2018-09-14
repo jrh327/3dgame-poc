@@ -65,12 +65,14 @@ public class ThirdPersonCharacterController extends Script {
 		}
 		
 		int tileIndex = (int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2;
-		double tempY = ((Drawable)currentSector.getChild("sector")).getFaces().get(tileIndex).avgY();
+		double tileY = ((Drawable)currentSector.getChild("sector")).getFaces().get(tileIndex).avgY();
 		
 		tempX *= 10;
 		tempZ *= 10;
+		this.object.translate(new Vector(tempX - position.x, 0.0, tempZ - position.z));
 		
-		this.object.translate(new Vector(tempX - position.x, tempY - position.y, tempZ - position.z));
+		position = this.object.getPosition();
+		this.object.setPosition(position.x, tileY, position.z);
 	}
 	
 	public void setMapSector(MapSector sector) {

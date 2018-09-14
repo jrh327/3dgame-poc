@@ -7,7 +7,7 @@ import net.jonhopkins.game3d.object.GameObject;
 public abstract class Camera extends GameObject {
 	public Camera(Vertex position, Vector direction) {
 		super();
-		this.relativePosition = position;
+		this.position = new Vertex(position);
 		this.relativeRotation = direction;
 	}
 }
