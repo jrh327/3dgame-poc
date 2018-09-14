@@ -186,13 +186,6 @@ public class Renderer {
 				Vertex.translate(verts, toTranslate);
 			}
 			
-			// same steps as vertices, but no need to move to offset
-			// within parent, position is that offset
-			Vertex position = object.getAbsolutePosition();
-			position.rotateX(newRotate.x);
-			position.rotateY(newRotate.y);
-			position.rotateZ(newRotate.z);
-			
 			rotateAndTranslateRelative(newTranslate, newRotate, object.getChildren());
 		}
 	}
