@@ -52,36 +52,40 @@ public class KeyboardInput implements KeyListener {
 	}
 	
 	public static boolean keyDown(int keyCode) {
-		if (keyCode < 0 || keyCode >= instance.keys.length) {
+		if (keyCode < 0 || keyCode >= KEY_COUNT) {
 			return false;
 		}
-		
-		return instance.keys[keyCode] == KeyState.ONCE ||
-				instance.keys[keyCode] == KeyState.PRESSED;
+		KeyState state = instance.keys[keyCode];
+		return state == KeyState.ONCE || state == KeyState.PRESSED;
 	}
 	
 	public static boolean keyDownOnce(int keyCode) {
+		if (keyCode < 0 || keyCode >= KEY_COUNT) {
+			return false;
+		}
 		return instance.keys[keyCode] == KeyState.ONCE;
 	}
 	
 	@Override
 	public synchronized void keyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
-		if (keyCode >= 0 && keyCode < KEY_COUNT) {
-			currentKeys[keyCode] = true;
+		if (keyCode < 0 && keyCode >= KEY_COUNT) {
+			return;
 		}
+		currentKeys[keyCode] = true;
 	}
 	
 	@Override
 	public synchronized void keyReleased(KeyEvent e) {
 		int keyCode = e.getKeyCode();
-		if (keyCode >= 0 && keyCode < KEY_COUNT) {
-			currentKeys[keyCode] = false;
+		if (keyCode < 0 || keyCode >= KEY_COUNT) {
+			return;
 		}
+		currentKeys[keyCode] = false;
 	}
 	
 	@Override
-	public synchronized void keyTyped(KeyEvent e) {
+	public void keyTyped(KeyEvent e) {
 		// Not needed
 	}
 }
