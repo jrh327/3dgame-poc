@@ -10,7 +10,7 @@ import net.jonhopkins.game3d.object.MapSector;
 import net.jonhopkins.game3d.object.Scriptable;
 
 public class ThirdPersonCharacterController extends Script {
-	private double speed = 10.0;
+	private double speed = 100.0;
 	private MapSector currentSector;
 	
 	public ThirdPersonCharacterController(Scriptable object) {
@@ -57,41 +57,46 @@ public class ThirdPersonCharacterController extends Script {
 		
 		Vertex position = this.object.getPosition();
 		
-		double tempX = position.x / 10;
-		double tempZ = position.z / 10;
+		double tempX = position.x;
+		double tempZ = position.z;
 		
 		double directionRads = Math.toRadians(direction);
 		tempX += Math.cos(directionRads) * speed * timestep;
 		tempZ += Math.sin(directionRads) * speed * timestep;
 		
-		if (tempX <= -32.0) {
-			tempX = -32.0;
-		} else if (tempX >= 32.0) {
-			tempX = 31.99;
+		if (tempX <= -320.0) {
+			tempX = -320.0;
+		} else if (tempX >= 320.0) {
+			tempX = 319.999;
 		}
-		if (tempZ <= -32.0) {
-			tempZ = -31.999;
-		} else if (tempZ >= 32.0) {
-			tempZ = 32.0;
+		if (tempZ <= -320.0) {
+			tempZ = -319.999;
+		} else if (tempZ >= 320.0) {
+			tempZ = 320.0;
 		}
 		
-		int tileIndex = (int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2;
-		double tileY = ((Drawable)currentSector.getChild("sector")).getFaces().get(tileIndex).avgY();
-		
-		tempX *= 10;
-		tempZ *= 10;
 		this.object.translate(new Vector(tempX - position.x, 0.0, tempZ - position.z));
-		
-		position = this.object.getPosition();
-		position.y = tileY;
-		this.object.setPosition(position);
+		snapPlayerToTerrain();
 		
 		Vector rotation = this.object.getRotation();
 		rotation.y = 180.0 - direction - 90.0;
 		this.object.setRotation(rotation);
 	}
 	
+	private void snapPlayerToTerrain() {
+		Vertex position = this.object.getPosition();
+		double tempX = position.x / 10;
+		double tempZ = position.z / 10;
+		
+		int tileIndex = (int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2;
+		double tileY = ((Drawable)currentSector.getChild("sector")).getFaces().get(tileIndex).avgY();
+		
+		position.y = tileY;
+		this.object.setPosition(position);
+	}
+	
 	public void setMapSector(MapSector sector) {
 		this.currentSector = sector;
+		snapPlayerToTerrain();
 	}
 }
