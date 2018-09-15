@@ -27,6 +27,5 @@ public class MainScene extends Scene {
 		camera = new ThirdPersonCamera(new Vertex(), new Vector());
 		Player player = new Player(camera, sector);
 		registerObject("player", player);
-		((ThirdPersonCamera)camera).setTarget(player);
 	}
 }

@@ -5,12 +5,10 @@ import java.awt.event.KeyEvent;
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.input.KeyboardInput;
-import net.jonhopkins.game3d.object.GameObject;
 
 public class ThirdPersonCamera extends Camera {
 	private double camVertSpeed = 50;
 	private double camHorizSpeed = 50;
-	private GameObject target;
 	private double distance = 50.0;
 	
 	public ThirdPersonCamera(Vertex position, Vector direction) {
@@ -53,11 +51,6 @@ public class ThirdPersonCamera extends Camera {
 		v.x = -v.x;
 		v.z = -v.z;
 		this.position.setTo(v);
-	}
-	
-	public void setTarget(GameObject object) {
-		this.target = object;
-		updatePosition();
 	}
 	
 	public void setDistance(double distance) {
