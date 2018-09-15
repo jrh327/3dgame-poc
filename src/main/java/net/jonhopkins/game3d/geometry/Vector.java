@@ -28,7 +28,20 @@ public class Vector {
 		this.y = vector.y;
 		this.z = vector.z;
 	}
-
+	
+	/**
+	 * Set the components of this vector to those given.
+	 * 
+	 * @param x the new x component
+	 * @param y the new y component
+	 * @param z the new z component
+	 */
+	public void setTo(double x, double y, double z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
 	/**
 	 * Set the components of this vector to those of the other vector.
 	 * 

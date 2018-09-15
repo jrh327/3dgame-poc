@@ -2,7 +2,6 @@ package net.jonhopkins.game3d.script;
 
 import java.util.Calendar;
 
-import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.object.Scriptable;
 
 public class SunUpdateScript extends Script {
@@ -26,6 +25,6 @@ public class SunUpdateScript extends Script {
 		while (tod >= 1440.0) {
 			tod = tod - 1440.0;
 		}
-		object.setRotation(new Vector(0.0, 0.0, tod * 360.0 / 1440.0));
+		object.setRotation(0.0, 0.0, tod * 360.0 / 1440.0);
 	}
 }

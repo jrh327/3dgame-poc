@@ -24,7 +24,7 @@ public class Vertex {
 		this.y = vertex.y;
 		this.z = vertex.z;
 	}
-
+	
 	/**
 	 * Set the coordinates of this vertex to those given.
 	 * 

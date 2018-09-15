@@ -42,6 +42,12 @@ public abstract class GameObject {
 		}
 	}
 	
+	public void translate(double x, double y, double z) {
+		this.position.x += x;
+		this.position.y += y;
+		this.position.z += z;
+	}
+	
 	public void translate(Vector translate) {
 		this.position.x += translate.x;
 		this.position.y += translate.y;
@@ -112,6 +118,11 @@ public abstract class GameObject {
 		this.rotation.x += rotation.x;
 		this.rotation.y += rotation.y;
 		this.rotation.z += rotation.z;
+		clampRotation(this.rotation);
+	}
+	
+	public void setRotation(double x, double y, double z) {
+		this.rotation.setTo(x, y, z);
 		clampRotation(this.rotation);
 	}
 	

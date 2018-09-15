@@ -75,7 +75,7 @@ public class ThirdPersonCharacterController extends Script {
 			tempZ = 320.0;
 		}
 		
-		this.object.translate(new Vector(tempX - position.x, 0.0, tempZ - position.z));
+		this.object.translate(tempX - position.x, 0.0, tempZ - position.z);
 		snapPlayerToTerrain();
 		
 		Vector rotation = this.object.getRotation();
