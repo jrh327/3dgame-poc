@@ -8,6 +8,6 @@ public abstract class Camera extends GameObject {
 	public Camera(Vertex position, Vector direction) {
 		super();
 		this.position = new Vertex(position);
-		this.relativeRotation = direction;
+		this.rotation = direction;
 	}
 }

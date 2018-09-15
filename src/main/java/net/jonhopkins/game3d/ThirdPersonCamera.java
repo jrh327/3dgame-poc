@@ -20,36 +20,36 @@ public class ThirdPersonCamera extends Camera {
 	@Override
 	public void update(double timestep) {
 		if (KeyboardInput.keyDown(KeyEvent.VK_UP)) {
-			relativeRotation.x -= Math.ceil(camVertSpeed * timestep);
+			rotation.x -= Math.ceil(camVertSpeed * timestep);
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_DOWN)) {
-			relativeRotation.x += Math.ceil(camVertSpeed * timestep);
+			rotation.x += Math.ceil(camVertSpeed * timestep);
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_LEFT)) {
-			relativeRotation.y -= Math.ceil(camHorizSpeed * timestep);
+			rotation.y -= Math.ceil(camHorizSpeed * timestep);
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_RIGHT)) {
-			relativeRotation.y += Math.ceil(camHorizSpeed * timestep);
+			rotation.y += Math.ceil(camHorizSpeed * timestep);
 		}
 		
 		updatePosition();
 	}
 	
 	private void updatePosition() {
-		if (relativeRotation.y < 0) {
-			relativeRotation.y += 360;
-		} else if (relativeRotation.y >= 360) {
-			relativeRotation.y -= 360;
+		if (rotation.y < 0) {
+			rotation.y += 360;
+		} else if (rotation.y >= 360) {
+			rotation.y -= 360;
 		}
-		if (relativeRotation.x > -15) {
-			relativeRotation.x = -15;
-		} else if (relativeRotation.x < -75) {
-			relativeRotation.x = -75;
+		if (rotation.x > -15) {
+			rotation.x = -15;
+		} else if (rotation.x < -75) {
+			rotation.x = -75;
 		}
 		
 		Vertex v = new Vertex(0, 10, distance);
-		v.rotateX(relativeRotation.x);
-		v.rotateY(-relativeRotation.y);
+		v.rotateX(rotation.x);
+		v.rotateY(-rotation.y);
 		v.x = -v.x;
 		v.z = -v.z;
 		this.position.setTo(v);

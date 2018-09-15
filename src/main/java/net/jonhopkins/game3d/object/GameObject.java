@@ -18,12 +18,7 @@ public abstract class GameObject {
 	/**
 	 * Rotation relative to parent, or relative to scene if top-level object
 	 */
-	protected Vector relativeRotation;
-	
-	/**
-	 * Absolute rotation within scene
-	 */
-	protected Vector absoluteRotation;
+	protected Vector rotation;
 	
 	/**
 	 * Point around which to rotate, relative to parent
@@ -35,15 +30,13 @@ public abstract class GameObject {
 	
 	public GameObject() {
 		position = new Vertex();
-		relativeRotation = new Vector();
-		absoluteRotation = new Vector();
+		rotation = new Vector();
 		pivot = new Vertex();
 		parent = null;
 		children = new HashMap<>();
 	}
 	
 	public void update(double timestep) {
-		resetRotation();
 		for (GameObject child : children.values()) {
 			child.update(timestep);
 		}
@@ -109,58 +102,37 @@ public abstract class GameObject {
 	}
 	
 	public void rotate(double x, double y, double z) {
-		this.relativeRotation.x += x;
-		this.relativeRotation.y += y;
-		this.relativeRotation.z += z;
-		clampRotation(this.relativeRotation);
-		resetRotation();
+		this.rotation.x += x;
+		this.rotation.y += y;
+		this.rotation.z += z;
+		clampRotation(this.rotation);
 	}
 	
 	public void rotate(Vector rotation) {
-		this.relativeRotation.x += rotation.x;
-		this.relativeRotation.y += rotation.y;
-		this.relativeRotation.z += rotation.z;
-		clampRotation(this.relativeRotation);
-		resetRotation();
+		this.rotation.x += rotation.x;
+		this.rotation.y += rotation.y;
+		this.rotation.z += rotation.z;
+		clampRotation(this.rotation);
 	}
 	
 	public void setRotation(Vector rotation) {
-		this.relativeRotation.setTo(rotation);
-		clampRotation(this.relativeRotation);
-		resetRotation();
+		this.rotation.setTo(rotation);
+		clampRotation(this.rotation);
 	}
 	
 	public Vector getRotation() {
-		return relativeRotation;
-	}
-	
-	public void rotateAbsolute(double x, double y, double z) {
-		this.absoluteRotation.x += x;
-		this.absoluteRotation.y += y;
-		this.absoluteRotation.z += z;
-		clampRotation(this.absoluteRotation);
-	}
-	
-	public void rotateAbsolute(Vector rotation) {
-		this.absoluteRotation.x += rotation.x;
-		this.absoluteRotation.y += rotation.y;
-		this.absoluteRotation.z += rotation.z;
-		clampRotation(this.absoluteRotation);
-	}
-	
-	public void setAbsoluteRotation(Vector rotation) {
-		this.absoluteRotation.setTo(rotation);
-		clampRotation(this.absoluteRotation);
+		return new Vector(rotation);
 	}
 	
 	public Vector getAbsoluteRotation() {
-		return absoluteRotation;
-	}
-	
-	public void resetRotation() {
-		this.absoluteRotation.x = relativeRotation.x;
-		this.absoluteRotation.y = relativeRotation.y;
-		this.absoluteRotation.z = relativeRotation.z;
+		if (parent != null) {
+			Vector parentRotation = parent.getAbsoluteRotation();
+			double x = parentRotation.x + rotation.x;
+			double y = parentRotation.y + rotation.y;
+			double z = parentRotation.z + rotation.z;
+			return new Vector(x, y, z);
+		}
+		return new Vector(rotation);
 	}
 	
 	public void setPivot(Vertex pivot) {
