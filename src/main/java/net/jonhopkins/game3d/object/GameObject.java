@@ -79,7 +79,7 @@ public abstract class GameObject {
 	
 	private void clampRotation(Vector rotation) {
 		if (rotation.x < 0.0) {
-			while (rotation.x < 360.0) {
+			while (rotation.x < 0.0) {
 				rotation.x += 360.0;
 			}
 		} else {
@@ -88,7 +88,7 @@ public abstract class GameObject {
 			}
 		}
 		if (rotation.y < 0.0) {
-			while (rotation.y < 360.0) {
+			while (rotation.y < 0.0) {
 				rotation.y += 360.0;
 			}
 		} else {
@@ -97,7 +97,7 @@ public abstract class GameObject {
 			}
 		}
 		if (rotation.z < 0.0) {
-			while (rotation.z < 360.0) {
+			while (rotation.z < 0.0) {
 				rotation.z += 360.0;
 			}
 		} else {
