@@ -25,6 +25,10 @@ public class DirectionalLight extends Light {
 	@Override
 	public double getLightFactor(Face face) {
 		Vertex position = getAbsolutePosition();
+		Vector rotation = getAbsoluteRotation();
+		position.rotateX(rotation.x);
+		position.rotateY(rotation.y);
+		position.rotateZ(rotation.z);
 		Vector direction = new Vector(position.x - target.x,
 				position.y - target.y, position.z - target.z);
 		double factor = Vector.dotNormalized(face.getNormal(), direction) * intensity;
