@@ -5,7 +5,7 @@ import net.jonhopkins.game3d.script.ThirdPersonCharacterController;
 
 public class Player extends Prefab {
 	public Player(Camera camera, MapSector sector) {
-		ThirdPersonCharacterController characterController = new ThirdPersonCharacterController(this, camera);
+		ThirdPersonCharacterController characterController = new ThirdPersonCharacterController(this);
 		characterController.setMapSector(sector);
 		registerScript("character_controller", characterController);
 		registerChild("person", new Person());

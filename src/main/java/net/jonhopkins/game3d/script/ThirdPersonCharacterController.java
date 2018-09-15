@@ -2,7 +2,6 @@ package net.jonhopkins.game3d.script;
 
 import java.awt.event.KeyEvent;
 
-import net.jonhopkins.game3d.Camera;
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.input.KeyboardInput;
@@ -11,47 +10,59 @@ import net.jonhopkins.game3d.object.MapSector;
 import net.jonhopkins.game3d.object.Scriptable;
 
 public class ThirdPersonCharacterController extends Script {
-	private Camera camera;
-	private double speedx = 10;
-	private double speedz = 10;
+	private double speed = 10.0;
 	private MapSector currentSector;
 	
-	public ThirdPersonCharacterController(Scriptable object, Camera camera) {
+	public ThirdPersonCharacterController(Scriptable object) {
 		super(object);
-		this.camera = camera;
 	}
 	
 	@Override
 	public void update(double timestep) {
+		boolean movingForward = KeyboardInput.keyDown(KeyEvent.VK_W);
+		boolean movingLeft = KeyboardInput.keyDown(KeyEvent.VK_A);
+		boolean movingBackward = KeyboardInput.keyDown(KeyEvent.VK_S);
+		boolean movingRight = KeyboardInput.keyDown(KeyEvent.VK_D);
+		
+		if (movingForward == movingBackward && movingLeft == movingRight) {
+			// no movement at all
+			// note that pressing opposing directions cancels out
+			return;
+		}
+		
+		double direction = 0.0;
+		if (movingForward && !movingBackward) {
+			if (movingRight && !movingLeft) {
+				direction = 45.0;
+			} else if (movingLeft && !movingRight) {
+				direction = 135.0;
+			} else {
+				direction = 90.0;
+			}
+		} else if (movingBackward && !movingForward) {
+			if (movingRight && !movingLeft) {
+				direction = 315.0;
+			} else if (movingLeft && !movingRight) {
+				direction = 225.0;
+			} else {
+				direction = 270.0;
+			}
+		// can only get here if movingForward == movingBackward
+		// since both pairs can't be equal, must be right or left
+		} else if (movingRight) {
+			direction = 0.0;
+		} else {
+			direction = 180.0;
+		}
+		
 		Vertex position = this.object.getPosition();
 		
 		double tempX = position.x / 10;
 		double tempZ = position.z / 10;
 		
-		Vector rotation = camera.getRotation();
-		double cosY = Math.cos(rotation.y * Math.PI / 180.0);
-		double sinY = Math.sin(rotation.y * Math.PI / 180.0);
-		
-		if (KeyboardInput.keyDown(KeyEvent.VK_W)) {
-			tempZ += cosY * speedz * timestep;
-			tempX -= sinY * speedx * timestep;
-		}
-		if (KeyboardInput.keyDown(KeyEvent.VK_A)) {
-			tempX -= cosY * speedx * timestep;
-			tempZ -= sinY * speedz * timestep;
-		}
-		if (KeyboardInput.keyDown(KeyEvent.VK_S)) {
-			if (KeyboardInput.keyDown(KeyEvent.VK_CONTROL)) {
-				//mapeditor.save(0, 0);
-			} else {
-				tempZ -= cosY * speedz * timestep;
-				tempX += sinY * speedx * timestep;
-			}
-		}
-		if (KeyboardInput.keyDown(KeyEvent.VK_D)) {
-			tempX += cosY * speedx * timestep;
-			tempZ += sinY * speedz * timestep;
-		}
+		double directionRads = Math.toRadians(direction);
+		tempX += Math.cos(directionRads) * speed * timestep;
+		tempZ += Math.sin(directionRads) * speed * timestep;
 		
 		if (tempX <= -32.0) {
 			tempX = -32.0;
@@ -72,7 +83,12 @@ public class ThirdPersonCharacterController extends Script {
 		this.object.translate(new Vector(tempX - position.x, 0.0, tempZ - position.z));
 		
 		position = this.object.getPosition();
-		this.object.setPosition(position.x, tileY, position.z);
+		position.y = tileY;
+		this.object.setPosition(position);
+		
+		Vector rotation = this.object.getRotation();
+		rotation.y = 180.0 - direction - 90.0;
+		this.object.setRotation(rotation);
 	}
 	
 	public void setMapSector(MapSector sector) {
