@@ -78,8 +78,8 @@ public abstract class GameObject {
 	}
 	
 	private void clampRotation(Vector rotation) {
-		if (rotation.x < 0.0) {
-			while (rotation.x < 0.0) {
+		if (rotation.x < -360.0) {
+			while (rotation.x < -360.0) {
 				rotation.x += 360.0;
 			}
 		} else {
@@ -87,8 +87,8 @@ public abstract class GameObject {
 				rotation.x -= 360.0;
 			}
 		}
-		if (rotation.y < 0.0) {
-			while (rotation.y < 0.0) {
+		if (rotation.y < -360.0) {
+			while (rotation.y < -360.0) {
 				rotation.y += 360.0;
 			}
 		} else {
@@ -96,8 +96,8 @@ public abstract class GameObject {
 				rotation.y -= 360.0;
 			}
 		}
-		if (rotation.z < 0.0) {
-			while (rotation.z < 0.0) {
+		if (rotation.z < -360.0) {
+			while (rotation.z < -360.0) {
 				rotation.z += 360.0;
 			}
 		} else {
@@ -152,6 +152,10 @@ public abstract class GameObject {
 	
 	public Vertex getPivot() {
 		return pivot;
+	}
+	
+	public GameObject getParent() {
+		return this.parent;
 	}
 	
 	public GameObject getChild(String child) {

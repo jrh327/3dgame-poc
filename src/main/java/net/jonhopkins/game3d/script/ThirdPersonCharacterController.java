@@ -2,23 +2,26 @@ package net.jonhopkins.game3d.script;
 
 import java.awt.event.KeyEvent;
 
+import net.jonhopkins.game3d.Camera;
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.input.KeyboardInput;
-import net.jonhopkins.game3d.model.Drawable;
 import net.jonhopkins.game3d.object.MapSector;
 import net.jonhopkins.game3d.object.Scriptable;
 
-public class ThirdPersonCharacterController extends Script {
-	private double speed = 100.0;
-	private MapSector currentSector;
-	
-	public ThirdPersonCharacterController(Scriptable object) {
-		super(object);
+public class ThirdPersonCharacterController extends CharacterController {
+	public ThirdPersonCharacterController(Scriptable object, Camera camera) {
+		super(object, camera);
 	}
 	
 	@Override
 	public void update(double timestep) {
+		updatePlayer(timestep);
+		updateCamera(timestep);
+	}
+	
+	@Override
+	protected void updatePlayer(double timestep) {
 		boolean movingForward = KeyboardInput.keyDown(KeyEvent.VK_W);
 		boolean movingLeft = KeyboardInput.keyDown(KeyEvent.VK_A);
 		boolean movingBackward = KeyboardInput.keyDown(KeyEvent.VK_S);
@@ -78,21 +81,49 @@ public class ThirdPersonCharacterController extends Script {
 		this.object.translate(tempX - position.x, 0.0, tempZ - position.z);
 		snapPlayerToTerrain();
 		
-		Vector rotation = this.object.getRotation();
+		Vector rotation = this.object.getChild("person").getRotation();
 		rotation.y = 180.0 - direction - 90.0;
-		this.object.setRotation(rotation);
+		this.object.getChild("person").setRotation(rotation);
 	}
 	
-	private void snapPlayerToTerrain() {
-		Vertex position = this.object.getPosition();
-		double tempX = position.x / 10;
-		double tempZ = position.z / 10;
+	@Override
+	protected void updateCamera(double timestep) {
+		Vector rotation = camera.getRotation();
+		if (KeyboardInput.keyDown(KeyEvent.VK_UP)) {
+			rotation.x -= Math.ceil(camVertSpeed * timestep);
+		}
+		if (KeyboardInput.keyDown(KeyEvent.VK_DOWN)) {
+			rotation.x += Math.ceil(camVertSpeed * timestep);
+		}
+		if (KeyboardInput.keyDown(KeyEvent.VK_LEFT)) {
+			rotation.y -= Math.ceil(camHorizSpeed * timestep);
+		}
+		if (KeyboardInput.keyDown(KeyEvent.VK_RIGHT)) {
+			rotation.y += Math.ceil(camHorizSpeed * timestep);
+		}
 		
-		int tileIndex = (int)(64 - (tempZ + 32)) * 64 * 2 + (int)(tempX + 32) * 2;
-		double tileY = ((Drawable)currentSector.getChild("sector")).getFaces().get(tileIndex).avgY();
+		if (rotation.y < 0) {
+			rotation.y += 360;
+		} else if (rotation.y >= 360) {
+			rotation.y -= 360;
+		}
+		if (rotation.x > -15) {
+			rotation.x = -15;
+		} else if (rotation.x < -75) {
+			rotation.x = -75;
+		}
 		
-		position.y = tileY;
-		this.object.setPosition(position);
+		Vertex v = new Vertex(0, 10, distance);
+		v.rotateX(rotation.x);
+		v.rotateY(-rotation.y);
+		v.x = -v.x;
+		v.z = -v.z;
+		camera.setPosition(v);
+		camera.setRotation(rotation);
+	}
+	
+	public void setDistance(double distance) {
+		this.distance = distance;
 	}
 	
 	public void setMapSector(MapSector sector) {

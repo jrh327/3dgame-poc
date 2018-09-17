@@ -215,20 +215,26 @@ public class Renderer {
 		Vertex cameraPosition = camera.getAbsolutePosition();
 		Vertex.translate(vertices, new Vector(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z));
 		for (Light light : scene.getLights()) {
-			light.getPosition().translate(new Vector(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z));
+			Vertex position = light.getAbsolutePosition();
+			position.translate(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
+			light.setPosition(position);
 		}
 		
-		Vector cameraRotation = camera.getRotation();
+		Vector cameraRotation = camera.getAbsoluteRotation();
 		if (cameraRotation.y != 0) {
 			Vertex.rotateY(vertices, cameraRotation.y);
 			for (Light light : scene.getLights()) {
-				light.getPosition().rotateY(cameraRotation.y);
+				Vertex position = light.getAbsolutePosition();
+				position.rotateY(-cameraRotation.y);
+				light.setPosition(position);
 			}
 		}
 		if (cameraRotation.x != 0) {
 			Vertex.rotateX(vertices, cameraRotation.x);
 			for (Light light : scene.getLights()) {
-				light.getPosition().rotateX(cameraRotation.x);
+				Vertex position = light.getAbsolutePosition();
+				position.rotateX(-cameraRotation.x);
+				light.setPosition(position);
 			}
 		}
 		backFaceCulling(faces);
@@ -253,7 +259,7 @@ public class Renderer {
 				continue;
 			}
 			
-			double dist = Math.pow(Math.pow(tile.avgX(), 2) + Math.pow(tile.avgY() + camera.getAbsolutePosition().y, 2) + Math.pow(tile.avgZ(), 2), 0.5); 
+			double dist = Math.pow(Math.pow(tile.avgX(), 2) + Math.pow(tile.avgY(), 2) + Math.pow(tile.avgZ(), 2), 0.5); 
 			
 			if (tile.avgZ() >= 0.0 && dist < viewingDistance) {
 				tile.to2DCoords(halfScreenX, halfScreenY, xs, ys);
@@ -283,6 +289,29 @@ public class Renderer {
 				}
 				counter++;
 			}
+		}
+		
+		Vector cameraRotation = camera.getAbsoluteRotation();
+		if (cameraRotation.x != 0) {
+			for (Light light : lights) {
+				Vertex position = light.getAbsolutePosition();
+				position.rotateX(cameraRotation.x);
+				light.setPosition(position);
+			}
+		}
+		if (cameraRotation.y != 0) {
+			for (Light light : lights) {
+				Vertex position = light.getAbsolutePosition();
+				position.rotateY(cameraRotation.y);
+				light.setPosition(position);
+			}
+		}
+		
+		Vertex cameraPosition = camera.getAbsolutePosition();
+		for (Light light : lights) {
+			Vertex position = light.getAbsolutePosition();
+			position.translate(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+			light.setPosition(position);
 		}
 		
 		return closestToMouse;

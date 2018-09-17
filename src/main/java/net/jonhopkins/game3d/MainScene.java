@@ -24,7 +24,7 @@ public class MainScene extends Scene {
 		
 		registerObject("cube", new Cube());
 		
-		camera = new ThirdPersonCamera(new Vertex(), new Vector());
+		camera = new Camera(new Vertex(), new Vector());
 		Player player = new Player(camera, sector);
 		registerObject("player", player);
 	}
