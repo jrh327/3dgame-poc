@@ -10,6 +10,13 @@ import net.jonhopkins.game3d.object.MapSector;
 import net.jonhopkins.game3d.object.Scriptable;
 
 public class ThirdPersonCharacterController extends CharacterController {
+	/**
+	 * When true, the camera's and character's rotation are joined.
+	 * The camera is always directly behind the character, and the 
+	 * character moves in the direction it is facing.
+	 */
+	protected boolean followCharacter = true;
+	
 	public ThirdPersonCharacterController(Scriptable object, Camera camera) {
 		super(object, camera);
 	}
@@ -34,38 +41,59 @@ public class ThirdPersonCharacterController extends CharacterController {
 		}
 		
 		double direction = 0.0;
-		if (movingForward && !movingBackward) {
-			if (movingRight && !movingLeft) {
-				direction = 45.0;
-			} else if (movingLeft && !movingRight) {
-				direction = 135.0;
-			} else {
-				direction = 90.0;
-			}
-		} else if (movingBackward && !movingForward) {
-			if (movingRight && !movingLeft) {
-				direction = 315.0;
-			} else if (movingLeft && !movingRight) {
-				direction = 225.0;
-			} else {
-				direction = 270.0;
-			}
-		// can only get here if movingForward == movingBackward
-		// since both pairs can't be equal, must be right or left
-		} else if (movingRight) {
-			direction = 0.0;
-		} else {
-			direction = 180.0;
-		}
-		
 		Vertex position = this.object.getPosition();
 		
 		double tempX = position.x;
 		double tempZ = position.z;
+		if (followCharacter) {
+			direction = -Math.toRadians(camera.getRotation().y);
+			double cosY = Math.cos(direction) * speed * timestep;
+			double sinY = Math.sin(direction) * speed * timestep;
+			if (movingForward && !movingBackward) {
+				tempZ += cosY;
+				tempX -= sinY;
+			}
+			if (movingLeft && !movingRight) {
+				tempX -= cosY;
+				tempZ -= sinY;
+			}
+			if (movingBackward && !movingForward) {
+				tempZ -= cosY;
+				tempX += sinY;
+			}
+			if (movingRight && !movingLeft) {
+				tempX += cosY;
+				tempZ += sinY;
+			}
+		} else {
+			if (movingForward && !movingBackward) {
+				if (movingRight && !movingLeft) {
+					direction = 45.0;
+				} else if (movingLeft && !movingRight) {
+					direction = 135.0;
+				} else {
+					direction = 90.0;
+				}
+			} else if (movingBackward && !movingForward) {
+				if (movingRight && !movingLeft) {
+					direction = 315.0;
+				} else if (movingLeft && !movingRight) {
+					direction = 225.0;
+				} else {
+					direction = 270.0;
+				}
+			// can only get here if movingForward == movingBackward
+			// since both pairs can't be equal, must be right or left
+			} else if (movingRight) {
+				direction = 0.0;
+			} else {
+				direction = 180.0;
+			}
+			double directionRads = Math.toRadians(direction);
+			tempX += Math.cos(directionRads) * speed * timestep;
+			tempZ += Math.sin(directionRads) * speed * timestep;
+		}
 		
-		double directionRads = Math.toRadians(direction);
-		tempX += Math.cos(directionRads) * speed * timestep;
-		tempZ += Math.sin(directionRads) * speed * timestep;
 		
 		if (tempX <= -320.0) {
 			tempX = -320.0;
@@ -81,8 +109,14 @@ public class ThirdPersonCharacterController extends CharacterController {
 		this.object.translate(tempX - position.x, 0.0, tempZ - position.z);
 		snapPlayerToTerrain();
 		
+		if (!followCharacter) {
+			turnModel(180.0 - direction - 90.0);
+		}
+	}
+	
+	private void turnModel(double direction) {
 		Vector rotation = this.object.getChild("person").getRotation();
-		rotation.y = 180.0 - direction - 90.0;
+		rotation.y = direction;
 		this.object.getChild("person").setRotation(rotation);
 	}
 	
@@ -118,6 +152,10 @@ public class ThirdPersonCharacterController extends CharacterController {
 		v.rotateY(rotation.y);
 		camera.setPosition(v);
 		camera.setRotation(rotation);
+		
+		if (followCharacter) {
+			turnModel(rotation.y);
+		}
 	}
 	
 	public void setDistance(double distance) {

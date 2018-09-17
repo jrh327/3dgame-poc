@@ -20,30 +20,41 @@ public class FirstPersonCharacterController extends CharacterController {
 	
 	@Override
 	protected void updatePlayer(double timestep) {
+		boolean movingForward = KeyboardInput.keyDown(KeyEvent.VK_W);
+		boolean movingLeft = KeyboardInput.keyDown(KeyEvent.VK_A);
+		boolean movingBackward = KeyboardInput.keyDown(KeyEvent.VK_S);
+		boolean movingRight = KeyboardInput.keyDown(KeyEvent.VK_D);
+		
+		if (movingForward == movingBackward && movingLeft == movingRight) {
+			// no movement at all
+			// note that pressing opposing directions cancels out
+			return;
+		}
+		
 		Vertex position = object.getPosition();
 		
 		double tempX = position.x;
 		double tempZ = position.z;
 		
-		double rotationY = -object.getRotation().y;
-		double cosY = Math.cos(rotationY * Math.PI / 180.0);
-		double sinY = Math.sin(rotationY * Math.PI / 180.0);
+		double rotationY = -Math.toRadians(object.getRotation().y);
+		double cosY = Math.cos(rotationY) * speed * timestep;
+		double sinY = Math.sin(rotationY) * speed * timestep;
 		
-		if (KeyboardInput.keyDown(KeyEvent.VK_W)) {
-			tempZ += cosY * speed * timestep;
-			tempX -= sinY * speed * timestep;
+		if (movingForward && !movingBackward) {
+			tempZ += cosY;
+			tempX -= sinY;
 		}
-		if (KeyboardInput.keyDown(KeyEvent.VK_A)) {
-			tempX -= cosY * speed * timestep;
-			tempZ -= sinY * speed * timestep;
+		if (movingLeft && !movingRight) {
+			tempX -= cosY;
+			tempZ -= sinY;
 		}
-		if (KeyboardInput.keyDown(KeyEvent.VK_S)) {
-			tempZ -= cosY * speed * timestep;
-			tempX += sinY * speed * timestep;
+		if (movingBackward && !movingForward) {
+			tempZ -= cosY;
+			tempX += sinY;
 		}
-		if (KeyboardInput.keyDown(KeyEvent.VK_D)) {
-			tempX += cosY * speed * timestep;
-			tempZ += sinY * speed * timestep;
+		if (movingRight && !movingLeft) {
+			tempX += cosY;
+			tempZ += sinY;
 		}
 		
 		if (tempX <= -320.0) {
