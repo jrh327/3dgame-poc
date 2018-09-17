@@ -90,16 +90,16 @@ public class ThirdPersonCharacterController extends CharacterController {
 	protected void updateCamera(double timestep) {
 		Vector rotation = camera.getRotation();
 		if (KeyboardInput.keyDown(KeyEvent.VK_UP)) {
-			rotation.x -= Math.ceil(camVertSpeed * timestep);
-		}
-		if (KeyboardInput.keyDown(KeyEvent.VK_DOWN)) {
 			rotation.x += Math.ceil(camVertSpeed * timestep);
 		}
+		if (KeyboardInput.keyDown(KeyEvent.VK_DOWN)) {
+			rotation.x -= Math.ceil(camVertSpeed * timestep);
+		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_LEFT)) {
-			rotation.y -= Math.ceil(camHorizSpeed * timestep);
+			rotation.y += Math.ceil(camHorizSpeed * timestep);
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_RIGHT)) {
-			rotation.y += Math.ceil(camHorizSpeed * timestep);
+			rotation.y -= Math.ceil(camHorizSpeed * timestep);
 		}
 		
 		if (rotation.y < 0) {
@@ -107,17 +107,15 @@ public class ThirdPersonCharacterController extends CharacterController {
 		} else if (rotation.y >= 360) {
 			rotation.y -= 360;
 		}
-		if (rotation.x > -15) {
-			rotation.x = -15;
-		} else if (rotation.x < -75) {
-			rotation.x = -75;
+		if (rotation.x < 15) {
+			rotation.x = 15;
+		} else if (rotation.x > 75) {
+			rotation.x = 75;
 		}
 		
-		Vertex v = new Vertex(0, 10, distance);
+		Vertex v = new Vertex(0, 10, -distance);
 		v.rotateX(rotation.x);
-		v.rotateY(-rotation.y);
-		v.x = -v.x;
-		v.z = -v.z;
+		v.rotateY(rotation.y);
 		camera.setPosition(v);
 		camera.setRotation(rotation);
 	}

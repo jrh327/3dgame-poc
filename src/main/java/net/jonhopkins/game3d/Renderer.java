@@ -222,18 +222,18 @@ public class Renderer {
 		
 		Vector cameraRotation = camera.getAbsoluteRotation();
 		if (cameraRotation.y != 0) {
-			Vertex.rotateY(vertices, cameraRotation.y);
+			Vertex.rotateY(vertices, -cameraRotation.y);
 			for (Light light : scene.getLights()) {
 				Vertex position = light.getAbsolutePosition();
-				position.rotateY(-cameraRotation.y);
+				position.rotateY(cameraRotation.y);
 				light.setPosition(position);
 			}
 		}
 		if (cameraRotation.x != 0) {
-			Vertex.rotateX(vertices, cameraRotation.x);
+			Vertex.rotateX(vertices, -cameraRotation.x);
 			for (Light light : scene.getLights()) {
 				Vertex position = light.getAbsolutePosition();
-				position.rotateX(-cameraRotation.x);
+				position.rotateX(cameraRotation.x);
 				light.setPosition(position);
 			}
 		}
@@ -295,14 +295,14 @@ public class Renderer {
 		if (cameraRotation.x != 0) {
 			for (Light light : lights) {
 				Vertex position = light.getAbsolutePosition();
-				position.rotateX(cameraRotation.x);
+				position.rotateX(-cameraRotation.x);
 				light.setPosition(position);
 			}
 		}
 		if (cameraRotation.y != 0) {
 			for (Light light : lights) {
 				Vertex position = light.getAbsolutePosition();
-				position.rotateY(cameraRotation.y);
+				position.rotateY(-cameraRotation.y);
 				light.setPosition(position);
 			}
 		}

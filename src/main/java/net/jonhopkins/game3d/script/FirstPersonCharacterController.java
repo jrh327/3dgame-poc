@@ -25,7 +25,7 @@ public class FirstPersonCharacterController extends CharacterController {
 		double tempX = position.x;
 		double tempZ = position.z;
 		
-		double rotationY = object.getRotation().y;
+		double rotationY = -object.getRotation().y;
 		double cosY = Math.cos(rotationY * Math.PI / 180.0);
 		double sinY = Math.sin(rotationY * Math.PI / 180.0);
 		
@@ -70,10 +70,10 @@ public class FirstPersonCharacterController extends CharacterController {
 		Vector objectRotation = object.getRotation();
 		
 		if (KeyboardInput.keyDown(KeyEvent.VK_LEFT)) {
-			objectRotation.y += Math.ceil(camHorizSpeed * timestep);
+			objectRotation.y -= Math.ceil(camHorizSpeed * timestep);
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_RIGHT)) {
-			objectRotation.y -= Math.ceil(camHorizSpeed * timestep);
+			objectRotation.y += Math.ceil(camHorizSpeed * timestep);
 		}
 		if (objectRotation.y < 0.0) {
 			objectRotation.y += 360.0;
@@ -84,10 +84,10 @@ public class FirstPersonCharacterController extends CharacterController {
 		
 		Vector cameraRotation = camera.getRotation();
 		if (KeyboardInput.keyDown(KeyEvent.VK_UP)) {
-			cameraRotation.x += Math.ceil(camVertSpeed * timestep);
+			cameraRotation.x -= Math.ceil(camVertSpeed * timestep);
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_DOWN)) {
-			cameraRotation.x -= Math.ceil(camVertSpeed * timestep);
+			cameraRotation.x += Math.ceil(camVertSpeed * timestep);
 		}
 		if (cameraRotation.x < -89.0) {
 			cameraRotation.x = -89.0; 
