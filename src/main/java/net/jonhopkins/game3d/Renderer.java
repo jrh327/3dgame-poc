@@ -253,8 +253,9 @@ public class Renderer {
 		bufferGraphics.setColor(new Color(153, 153, 205));
 		bufferGraphics.fillRect(0, 0, 2 * halfScreenX, 2 * halfScreenY);
 		
-		int counter = 0;
+		int counter = -1;
 		for (Face tile : tiles) {
+			counter++;
 			if (!tile.isVisible()) {
 				continue;
 			}
@@ -284,10 +285,9 @@ public class Renderer {
 				bufferGraphics.setColor(new Color(newR, newG, newB));
 				bufferGraphics.fillPolygon(xs, ys, xs.length);
 				
-				if (inpoly(xs, ys, xs.length, 300, 200)) {
+				if (inpoly(xs, ys, xs.length, halfScreenX, halfScreenY)) {
 					closestToMouse = counter;
 				}
-				counter++;
 			}
 		}
 		
