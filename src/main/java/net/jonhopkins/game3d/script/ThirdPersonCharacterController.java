@@ -130,10 +130,10 @@ public class ThirdPersonCharacterController extends CharacterController {
 			rotation.x -= Math.ceil(camVertSpeed * timestep);
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_LEFT)) {
-			rotation.y += Math.ceil(camHorizSpeed * timestep);
+			rotation.y -= Math.ceil(camHorizSpeed * timestep);
 		}
 		if (KeyboardInput.keyDown(KeyEvent.VK_RIGHT)) {
-			rotation.y -= Math.ceil(camHorizSpeed * timestep);
+			rotation.y += Math.ceil(camHorizSpeed * timestep);
 		}
 		
 		if (rotation.y < 0) {
