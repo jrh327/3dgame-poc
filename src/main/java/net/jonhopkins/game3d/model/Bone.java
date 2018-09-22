@@ -7,6 +7,7 @@ import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 
 class Bone {
+	private String name;
 	private Vertex origPivot;
 	private Vertex pivot;
 	private Vertex[] vertices;
@@ -15,7 +16,8 @@ class Bone {
 	private Vector rotation;
 	private Vector scale;
 	
-	public Bone(Vertex pivot, Vertex[] vertices, Bone[] children) {
+	public Bone(String name, Vertex pivot, Vertex[] vertices, Bone[] children) {
+		this.name = name;
 		this.origPivot = new Vertex(pivot);
 		this.pivot = pivot;
 		this.vertices = vertices;
@@ -23,6 +25,10 @@ class Bone {
 		this.translation = new Vector();
 		this.rotation = new Vector();
 		this.scale = new Vector(1.0, 1.0, 1.0);
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 	
 	public Vertex getPivot() {

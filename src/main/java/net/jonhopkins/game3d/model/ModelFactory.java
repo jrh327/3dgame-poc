@@ -72,6 +72,7 @@ public class ModelFactory {
 		int[] colors = new int[numFaces];
 		
 		int boneCounter = 0;
+		String[] boneNames = new String[numBones];
 		Vertex[] bonePivots = new Vertex[numBones];
 		int[][] boneChildren = new int[numBones][];
 		int[][] boneVerts = new int[numBones][];
@@ -118,8 +119,11 @@ public class ModelFactory {
 			}
 			case 'b': {
 				String[] parts = line.split(" ");
+				
+				boneNames[boneCounter] = parts[1];
+				
 				int numChildren = 0;
-				for (int i = 1; i < parts.length; i++) {
+				for (int i = 2; i < parts.length; i++) {
 					if (parts[i].charAt(0) != 'b') {
 						break;
 					}
@@ -129,18 +133,18 @@ public class ModelFactory {
 				int[] bchildren = new int[numChildren];
 				boneChildren[boneCounter] = bchildren;
 				for (int i = 0; i < numChildren; i++) {
-					bchildren[i] = Integer.valueOf(parts[i + 1].substring(1)) - 1;
+					bchildren[i] = Integer.valueOf(parts[i + 2].substring(1)) - 1;
 				}
 				
-				double pivotX = Double.valueOf(parts[numChildren + 1]);
-				double pivotY = Double.valueOf(parts[numChildren + 2]);
-				double pivotZ = Double.valueOf(parts[numChildren + 3]);
+				double pivotX = Double.valueOf(parts[numChildren + 2]);
+				double pivotY = Double.valueOf(parts[numChildren + 3]);
+				double pivotZ = Double.valueOf(parts[numChildren + 4]);
 				bonePivots[boneCounter] = new Vertex(pivotX, pivotY, pivotZ);
 				
-				int[] bverts =  new int[parts.length - numChildren - 4];
+				int[] bverts =  new int[parts.length - numChildren - 5];
 				boneVerts[boneCounter] = bverts;
 				int vert = 0;
-				for (int i = numChildren + 4; i < parts.length; i++) {
+				for (int i = numChildren + 5; i < parts.length; i++) {
 					bverts[vert] = Integer.valueOf(parts[i]) - 1;
 					vert++;
 				}
@@ -211,7 +215,7 @@ public class ModelFactory {
 		for (int i = 0; i < numBones; i++) {
 			bonesChildren[i] = new Bone[boneChildren[i].length];
 			bonesVertices[i] = new Vertex[boneVerts[i].length];
-			bones[i] = new Bone(bonePivots[i], bonesVertices[i], bonesChildren[i]);
+			bones[i] = new Bone(boneNames[i], bonePivots[i], bonesVertices[i], bonesChildren[i]);
 		}
 		
 		for (int i = 0; i < numBones; i++) {
