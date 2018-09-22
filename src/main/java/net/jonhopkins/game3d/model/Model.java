@@ -76,6 +76,13 @@ public class Model extends GameObject implements Drawable {
 		return faces;
 	}
 	
+	public Bone getBone(String name) {
+		if (primaryBone.getName().equals(name)) {
+			return primaryBone;
+		}
+		return primaryBone.getChild(name);
+	}
+	
 	public Vector getScale() {
 		return scale;
 	}

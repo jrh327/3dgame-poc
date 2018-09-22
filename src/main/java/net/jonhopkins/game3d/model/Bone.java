@@ -60,6 +60,15 @@ class Bone {
 		return vertices;
 	}
 	
+	public Bone getChild(String name) {
+		for (Bone child : children) {
+			if (child.name.equals(name)) {
+				return child;
+			}
+		}
+		return null;
+	}
+	
 	public Bone[] getChildren() {
 		return children;
 	}
