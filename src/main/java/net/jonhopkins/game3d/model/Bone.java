@@ -66,6 +66,12 @@ class Bone {
 				return child;
 			}
 		}
+		for (Bone child : children) {
+			Bone bone = child.getChild(name);
+			if (bone != null) {
+				return bone;
+			}
+		}
 		return null;
 	}
 	
