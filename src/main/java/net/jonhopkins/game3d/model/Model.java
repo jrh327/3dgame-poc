@@ -20,11 +20,10 @@ public class Model extends GameObject implements Drawable {
 	protected Vector scale;
 	
 	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors) {
-		this(vertices, faceVertices, faceColors, new HashMap<String, Animation>(), null);
+		this(vertices, faceVertices, faceColors, null);
 	}
 	
-	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors,
-			Map<String, Animation> animations, Bone primaryBone) {
+	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors, Bone primaryBone) {
 		super();
 		this.vertices = Arrays.asList(vertices);
 		this.origVertices = new Vertex[vertices.length];
@@ -40,7 +39,7 @@ public class Model extends GameObject implements Drawable {
 			}
 			this.faces.add(i, new Face(verts, faceColors[i]));
 		}
-		this.animations = animations;
+		this.animations = new HashMap<>();
 		this.primaryBone = primaryBone;
 		this.scale = new Vector(1.0, 1.0, 1.0);
 	}
@@ -91,6 +90,10 @@ public class Model extends GameObject implements Drawable {
 		this.scale.setTo(scale);
 		resetVertices();
 		primaryBone.setScale(scale);
+	}
+	
+	void setAnimations(Map<String, Animation> animations) {
+		this.animations.putAll(animations);
 	}
 	
 	public void setAnimationActive(String name, boolean active) {

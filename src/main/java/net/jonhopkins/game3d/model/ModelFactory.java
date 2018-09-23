@@ -78,7 +78,7 @@ public class ModelFactory {
 		int[][] boneVerts = new int[numBones][];
 		
 		int keyCounter = 0;
-		int[][] keyBoneIndices = new int[numKeys][];
+		String[][] keyBoneNames = new String[numKeys][];
 		Vector[][] keyTranslations = new Vector[numKeys][];
 		Vector[][] keyRotations = new Vector[numKeys][];
 		
@@ -156,8 +156,8 @@ public class ModelFactory {
 				String[] parts = line.split(" ");
 				int numKeyBones = (parts.length - 1) / 7;
 				
-				int[] keyBones = new int[numKeyBones];
-				keyBoneIndices[keyCounter] = keyBones;
+				String[] keyBones = new String[numKeyBones];
+				keyBoneNames[keyCounter] = keyBones;
 				Vector[] translations  = new Vector[numKeyBones];
 				keyTranslations[keyCounter] = translations;
 				Vector[] rotations = new Vector[numKeyBones];
@@ -165,7 +165,7 @@ public class ModelFactory {
 				
 				int bone = 1;
 				for (int i = 0; i < numKeyBones; i++) {
-					keyBones[i] = Integer.valueOf(parts[bone]) - 1;
+					keyBones[i] = parts[bone];
 					
 					double translateX = Double.valueOf(parts[bone + 1]);
 					double translateY = Double.valueOf(parts[bone + 2]);
@@ -232,14 +232,16 @@ public class ModelFactory {
 			}
 		}
 		
+		Bone primaryBone = null;
+		if (bones.length > 0) {
+			primaryBone = bones[0];
+		}
+		Model model = new Model(vertices, faces, colors, primaryBone);
+		
 		AnimationKey[] keys = new AnimationKey[numKeys];
 		for (int i = 0; i < numKeys; i++) {
-			int[] boneIndices = keyBoneIndices[i];
-			Bone[] keyBones = new Bone[boneIndices.length];
-			for (int b = 0; b < keyBones.length; b++) {
-				keyBones[b] = bones[boneIndices[b]];
-			}
-			keys[i] = new AnimationKey(keyBones, keyTranslations[i], keyRotations[i]);
+			String[] keyBones = keyBoneNames[i];
+			keys[i] = new AnimationKey(model, keyBones, keyTranslations[i], keyRotations[i]);
 		}
 		
 		for (int i = 0; i < numAnimations; i++) {
@@ -251,10 +253,7 @@ public class ModelFactory {
 			animations.put(animationNames[i], new Animation(animationKeys, animationKeyTimes[i]));
 		}
 		
-		Bone primaryBone = null;
-		if (bones.length > 0) {
-			primaryBone = bones[0];
-		}
-		return new Model(vertices, faces, colors, animations, primaryBone);
+		model.setAnimations(animations);
+		return model;
 	}
 }
