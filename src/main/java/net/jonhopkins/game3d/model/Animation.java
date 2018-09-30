@@ -72,6 +72,9 @@ class Animation {
 		for (int i = 0; i < bones.length; i++) {
 			Vector curTranslation = bones[i].getTranslation();
 			Vector startTranslation = previousTranslations.get(bones[i]);
+			if (startTranslation == null) {
+				startTranslation = bones[i].getTranslation();
+			}
 			Vector targetTranslation = translations[i];
 			
 			double dx = startTranslation.x + (targetTranslation.x - startTranslation.x) * fractionOfKey;
@@ -84,6 +87,9 @@ class Animation {
 			
 			Vector curRotation = bones[i].getRotation();
 			Vector startRotation = previousRotations.get(bones[i]);
+			if (startRotation == null) {
+				startRotation = bones[i].getRotation();
+			}
 			Vector targetRotation = rotations[i];
 			
 			dx = startRotation.x + (targetRotation.x - startRotation.x) * fractionOfKey;

@@ -23,6 +23,11 @@ public abstract class Prefab extends GameObject implements Scriptable {
 	}
 	
 	@Override
+	public Script getScript(String name) {
+		return scripts.get(name);
+	}
+	
+	@Override
 	public void registerScript(String name, Script script) {
 		this.scripts.put(name, script);
 	}
