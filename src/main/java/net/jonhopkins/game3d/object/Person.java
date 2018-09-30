@@ -15,7 +15,7 @@ public class Person extends Prefab {
 		registerScript("animation_script", new Script(this) {
 			@Override
 			public void update(double timestep) {
-				model.setAnimationActive("test_animation", true);
+				model.setAnimationActive("idle", true);
 			}
 		});
 	}

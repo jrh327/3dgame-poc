@@ -321,8 +321,8 @@ b left_hand b16 -11.0 5.0 0.0 81 82 83 84 85 86 87 88
 b right_arm_upper b13 3.0 5.0 0.0 89 90 91 92 93 94 95 96
 b right_arm_lower b14 7.0 5.0 0.0 97 98 99 100 101 102 103 104
 b right_hand b15 11.0 5.0 0.0 105 106 107 108 109 110 111 112
-b weapon 11.0 5.0 0.0
-b offhand -11.0 5.0 0.0
+b weapon 12.0 5.0 0.0
+b offhand -12.0 5.0 0.0
 
 # animation_key - k bone1_name translate1 rotate1 bone2_name translate2 rotate2 ...
 k left_leg_upper 0.0 0.0 0.0 0.0 0.0 -45.0 right_leg_upper 0.0 0.0 0.0 0.0 0.0 45.0 left_arm_upper 0.0 0.0 0.0 0.0 0.0 -45.0 left_arm_lower 0.0 0.0 0.0 0.0 0.0 -45.0 right_arm_upper 0.0 0.0 0.0 0.0 0.0 45.0 right_arm_lower 0.0 0.0 0.0 0.0 0.0 45.0
@@ -331,3 +331,6 @@ k left_leg_upper 0.0 0.0 0.0 0.0 0.0 0.0 right_leg_upper 0.0 0.0 0.0 0.0 0.0 0.0
 k left_leg_upper 0.0 0.0 0.0 0.0 0.0 0.0 right_leg_upper 0.0 0.0 0.0 0.0 0.0 0.0 left_arm_upper 0.0 0.0 0.0 0.0 0.0 0.0 left_arm_lower 0.0 0.0 0.0 0.0 0.0 0.0 right_arm_upper 0.0 0.0 0.0 0.0 0.0 0.0 right_arm_lower 0.0 0.0 0.0 0.0 0.0 0.0
 # animation - a name key1_index key1_time key2_index key2_time ...
 a test_animation 1 2.0 2 4.0 3 6.0 4 8.0
+
+k body 0.0 0.0 0.0 0.0 0.0 0.0 head 0.0 0.0 0.0 0.0 0.0 0.0 left_leg_upper 0.0 0.0 0.0 0.0 0.0 0.0 left_leg_lower 0.0 0.0 0.0 0.0 0.0 0.0 left_foot 0.0 0.0 0.0 0.0 0.0 0.0 right_leg_upper 0.0 0.0 0.0 0.0 0.0 0.0 right_leg_lower 0.0 0.0 0.0 0.0 0.0 0.0 right_foot 0.0 0.0 0.0 0.0 0.0 0.0 left_arm_upper 0.0 0.0 0.0 0.0 0.0 85.0 left_arm_lower 0.0 0.0 0.0 0.0 0.0 0.0 left_hand 0.0 0.0 0.0 0.0 0.0 0.0 right_arm_upper 0.0 0.0 0.0 0.0 0.0 -85.0 right_arm_lower 0.0 0.0 0.0 0.0 0.0 0.0 right_hand 0.0 0.0 0.0 0.0 0.0 0.0 weapon 0.0 0.0 0.0 0.0 0.0 0.0 offhand 0.0 0.0 0.0 0.0 0.0 0.0
+a idle 5 0.1

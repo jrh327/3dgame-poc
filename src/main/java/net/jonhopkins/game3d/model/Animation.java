@@ -59,7 +59,7 @@ class Animation {
 		Bone[] bones = key.getBones();
 		Vector[] translations = key.getTranslations();
 		Vector[] rotations = key.getRotations();
-		if (newKey) {
+		if (newKey && keys.length > 1) {
 			Bone[] prevBones = keys[currentKey - 1].getBones();
 			Vector[] prevTranslations = keys[currentKey - 1].getTranslations();
 			Vector[] prevRotations = keys[currentKey - 1].getRotations();
