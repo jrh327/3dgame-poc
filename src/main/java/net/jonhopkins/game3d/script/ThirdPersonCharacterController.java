@@ -6,6 +6,8 @@ import net.jonhopkins.game3d.Camera;
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 import net.jonhopkins.game3d.input.KeyboardInput;
+import net.jonhopkins.game3d.model.Model;
+import net.jonhopkins.game3d.model.ModelFactory;
 import net.jonhopkins.game3d.object.MapSector;
 import net.jonhopkins.game3d.object.Scriptable;
 
@@ -15,7 +17,7 @@ public class ThirdPersonCharacterController extends CharacterController {
 	 * The camera is always directly behind the character, and the 
 	 * character moves in the direction it is facing.
 	 */
-	protected boolean followCharacter = true;
+	protected boolean followCharacter = false;
 	
 	public ThirdPersonCharacterController(Scriptable object, Camera camera) {
 		super(object, camera);
@@ -37,8 +39,13 @@ public class ThirdPersonCharacterController extends CharacterController {
 		if (movingForward == movingBackward && movingLeft == movingRight) {
 			// no movement at all
 			// note that pressing opposing directions cancels out
+			((Model)object.getChild("person").getChild("human")).setAnimationActive("idle", true);
+			((Model)object.getChild("person").getChild("human")).setAnimationActive("walking", false);
 			return;
 		}
+		
+		((Model)object.getChild("person").getChild("human")).setAnimationActive("idle", false);
+		((Model)object.getChild("person").getChild("human")).setAnimationActive("walking", true);
 		
 		double direction = 0.0;
 		Vertex position = this.object.getPosition();
