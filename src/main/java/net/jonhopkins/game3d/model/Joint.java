@@ -6,17 +6,17 @@ import java.util.List;
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 
-class Bone {
+class Joint {
 	private String name;
 	private Vertex origPivot;
 	private Vertex pivot;
 	private Vertex[] vertices;
-	private Bone[] children;
+	private Joint[] children;
 	private Vector translation;
 	private Vector rotation;
 	private Vector scale;
 	
-	public Bone(String name, Vertex pivot, Vertex[] vertices, Bone[] children) {
+	public Joint(String name, Vertex pivot, Vertex[] vertices, Joint[] children) {
 		this.name = name;
 		this.origPivot = new Vertex(pivot);
 		this.pivot = pivot;
@@ -36,7 +36,7 @@ class Bone {
 	}
 	
 	public void rotateAndTranslate() {
-		for (Bone child : children) {
+		for (Joint child : children) {
 			child.rotateAndTranslate();
 		}
 		rotateAndTranslate(pivot, translation, rotation);
@@ -51,7 +51,7 @@ class Bone {
 		Vertex.translate(verts, new Vector(pivot));
 		Vertex.translate(verts, translate);
 		
-		for (Bone child : children) {
+		for (Joint child : children) {
 			child.rotateAndTranslate(pivot, translate, rotate);
 		}
 	}
@@ -60,22 +60,22 @@ class Bone {
 		return vertices;
 	}
 	
-	public Bone getChild(String name) {
-		for (Bone child : children) {
+	public Joint getChild(String name) {
+		for (Joint child : children) {
 			if (child.name.equals(name)) {
 				return child;
 			}
 		}
-		for (Bone child : children) {
-			Bone bone = child.getChild(name);
-			if (bone != null) {
-				return bone;
+		for (Joint child : children) {
+			Joint joint = child.getChild(name);
+			if (joint != null) {
+				return joint;
 			}
 		}
 		return null;
 	}
 	
-	public Bone[] getChildren() {
+	public Joint[] getChildren() {
 		return children;
 	}
 	
@@ -86,7 +86,7 @@ class Bone {
 	public void setScale(Vector scale) {
 		this.scale.setTo(scale);
 		scalePivot();
-		for (Bone child : children) {
+		for (Joint child : children) {
 			child.setScale(scale);
 		}
 	}

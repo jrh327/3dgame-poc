@@ -12,8 +12,8 @@ class Animation {
 	private int currentKey;
 	private boolean active = false;
 	
-	private Map<Bone, Vector> previousTranslations;
-	private Map<Bone, Vector> previousRotations;
+	private Map<Joint, Vector> previousTranslations;
+	private Map<Joint, Vector> previousRotations;
 	
 	public Animation(AnimationKey[] keys, double[] keyTimes) {
 		this.keys = keys;
@@ -34,7 +34,7 @@ class Animation {
 		
 		boolean newKey = false;
 		if (timeElapsed > keyTimes[keyTimes.length - 1]) {
-			// to get the bones to the final position
+			// to get the joints to the final position
 			timeElapsed = keyTimes[keyTimes.length - 1];
 			currentKey = keys.length - 1;
 			
@@ -56,24 +56,24 @@ class Animation {
 		}
 		double fractionOfKey = (timeForKey - (keyTimes[currentKey] - timeElapsed)) / timeForKey;
 		
-		Bone[] bones = key.getBones();
+		Joint[] joints = key.getJoints();
 		Vector[] translations = key.getTranslations();
 		Vector[] rotations = key.getRotations();
 		if (newKey && keys.length > 1) {
-			Bone[] prevBones = keys[currentKey - 1].getBones();
+			Joint[] prevJoints = keys[currentKey - 1].getJoints();
 			Vector[] prevTranslations = keys[currentKey - 1].getTranslations();
 			Vector[] prevRotations = keys[currentKey - 1].getRotations();
-			for (int i = 0; i < prevBones.length; i++) {
-				previousTranslations.put(prevBones[i], new Vector(prevTranslations[i]));
-				previousRotations.put(prevBones[i], new Vector(prevRotations[i]));
+			for (int i = 0; i < prevJoints.length; i++) {
+				previousTranslations.put(prevJoints[i], new Vector(prevTranslations[i]));
+				previousRotations.put(prevJoints[i], new Vector(prevRotations[i]));
 			}
 		}
 		
-		for (int i = 0; i < bones.length; i++) {
-			Vector curTranslation = bones[i].getTranslation();
-			Vector startTranslation = previousTranslations.get(bones[i]);
+		for (int i = 0; i < joints.length; i++) {
+			Vector curTranslation = joints[i].getTranslation();
+			Vector startTranslation = previousTranslations.get(joints[i]);
 			if (startTranslation == null) {
-				startTranslation = bones[i].getTranslation();
+				startTranslation = joints[i].getTranslation();
 			}
 			Vector targetTranslation = translations[i];
 			
@@ -85,10 +85,10 @@ class Animation {
 			curTranslation.y = dy;
 			curTranslation.z = dz;
 			
-			Vector curRotation = bones[i].getRotation();
-			Vector startRotation = previousRotations.get(bones[i]);
+			Vector curRotation = joints[i].getRotation();
+			Vector startRotation = previousRotations.get(joints[i]);
 			if (startRotation == null) {
-				startRotation = bones[i].getRotation();
+				startRotation = joints[i].getRotation();
 			}
 			Vector targetRotation = rotations[i];
 			
@@ -112,12 +112,12 @@ class Animation {
 	public void reset() {
 		timeElapsed = 0.0;
 		currentKey = 0;
-		Bone[] bones = keys[0].getBones();
-		for (Bone bone : bones) {
-			Vector translation = new Vector(bone.getTranslation());
-			Vector rotation = new Vector(bone.getRotation());
-			previousTranslations.put(bone, translation);
-			previousRotations.put(bone, rotation);
+		Joint[] joints = keys[0].getJoints();
+		for (Joint joint : joints) {
+			Vector translation = new Vector(joint.getTranslation());
+			Vector rotation = new Vector(joint.getRotation());
+			previousTranslations.put(joint, translation);
+			previousRotations.put(joint, rotation);
 		}
 	}
 	

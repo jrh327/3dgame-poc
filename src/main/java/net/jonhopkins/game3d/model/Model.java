@@ -16,14 +16,14 @@ public class Model extends GameObject implements Drawable {
 	protected List<Vertex> vertices;
 	protected List<Face> faces;
 	protected Map<String, Animation> animations;
-	protected Bone primaryBone;
+	protected Joint rootJoint;
 	protected Vector scale;
 	
 	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors) {
 		this(vertices, faceVertices, faceColors, null);
 	}
 	
-	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors, Bone primaryBone) {
+	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors, Joint primaryBone) {
 		super();
 		this.vertices = Arrays.asList(vertices);
 		this.origVertices = new Vertex[vertices.length];
@@ -40,7 +40,7 @@ public class Model extends GameObject implements Drawable {
 			this.faces.add(i, new Face(verts, faceColors[i]));
 		}
 		this.animations = new HashMap<>();
-		this.primaryBone = primaryBone;
+		this.rootJoint = primaryBone;
 		this.scale = new Vector(1.0, 1.0, 1.0);
 	}
 	
@@ -50,8 +50,8 @@ public class Model extends GameObject implements Drawable {
 		for (Animation animation : animations.values()) {
 			animation.update(timestep);
 		}
-		if (primaryBone != null) {
-			primaryBone.rotateAndTranslate();
+		if (rootJoint != null) {
+			rootJoint.rotateAndTranslate();
 		}
 	}
 	
@@ -75,11 +75,11 @@ public class Model extends GameObject implements Drawable {
 		return faces;
 	}
 	
-	public Bone getBone(String name) {
-		if (primaryBone.getName().equals(name)) {
-			return primaryBone;
+	public Joint getJoint(String name) {
+		if (rootJoint.getName().equals(name)) {
+			return rootJoint;
 		}
-		return primaryBone.getChild(name);
+		return rootJoint.getChild(name);
 	}
 	
 	public Vector getScale() {
@@ -89,7 +89,7 @@ public class Model extends GameObject implements Drawable {
 	public void setScale(Vector scale) {
 		this.scale.setTo(scale);
 		resetVertices();
-		primaryBone.setScale(scale);
+		rootJoint.setScale(scale);
 	}
 	
 	void setAnimations(Map<String, Animation> animations) {

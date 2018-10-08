@@ -11,6 +11,12 @@ import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 
 public class ModelFactory {
+	private static final char VERT_IDENTIFIER = 'v';
+	private static final char FACE_IDENTIFIER = 'f';
+	private static final char JOINT_IDENTIFIER = 'j';
+	private static final char KEY_IDENTIFIER = 'k';
+	private static final char ANIM_IDENTIFIER = 'a';
+	
 	/**
 	 * Generates a model from the given file.
 	 * <p>
@@ -38,7 +44,7 @@ public class ModelFactory {
 		
 		int numVertices = 0;
 		int numFaces = 0;
-		int numBones = 0;
+		int numJoints = 0;
 		int numKeys = 0;
 		int numAnimations = 0;
 		for (String line : lines) {
@@ -47,19 +53,19 @@ public class ModelFactory {
 				continue;
 			}
 			switch (line.charAt(0)) {
-			case 'v':
+			case VERT_IDENTIFIER:
 				numVertices++;
 				break;
-			case 'f':
+			case FACE_IDENTIFIER:
 				numFaces++;
 				break;
-			case 'b':
-				numBones++;
+			case JOINT_IDENTIFIER:
+				numJoints++;
 				break;
-			case 'k':
+			case KEY_IDENTIFIER:
 				numKeys++;
 				break;
-			case 'a':
+			case ANIM_IDENTIFIER:
 				numAnimations++;
 				break;
 			default:
@@ -71,14 +77,14 @@ public class ModelFactory {
 		int[][] faces = new int[numFaces][];
 		int[] colors = new int[numFaces];
 		
-		int boneCounter = 0;
-		String[] boneNames = new String[numBones];
-		Vertex[] bonePivots = new Vertex[numBones];
-		int[][] boneChildren = new int[numBones][];
-		int[][] boneVerts = new int[numBones][];
+		int jointCounter = 0;
+		String[] jointNames = new String[numJoints];
+		Vertex[] jointPivots = new Vertex[numJoints];
+		int[][] jointChildren = new int[numJoints][];
+		int[][] jointVerts = new int[numJoints][];
 		
 		int keyCounter = 0;
-		String[][] keyBoneNames = new String[numKeys][];
+		String[][] keyJointNames = new String[numKeys][];
 		Vector[][] keyTranslations = new Vector[numKeys][];
 		Vector[][] keyRotations = new Vector[numKeys][];
 		
@@ -96,7 +102,7 @@ public class ModelFactory {
 				continue;
 			}
 			switch (line.charAt(0)) {
-			case 'v': {
+			case VERT_IDENTIFIER: {
 				String[] parts = line.split(" ");
 				double x = Double.valueOf(parts[1]);
 				double y = Double.valueOf(parts[2]);
@@ -106,7 +112,7 @@ public class ModelFactory {
 				vertexCounter++;
 				break;
 			}
-			case 'f': {
+			case FACE_IDENTIFIER: {
 				String[] parts = line.split(" ");
 				int[] vertexIndices = new int[parts.length - 2];
 				for (int i = 0; i < vertexIndices.length; i++) {
@@ -117,74 +123,74 @@ public class ModelFactory {
 				faceCounter++;
 				break;
 			}
-			case 'b': {
+			case JOINT_IDENTIFIER: {
 				String[] parts = line.split(" ");
 				
-				boneNames[boneCounter] = parts[1];
+				jointNames[jointCounter] = parts[1];
 				
 				int numChildren = 0;
 				for (int i = 2; i < parts.length; i++) {
-					if (parts[i].charAt(0) != 'b') {
+					if (parts[i].charAt(0) != JOINT_IDENTIFIER) {
 						break;
 					}
 					numChildren++;
 				}
 				
-				int[] bchildren = new int[numChildren];
-				boneChildren[boneCounter] = bchildren;
+				int[] jchildren = new int[numChildren];
+				jointChildren[jointCounter] = jchildren;
 				for (int i = 0; i < numChildren; i++) {
-					bchildren[i] = Integer.valueOf(parts[i + 2].substring(1)) - 1;
+					jchildren[i] = Integer.valueOf(parts[i + 2].substring(1)) - 1;
 				}
 				
 				double pivotX = Double.valueOf(parts[numChildren + 2]);
 				double pivotY = Double.valueOf(parts[numChildren + 3]);
 				double pivotZ = Double.valueOf(parts[numChildren + 4]);
-				bonePivots[boneCounter] = new Vertex(pivotX, pivotY, pivotZ);
+				jointPivots[jointCounter] = new Vertex(pivotX, pivotY, pivotZ);
 				
-				int[] bverts =  new int[parts.length - numChildren - 5];
-				boneVerts[boneCounter] = bverts;
+				int[] jverts =  new int[parts.length - numChildren - 5];
+				jointVerts[jointCounter] = jverts;
 				int vert = 0;
 				for (int i = numChildren + 5; i < parts.length; i++) {
-					bverts[vert] = Integer.valueOf(parts[i]) - 1;
+					jverts[vert] = Integer.valueOf(parts[i]) - 1;
 					vert++;
 				}
 				
-				boneCounter++;
+				jointCounter++;
 				break;
 			}
-			case 'k': {
+			case KEY_IDENTIFIER: {
 				String[] parts = line.split(" ");
-				int numKeyBones = (parts.length - 1) / 7;
+				int numKeyJoints = (parts.length - 1) / 7;
 				
-				String[] keyBones = new String[numKeyBones];
-				keyBoneNames[keyCounter] = keyBones;
-				Vector[] translations  = new Vector[numKeyBones];
+				String[] keyJoints = new String[numKeyJoints];
+				keyJointNames[keyCounter] = keyJoints;
+				Vector[] translations  = new Vector[numKeyJoints];
 				keyTranslations[keyCounter] = translations;
-				Vector[] rotations = new Vector[numKeyBones];
+				Vector[] rotations = new Vector[numKeyJoints];
 				keyRotations[keyCounter] = rotations;
 				
-				int bone = 1;
-				for (int i = 0; i < numKeyBones; i++) {
-					keyBones[i] = parts[bone];
+				int joint = 1;
+				for (int i = 0; i < numKeyJoints; i++) {
+					keyJoints[i] = parts[joint];
 					
-					double translateX = Double.valueOf(parts[bone + 1]);
-					double translateY = Double.valueOf(parts[bone + 2]);
-					double translateZ = Double.valueOf(parts[bone + 3]);
+					double translateX = Double.valueOf(parts[joint + 1]);
+					double translateY = Double.valueOf(parts[joint + 2]);
+					double translateZ = Double.valueOf(parts[joint + 3]);
 					translations[i] = new Vector(translateX, translateY, translateZ);
 					
-					double rotateX = Double.valueOf(parts[bone + 4]);
-					double rotateY = Double.valueOf(parts[bone + 5]);
-					double rotateZ = Double.valueOf(parts[bone + 6]);
+					double rotateX = Double.valueOf(parts[joint + 4]);
+					double rotateY = Double.valueOf(parts[joint + 5]);
+					double rotateZ = Double.valueOf(parts[joint + 6]);
 					rotations[i] = new Vector(rotateX, rotateY, rotateZ);
 					
-					bone += 7;
+					joint += 7;
 				}
 				
 				keyCounter++;
 				
 				break;
 			}
-			case 'a': {
+			case ANIM_IDENTIFIER: {
 				String[] parts = line.split(" ");
 				int numAnimationKeys = (parts.length - 2) / 2;
 				
@@ -209,39 +215,39 @@ public class ModelFactory {
 			}
 		}
 		
-		Bone[] bones = new Bone[numBones];
-		Bone[][] bonesChildren = new Bone[numBones][];
-		Vertex[][] bonesVertices = new Vertex[numBones][];
-		for (int i = 0; i < numBones; i++) {
-			bonesChildren[i] = new Bone[boneChildren[i].length];
-			bonesVertices[i] = new Vertex[boneVerts[i].length];
-			bones[i] = new Bone(boneNames[i], bonePivots[i], bonesVertices[i], bonesChildren[i]);
+		Joint[] joints = new Joint[numJoints];
+		Joint[][] jointsChildren = new Joint[numJoints][];
+		Vertex[][] jointsVertices = new Vertex[numJoints][];
+		for (int i = 0; i < numJoints; i++) {
+			jointsChildren[i] = new Joint[jointChildren[i].length];
+			jointsVertices[i] = new Vertex[jointVerts[i].length];
+			joints[i] = new Joint(jointNames[i], jointPivots[i], jointsVertices[i], jointsChildren[i]);
 		}
 		
-		for (int i = 0; i < numBones; i++) {
-			Bone[] bchildren = bonesChildren[i];
-			int[] childrenIndices = boneChildren[i];
-			for (int j = 0; j < bchildren.length; j++) {
-				bchildren[j] = bones[childrenIndices[j]];
+		for (int i = 0; i < numJoints; i++) {
+			Joint[] jchildren = jointsChildren[i];
+			int[] childrenIndices = jointChildren[i];
+			for (int j = 0; j < jchildren.length; j++) {
+				jchildren[j] = joints[childrenIndices[j]];
 			}
 			
-			Vertex[] bverts = bonesVertices[i];
-			int[] verticesIndices = boneVerts[i];
-			for (int j = 0; j < bverts.length; j++) {
-				bverts[j] = vertices[verticesIndices[j]];
+			Vertex[] jverts = jointsVertices[i];
+			int[] verticesIndices = jointVerts[i];
+			for (int j = 0; j < jverts.length; j++) {
+				jverts[j] = vertices[verticesIndices[j]];
 			}
 		}
 		
-		Bone primaryBone = null;
-		if (bones.length > 0) {
-			primaryBone = bones[0];
+		Joint rootJoint = null;
+		if (joints.length > 0) {
+			rootJoint = joints[0];
 		}
-		Model model = new Model(vertices, faces, colors, primaryBone);
+		Model model = new Model(vertices, faces, colors, rootJoint);
 		
 		AnimationKey[] keys = new AnimationKey[numKeys];
 		for (int i = 0; i < numKeys; i++) {
-			String[] keyBones = keyBoneNames[i];
-			keys[i] = new AnimationKey(model, keyBones, keyTranslations[i], keyRotations[i]);
+			String[] keyJoint = keyJointNames[i];
+			keys[i] = new AnimationKey(model, keyJoint, keyTranslations[i], keyRotations[i]);
 		}
 		
 		for (int i = 0; i < numAnimations; i++) {

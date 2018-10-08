@@ -4,23 +4,23 @@ import net.jonhopkins.game3d.geometry.Vector;
 
 public class AnimationKey {
 	private Model model;
-	private String[] boneNames;
+	private String[] jointNames;
 	private Vector[] translations;
 	private Vector[] rotations;
 	
-	public AnimationKey(Model model, String[] bones, Vector[] translations, Vector[] rotations) {
+	public AnimationKey(Model model, String[] joints, Vector[] translations, Vector[] rotations) {
 		this.model = model;
-		this.boneNames = bones;
+		this.jointNames = joints;
 		this.translations = translations;
 		this.rotations = rotations;
 	}
 	
-	public Bone[] getBones() {
-		Bone[] bones = new Bone[boneNames.length];
-		for (int i = 0; i < bones.length; i++) {
-			bones[i] = model.getBone(boneNames[i]);
+	public Joint[] getJoints() {
+		Joint[] joints = new Joint[jointNames.length];
+		for (int i = 0; i < joints.length; i++) {
+			joints[i] = model.getJoint(jointNames[i]);
 		}
-		return bones;
+		return joints;
 	}
 	
 	public Vector[] getTranslations() {
