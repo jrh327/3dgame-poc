@@ -23,7 +23,7 @@ public class Model extends GameObject implements Drawable {
 		this(vertices, faceVertices, faceColors, null);
 	}
 	
-	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors, Joint primaryBone) {
+	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors, Joint primaryJoint) {
 		super();
 		this.vertices = Arrays.asList(vertices);
 		this.origVertices = new Vertex[vertices.length];
@@ -40,7 +40,7 @@ public class Model extends GameObject implements Drawable {
 			this.faces.add(i, new Face(verts, faceColors[i]));
 		}
 		this.animations = new HashMap<>();
-		this.rootJoint = primaryBone;
+		this.rootJoint = primaryJoint;
 		this.scale = new Vector(1.0, 1.0, 1.0);
 	}
 	
