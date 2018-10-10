@@ -48,7 +48,9 @@ public class Model extends GameObject implements Drawable {
 	public void update(double timestep) {
 		resetVertices();
 		for (Animation animation : animations.values()) {
-			animation.update(timestep);
+			if (animation.isActive()) {
+				animation.update(timestep);
+			}
 		}
 		if (rootJoint != null) {
 			rootJoint.rotateAndTranslate();
