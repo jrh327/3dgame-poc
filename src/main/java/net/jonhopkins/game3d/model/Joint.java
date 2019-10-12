@@ -6,7 +6,7 @@ import java.util.List;
 import net.jonhopkins.game3d.geometry.Vector;
 import net.jonhopkins.game3d.geometry.Vertex;
 
-class Joint {
+public class Joint {
 	private String name;
 	private Vertex origPivot;
 	private Vertex pivot;
@@ -77,6 +77,30 @@ class Joint {
 	
 	public Joint[] getChildren() {
 		return children;
+	}
+	
+	public boolean setChild(Joint joint) {
+		for (int i = 0; i < children.length; i++) {
+			Joint child = children[i];
+			if (child.name.equals(joint.name)) {
+				joint.setScale(child.getScale());
+				
+				for (Joint newChild : joint.children) {
+					child.setChild(newChild);
+				}
+				joint.children = child.children;
+				children[i] = joint;
+				return true;
+			}
+		}
+		
+		for (Joint child : children) {
+			if (child.setChild(joint)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public Vector getScale() {

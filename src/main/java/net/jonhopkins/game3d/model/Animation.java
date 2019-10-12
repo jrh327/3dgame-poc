@@ -12,8 +12,8 @@ class Animation {
 	private int currentKey;
 	private boolean active = false;
 	
-	private Map<Joint, Vector> previousTranslations;
-	private Map<Joint, Vector> previousRotations;
+	private Map<String, Vector> previousTranslations;
+	private Map<String, Vector> previousRotations;
 	
 	public Animation(AnimationKey[] keys, double[] keyTimes) {
 		this.keys = keys;
@@ -64,14 +64,14 @@ class Animation {
 			Vector[] prevTranslations = keys[currentKey - 1].getTranslations();
 			Vector[] prevRotations = keys[currentKey - 1].getRotations();
 			for (int i = 0; i < prevJoints.length; i++) {
-				previousTranslations.put(prevJoints[i], new Vector(prevTranslations[i]));
-				previousRotations.put(prevJoints[i], new Vector(prevRotations[i]));
+				previousTranslations.put(prevJoints[i].getName(), new Vector(prevTranslations[i]));
+				previousRotations.put(prevJoints[i].getName(), new Vector(prevRotations[i]));
 			}
 		}
 		
 		for (int i = 0; i < joints.length; i++) {
 			Vector curTranslation = joints[i].getTranslation();
-			Vector startTranslation = previousTranslations.get(joints[i]);
+			Vector startTranslation = previousTranslations.get(joints[i].getName());
 			if (startTranslation == null) {
 				startTranslation = joints[i].getTranslation();
 			}
@@ -86,7 +86,7 @@ class Animation {
 			curTranslation.z = dz;
 			
 			Vector curRotation = joints[i].getRotation();
-			Vector startRotation = previousRotations.get(joints[i]);
+			Vector startRotation = previousRotations.get(joints[i].getName());
 			if (startRotation == null) {
 				startRotation = joints[i].getRotation();
 			}
@@ -116,8 +116,8 @@ class Animation {
 		for (Joint joint : joints) {
 			Vector translation = new Vector(joint.getTranslation());
 			Vector rotation = new Vector(joint.getRotation());
-			previousTranslations.put(joint, translation);
-			previousRotations.put(joint, rotation);
+			previousTranslations.put(joint.getName(), translation);
+			previousRotations.put(joint.getName(), rotation);
 		}
 	}
 	

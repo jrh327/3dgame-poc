@@ -16,7 +16,7 @@ public class Model extends GameObject implements Drawable {
 	protected List<Vertex> vertices;
 	protected List<Face> faces;
 	protected Map<String, Animation> animations;
-	protected Joint rootJoint;
+	protected Rig rig;
 	protected Vector scale;
 	
 	public Model(Vertex[] vertices, int[][] faceVertices, int[] faceColors) {
@@ -40,7 +40,12 @@ public class Model extends GameObject implements Drawable {
 			this.faces.add(i, new Face(verts, faceColors[i]));
 		}
 		this.animations = new HashMap<>();
-		this.rootJoint = primaryJoint;
+		
+		if (primaryJoint == null) {
+			this.rig = null;
+		} else {
+			this.rig = new Rig(primaryJoint);
+		}
 		this.scale = new Vector(1.0, 1.0, 1.0);
 	}
 	
@@ -52,8 +57,8 @@ public class Model extends GameObject implements Drawable {
 				animation.update(timestep);
 			}
 		}
-		if (rootJoint != null) {
-			rootJoint.rotateAndTranslate();
+		if (rig != null) {
+			rig.rotateAndTranslate();
 		}
 	}
 	
@@ -65,6 +70,11 @@ public class Model extends GameObject implements Drawable {
 			v.y *= scale.y;
 			v.z *= scale.z;
 		}
+		if (rig != null) {
+			for (Model model : rig.getModels()) {
+				model.resetVertices();
+			}
+		}
 	}
 	
 	@Override
@@ -74,14 +84,19 @@ public class Model extends GameObject implements Drawable {
 	
 	@Override
 	public List<Face> getFaces() {
+		if (rig != null) {
+			List<Face> faces = new ArrayList<>();
+			faces.addAll(this.faces);
+			for (Model model : rig.getModels()) {
+				faces.addAll(model.faces);
+			}
+			return faces;
+		}
 		return faces;
 	}
 	
-	public Joint getJoint(String name) {
-		if (rootJoint.getName().equals(name)) {
-			return rootJoint;
-		}
-		return rootJoint.getChild(name);
+	public Rig getRig() {
+		return rig;
 	}
 	
 	public Vector getScale() {
@@ -91,7 +106,9 @@ public class Model extends GameObject implements Drawable {
 	public void setScale(Vector scale) {
 		this.scale.setTo(scale);
 		resetVertices();
-		rootJoint.setScale(scale);
+		if (rig != null) {
+			rig.setScale(scale);
+		}
 	}
 	
 	void setAnimations(Map<String, Animation> animations) {

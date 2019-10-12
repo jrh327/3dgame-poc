@@ -18,7 +18,7 @@ public class AnimationKey {
 	public Joint[] getJoints() {
 		Joint[] joints = new Joint[jointNames.length];
 		for (int i = 0; i < joints.length; i++) {
-			joints[i] = model.getJoint(jointNames[i]);
+			joints[i] = model.getRig().getJoint(jointNames[i]);
 		}
 		return joints;
 	}
