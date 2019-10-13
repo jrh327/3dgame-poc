@@ -37,6 +37,9 @@ public class ThirdPersonCharacterController extends CharacterController {
 		if (KeyboardInput.keyDownOnce(KeyEvent.VK_R)) {
 			equipWeapon2();
 		}
+		if (KeyboardInput.keyDownOnce(KeyEvent.VK_T)) {
+			equipTorso();
+		}
 		
 		boolean movingForward = KeyboardInput.keyDown(KeyEvent.VK_W);
 		boolean movingLeft = KeyboardInput.keyDown(KeyEvent.VK_A);
@@ -181,6 +184,12 @@ public class ThirdPersonCharacterController extends CharacterController {
 		Model sword = ModelFactory.getModel("axe.obj");
 		object.getChild("person").registerChild("weapon", sword);
 		((Model)(object.getChild("person").getChild("human"))).getRig().replacePart(sword);
+	}
+	
+	private void equipTorso() {
+		Model shirt = ModelFactory.getModel("torso2.obj");
+		object.getChild("person").registerChild("torso", shirt);
+		((Model)(object.getChild("person").getChild("human"))).getRig().replacePart(shirt);
 	}
 	
 	public void setDistance(double distance) {
