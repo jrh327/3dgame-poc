@@ -83,7 +83,7 @@ public class Joint {
 		for (int i = 0; i < children.length; i++) {
 			Joint child = children[i];
 			if (child.name.equals(joint.name)) {
-				joint.setScale(child.getScale());
+				//joint.setScale(child.getScale());
 				
 				for (Joint newChild : joint.children) {
 					child.setChild(newChild);

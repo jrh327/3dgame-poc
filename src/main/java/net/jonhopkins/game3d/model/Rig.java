@@ -22,14 +22,16 @@ public class Rig {
 	}
 	
 	public void replacePart(Model part) {
-		Joint joint = part.getRig().rootJoint;
+		Joint joint = part.getRig().getRoot();
 		boolean foundMatch = false;
 		if (rootJoint.getName().equals(joint.getName())) {
+			part.snapTo(rootJoint);
 			rootJoint = joint;
 			foundMatch = true;
 		} else {
 			Joint origJoint = getJoint(joint.getName());
 			if (origJoint != null) {
+				part.snapTo(origJoint);
 				rootJoint.setChild(joint);
 				foundMatch = true;
 			}

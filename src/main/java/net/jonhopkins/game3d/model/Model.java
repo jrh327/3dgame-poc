@@ -118,4 +118,32 @@ public class Model extends GameObject implements Drawable {
 	public void setAnimationActive(String name, boolean active) {
 		animations.get(name).setActive(active);
 	}
+	
+	/**
+	 * Snap a model to a joint on a rig.
+	 * 
+	 * @param joint The joint to attach to
+	 */
+	public void snapTo(Joint joint) {
+		Vertex origPivot = joint.getPivot();
+		Vertex pivot = getRig().getRoot().getPivot();
+		double dx = origPivot.x - pivot.x;
+		double dy = origPivot.y - pivot.y;
+		double dz = origPivot.z - pivot.z;
+		
+		// shift the whole model to where the joint is
+		for (Vertex v : origVertices) {
+			v.translate(dx, dy, dz);
+		}
+		
+		// shift all the pivots too
+		translateJointPivots(getRig().getRoot(), dx, dy, dz);
+	}
+	
+	private void translateJointPivots(Joint joint, double dx, double dy, double dz) {
+		joint.getPivot().translate(dx, dy, dz);
+		for (Joint child : joint.getChildren()) {
+			translateJointPivots(child, dx, dy, dz);
+		}
+	}
 }
