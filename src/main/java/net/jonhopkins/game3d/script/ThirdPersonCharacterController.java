@@ -31,6 +31,13 @@ public class ThirdPersonCharacterController extends CharacterController {
 	
 	@Override
 	protected void updatePlayer(double timestep) {
+		if (KeyboardInput.keyDownOnce(KeyEvent.VK_E)) {
+			equipWeapon();
+		}
+		if (KeyboardInput.keyDownOnce(KeyEvent.VK_R)) {
+			equipWeapon2();
+		}
+		
 		boolean movingForward = KeyboardInput.keyDown(KeyEvent.VK_W);
 		boolean movingLeft = KeyboardInput.keyDown(KeyEvent.VK_A);
 		boolean movingBackward = KeyboardInput.keyDown(KeyEvent.VK_S);
@@ -101,7 +108,6 @@ public class ThirdPersonCharacterController extends CharacterController {
 			tempZ += Math.sin(directionRads) * speed * timestep;
 		}
 		
-		
 		if (tempX <= -320.0) {
 			tempX = -320.0;
 		} else if (tempX >= 320.0) {
@@ -163,6 +169,18 @@ public class ThirdPersonCharacterController extends CharacterController {
 		if (followCharacter) {
 			turnModel(rotation.y);
 		}
+	}
+	
+	private void equipWeapon() {
+		Model sword = ModelFactory.getModel("sword.obj");
+		object.getChild("person").registerChild("weapon", sword);
+		((Model)(object.getChild("person").getChild("human"))).getRig().replacePart(sword);
+	}
+	
+	private void equipWeapon2() {
+		Model sword = ModelFactory.getModel("axe.obj");
+		object.getChild("person").registerChild("weapon", sword);
+		((Model)(object.getChild("person").getChild("human"))).getRig().replacePart(sword);
 	}
 	
 	public void setDistance(double distance) {
